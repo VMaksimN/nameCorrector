@@ -66,9 +66,10 @@ void MainWindow::fixButtonClicked()
 
 void MainWindow::removeRuleButtonClicked()
 {
-    removeRow(mainGrid, ((QPushButton*)sender())->objectName().toInt(), true);
+    removeRow(mainGrid, getWidgetPosition(mainGrid, (QWidget*)sender()).first, true);
     addRuleButton->setEnabled(true);
     rulesNumber--;
+    delete sender();
 }
 
 void MainWindow::applyButtonClicked()
@@ -76,7 +77,8 @@ void MainWindow::applyButtonClicked()
     addRuleButton->setEnabled(true);
 
     QLabel* ruleLabel = new QLabel(mainWidget);
-    ruleLabel->setText(ruleComboBox->currentText());
+    ruleLabel->setText(QString::fromStdString(std::to_string(rulesNumber))
+                       + ". " + ruleComboBox->currentText());
     mainGrid->addWidget(ruleLabel, rulesNumber, 0);
 
     if(ruleComboBox->currentText() == "Replace")
@@ -173,4 +175,27 @@ void MainWindow::deleteChildWidgets(QLayoutItem *item)
 QString MainWindow::replace(QString* old, QString* args)
 {
     return old->replace(args[0], args[1]);
+}
+
+
+QPair<int,int> MainWindow::getWidgetPosition(QGridLayout* layout, QWidget* widget)
+{
+    QPair<int,int> res;
+    int row;
+    int column;
+    int rs;
+    int cs;
+    // Avoid usage of QGridLayout::itemAtPosition() here to improve performance.
+    for (int i = layout->count() - 1; i >= 0; i--)
+    {
+        layout->getItemPosition(i, &row, &column, &rs, &cs);
+        if(layout->takeAt(i)->widget() == widget)
+        {
+            res.first = row;
+            res.second = column;
+            break;
+        }
+    }
+
+    return res;
 }

@@ -16,6 +16,7 @@
 #include <QComboBox>
 #include <QTextEdit>
 #include <QLabel>
+#include <QPair>
 
 class MainWindow : public QMainWindow
 {
@@ -37,6 +38,7 @@ private:
     void removeRow(QGridLayout *layout, int row, bool deleteWidgets);
     void remove(QGridLayout *layout, int row, int column, bool deleteWidgets);
     void deleteChildWidgets(QLayoutItem *item);
+    QPair<int,int> getWidgetPosition(QGridLayout* layout, QWidget* widget);
 
     QWidget* mainWidget;
     QGridLayout* mainGrid;
