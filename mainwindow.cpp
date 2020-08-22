@@ -64,11 +64,11 @@ void MainWindow::fixButtonClicked()
     QStringList path_list = dir.entryList();
     for(uint i = 0; i < dir.count(); i++)
     {
-        /*if(QFile::rename(path + "/" + path_list[i], path + "/" + fix_name(path_list[i])) != 0)
+        if(QFile::rename(path + "/" + path_list[i], path + "/" + fix_name(path_list[i])) != 0)
         {
             QMessageBox box(this);
             box.setText("Operation fault! You are loser");
-        }*/
+        }
     }
 }
 
@@ -114,7 +114,7 @@ void MainWindow::applyButtonClicked()
         args[0] = replacedTextBox->toPlainText();
         args[1] = replaceWithTextBox->toPlainText();
 
-        rules.insert("Replace", args);
+        rules.push_back(new QPair<QString, QString*>("Replace", args));
 
         delete replacedTextBox;
         delete replaceWithTextBox;
@@ -141,7 +141,19 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
     }
 }
 
-QString MainWindow::replace(QString* old, QString* args)
+QString MainWindow::fix_name(QString old_name)
 {
-    return old->replace(args[0], args[1]);
+    for(int i = 0; i < rules.count(); i++)
+    {
+        if(rules[i]->first == "Replace")
+        {
+            old_name = replace(old_name, rules[i]->second);
+        }
+    }
+    return old_name;
+}
+
+QString MainWindow::replace(QString old, QString* args)
+{
+    return old.replace(args[0], args[1]);
 }

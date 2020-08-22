@@ -33,7 +33,8 @@ private:
     void applyButtonClicked();
     void ruleComboBoxTextChanged(const QString& text);
 
-    QString replace(QString* old, QString* args);
+    QString fix_name(QString old_name);
+    QString replace(QString old, QString* args);
 
     QWidget* mainWidget;
     QGridLayout* mainGrid;
@@ -47,6 +48,6 @@ private:
     QList<QList<QWidget*>*>* widgets;
 
     int rulesNumber = 0;
-    QMap<QString, QString*> rules;
+    QList<QPair<QString, QString*>*> rules;
 };
 #endif // MAINWINDOW_H
