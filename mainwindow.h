@@ -32,13 +32,8 @@ private:
     void removeRuleButtonClicked();
     void applyButtonClicked();
     void ruleComboBoxTextChanged(const QString& text);
-    QString fix_name(QString name);
-    QString replace(QString* old, QString* args);
 
-    void removeRow(QGridLayout *layout, int row, bool deleteWidgets);
-    void remove(QGridLayout *layout, int row, int column, bool deleteWidgets);
-    void deleteChildWidgets(QLayoutItem *item);
-    QPair<int,int> getWidgetPosition(QGridLayout* layout, QWidget* widget);
+    QString replace(QString* old, QString* args);
 
     QWidget* mainWidget;
     QGridLayout* mainGrid;
@@ -49,6 +44,7 @@ private:
     QComboBox* ruleComboBox = nullptr;
     QTextEdit* replacedTextBox;
     QTextEdit* replaceWithTextBox;
+    QList<QList<QWidget*>*>* widgets;
 
     int rulesNumber = 0;
     QMap<QString, QString*> rules;
