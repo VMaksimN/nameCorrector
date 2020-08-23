@@ -3,6 +3,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    //Init widgets storage
     widgets = new QList<QList<QWidget*>*>();
     widgets->push_back(new QList<QWidget*>());
 
@@ -12,27 +13,29 @@ MainWindow::MainWindow(QWidget *parent)
     mainGrid = new QGridLayout(mainWidget);
     mainWidget->setLayout(mainGrid);
 
+    //Init button starting fix operations
     fixButton = new QPushButton("Fix names", mainWidget);
     connect(fixButton, &QPushButton::clicked, this, &MainWindow::fixButtonClicked);
     mainGrid->addWidget(fixButton, 0, 1);
     widgets->first()->push_back(fixButton);
 
+    //Init button adding new rules
     addRuleButton = new QPushButton("New rule", mainWidget);
     connect(addRuleButton, &QPushButton::clicked, this, &MainWindow::addRuleButtonClicked);
     mainGrid->addWidget(addRuleButton, 0, 0);
     widgets->first()->push_back(fixButton);
 }
 
-MainWindow::~MainWindow()
-{
-}
+MainWindow::~MainWindow(){}
 
 void MainWindow::addRuleButtonClicked()
 {
+    //Add a new line and index it
     rulesNumber++;
     widgets->push_back(new QList<QWidget*>());
     addRuleButton->setEnabled(false);
 
+    //Fill the new line with blank rule (comboBox and two buttons)
     ruleComboBox = new QComboBox(mainWidget);
     ruleComboBox->addItem("None");
     ruleComboBox->addItem("Replace");
@@ -56,9 +59,9 @@ void MainWindow::addRuleButtonClicked()
     widgets->last()->push_back(applyButton);*/
 }
 
-
 void MainWindow::fixButtonClicked()
 {
+    //User open a directory and program start fix operations
     QFileDialog dialog(this);
     QString path = dialog.getExistingDirectory();
     QDir dir(path);
@@ -75,6 +78,7 @@ void MainWindow::fixButtonClicked()
 
 void MainWindow::removeRuleButtonClicked()
 {
+    //Search for sender and remove all widgets in the selected line
     for(int i = widgets->count() - 1; i > -1; i--)
     {
         if(sender() == widgets->at(i)->last() ||
@@ -94,6 +98,7 @@ void MainWindow::removeRuleButtonClicked()
 
 void MainWindow::applyButtonClicked()
 {
+    //Replace current widgets with new inactive ones according selected rule
     addRuleButton->setEnabled(true);
 
     QLabel* ruleLabel = new QLabel(mainWidget);
@@ -166,6 +171,7 @@ void MainWindow::applyButtonClicked()
 
 void MainWindow::ruleComboBoxTextChanged(const QString& text)
 {
+    //Replace current widgets with new ones according selected rule
     for(int i = 0; i < widgets->last()->count(); i++)
     {
         if(widgets->last()->at(i) != ruleComboBox)
@@ -230,6 +236,7 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
 
 void MainWindow::createApplyButton(QGridLayout* layout, int row, int column)
 {
+    //Add a new applyButton to the selected grid cell
     QPushButton* applyButton = new QPushButton(mainWidget);
     applyButton->setText("Apply");
     connect(applyButton, &QPushButton::clicked, this, &MainWindow::applyButtonClicked);
@@ -239,6 +246,7 @@ void MainWindow::createApplyButton(QGridLayout* layout, int row, int column)
 
 void MainWindow::createRemoveButton(QGridLayout* layout, int row, int column)
 {
+    //Add a new removeButton to the selected grid cell
     QPushButton* removeRuleButton = new QPushButton("Remove", mainWidget);
     connect(removeRuleButton, &QPushButton::clicked, this, &MainWindow::removeRuleButtonClicked);
     layout->addWidget(removeRuleButton, row, column);
@@ -247,6 +255,7 @@ void MainWindow::createRemoveButton(QGridLayout* layout, int row, int column)
 
 QString MainWindow::fix_name(QString old_name)
 {
+    //Fix all names according the rule list
     for(int i = 0; i < rules.count(); i++)
     {
         if(rules[i]->first == "Replace")
