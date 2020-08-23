@@ -1,1 +1,1 @@
-Use List<List<QWidget>> to storage objects and then delete it
+It seems more correctly to define all required widgets with old widgets info and then remove old widgets and appropriate list and then add a new list containing new widgets (applyButtonClicked)

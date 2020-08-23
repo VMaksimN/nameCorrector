@@ -44,7 +44,6 @@ void MainWindow::addRuleButtonClicked()
 
     QPushButton* removeRuleButton = new QPushButton("Remove", mainWidget);
     connect(removeRuleButton, &QPushButton::clicked, this, &MainWindow::removeRuleButtonClicked);
-    removeRuleButton->setObjectName(QString::fromStdString(std::to_string(rulesNumber)));
     mainGrid->addWidget(removeRuleButton, rulesNumber, 6);
     widgets->last()->push_back(removeRuleButton);
 
@@ -106,6 +105,9 @@ void MainWindow::applyButtonClicked()
         replacedLabel->setText(replacedTextBox->toPlainText());
         mainGrid->addWidget(replacedLabel, rulesNumber, 1);
 
+        QLabel* withLabel = new QLabel("with", mainWidget);
+        mainGrid->addWidget(withLabel, rulesNumber, 2);
+
         QLabel* replaceWithLabel = new QLabel(mainWidget);
         replaceWithLabel->setText(replaceWithTextBox->toPlainText());
         mainGrid->addWidget(replaceWithLabel, rulesNumber, 3);
@@ -114,13 +116,31 @@ void MainWindow::applyButtonClicked()
         args[0] = replacedTextBox->toPlainText();
         args[1] = replaceWithTextBox->toPlainText();
 
+        QPushButton* removeRuleButton = new QPushButton("Remove", mainWidget);
+        connect(removeRuleButton, &QPushButton::clicked, this, &MainWindow::removeRuleButtonClicked);
+        mainGrid->addWidget(removeRuleButton, rulesNumber, 4);
+
         rules.push_back(new QPair<QString, QString*>("Replace", args));
 
-        delete replacedTextBox;
-        delete replaceWithTextBox;
+        for(int i = 0; i < widgets->last()->count(); i++)
+        {
+            delete widgets->last()->at(i);
+        }
+        widgets->removeLast();
+
+        widgets->push_back(new QList<QWidget*>());
+        widgets->last()->push_back(ruleLabel);
+        widgets->last()->push_back(replacedLabel);
+        widgets->last()->push_back(withLabel);
+        widgets->last()->push_back(replaceWithLabel);
+        widgets->last()->push_back(removeRuleButton);
     }
-    delete ruleComboBox;
-    delete sender();
+    else if(ruleComboBox->currentText() == "Replace")
+    {
+
+    }
+    /*delete ruleComboBox;
+    delete sender();*/
 }
 
 void MainWindow::ruleComboBoxTextChanged(const QString& text)
@@ -138,6 +158,14 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
         replaceWithTextBox = new QTextEdit(mainWidget);
         mainGrid->addWidget(replaceWithTextBox, rulesNumber, 3);
         widgets->last()->push_front(replaceWithTextBox);
+        return;
+    }
+    if(text == "Remove")
+    {
+        removeTextBox = new QTextEdit(mainWidget);
+        mainGrid->addWidget(removeTextBox, rulesNumber, 1);
+        widgets->last()->push_back(removeTextBox);
+        return;
     }
 }
 

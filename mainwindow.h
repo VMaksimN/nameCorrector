@@ -45,6 +45,7 @@ private:
     QComboBox* ruleComboBox = nullptr;
     QTextEdit* replacedTextBox;
     QTextEdit* replaceWithTextBox;
+    QTextEdit* removeTextBox;
     QList<QList<QWidget*>*>* widgets;
 
     int rulesNumber = 0;
