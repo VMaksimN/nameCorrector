@@ -42,16 +42,18 @@ void MainWindow::addRuleButtonClicked()
     mainGrid->addWidget(ruleComboBox, rulesNumber, 0);
     widgets->last()->push_back(ruleComboBox);
 
-    QPushButton* removeRuleButton = new QPushButton("Remove", mainWidget);
+    createRemoveButton(mainGrid, rulesNumber, 1);
+    /*QPushButton* removeRuleButton = new QPushButton("Remove", mainWidget);
     connect(removeRuleButton, &QPushButton::clicked, this, &MainWindow::removeRuleButtonClicked);
     mainGrid->addWidget(removeRuleButton, rulesNumber, 1);
-    widgets->last()->push_back(removeRuleButton);
+    widgets->last()->push_back(removeRuleButton);*/
 
-    QPushButton* applyButton = new QPushButton(mainWidget);
+    createApplyButton(mainGrid, rulesNumber, 2);
+    /*QPushButton* applyButton = new QPushButton(mainWidget);
     applyButton->setText("Apply");
     connect(applyButton, &QPushButton::clicked, this, &MainWindow::applyButtonClicked);
     mainGrid->addWidget(applyButton, rulesNumber, 2);
-    widgets->last()->push_back(applyButton);
+    widgets->last()->push_back(applyButton);*/
 }
 
 
@@ -169,16 +171,18 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
         mainGrid->addWidget(replaceWithTextBox, rulesNumber, 3);
         widgets->last()->push_back(replaceWithTextBox);
 
-        QPushButton* removeRuleButton = new QPushButton("Remove", mainWidget);
+        createRemoveButton(mainGrid, rulesNumber, 4);
+        /*QPushButton* removeRuleButton = new QPushButton("Remove", mainWidget);
         connect(removeRuleButton, &QPushButton::clicked, this, &MainWindow::removeRuleButtonClicked);
         mainGrid->addWidget(removeRuleButton, rulesNumber, 4);
-        widgets->last()->push_back(removeRuleButton);
+        widgets->last()->push_back(removeRuleButton);*/
 
-        QPushButton* applyButton = new QPushButton(mainWidget);
+        createApplyButton(mainGrid, rulesNumber, 5);
+        /*QPushButton* applyButton = new QPushButton(mainWidget);
         applyButton->setText("Apply");
         connect(applyButton, &QPushButton::clicked, this, &MainWindow::applyButtonClicked);
         mainGrid->addWidget(applyButton, rulesNumber, 5);
-        widgets->last()->push_back(applyButton);
+        widgets->last()->push_back(applyButton);*/
 
         return;
     }
@@ -188,19 +192,38 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
         mainGrid->addWidget(removeTextBox, rulesNumber, 1);
         widgets->last()->push_back(removeTextBox);
 
-        QPushButton* removeRuleButton = new QPushButton("Remove", mainWidget);
+        createRemoveButton(mainGrid, rulesNumber, 2);
+        /*QPushButton* removeRuleButton = new QPushButton("Remove", mainWidget);
         connect(removeRuleButton, &QPushButton::clicked, this, &MainWindow::removeRuleButtonClicked);
         mainGrid->addWidget(removeRuleButton, rulesNumber, 2);
-        widgets->last()->push_back(removeRuleButton);
+        widgets->last()->push_back(removeRuleButton);*/
 
-        QPushButton* applyButton = new QPushButton(mainWidget);
+        createApplyButton(mainGrid, rulesNumber, 3);
+        /*QPushButton* applyButton = new QPushButton(mainWidget);
         applyButton->setText("Apply");
         connect(applyButton, &QPushButton::clicked, this, &MainWindow::applyButtonClicked);
         mainGrid->addWidget(applyButton, rulesNumber, 3);
-        widgets->last()->push_back(applyButton);
+        widgets->last()->push_back(applyButton);*/
 
         return;
     }
+}
+
+void MainWindow::createApplyButton(QGridLayout* layout, int row, int column)
+{
+    QPushButton* applyButton = new QPushButton(mainWidget);
+    applyButton->setText("Apply");
+    connect(applyButton, &QPushButton::clicked, this, &MainWindow::applyButtonClicked);
+    layout->addWidget(applyButton, row, column);
+    widgets->at(row)->push_back(applyButton);
+}
+
+void MainWindow::createRemoveButton(QGridLayout* layout, int row, int column)
+{
+    QPushButton* removeRuleButton = new QPushButton("Remove", mainWidget);
+    connect(removeRuleButton, &QPushButton::clicked, this, &MainWindow::removeRuleButtonClicked);
+    layout->addWidget(removeRuleButton, row, column);
+    widgets->at(row)->push_back(removeRuleButton);
 }
 
 QString MainWindow::fix_name(QString old_name)

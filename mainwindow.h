@@ -32,6 +32,8 @@ private:
     void removeRuleButtonClicked();
     void applyButtonClicked();
     void ruleComboBoxTextChanged(const QString& text);
+    void createApplyButton(QGridLayout* layout, int row, int column);
+    void createRemoveButton(QGridLayout* layout, int row, int column);
 
     QString fix_name(QString old_name);
     QString replace(QString old, QString* args);
