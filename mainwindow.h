@@ -37,6 +37,7 @@ private:
 
     QString fix_name(QString old_name);
     QString replace(QString old, QString* args);
+    QString remove(QString old, QString* args);
 
     QWidget* mainWidget;
     QGridLayout* mainGrid;

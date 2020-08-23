@@ -118,9 +118,9 @@ void MainWindow::applyButtonClicked()
         args[0] = replacedTextBox->toPlainText();
         args[1] = replaceWithTextBox->toPlainText();
 
-        QPushButton* removeRuleButton = new QPushButton("Remove", mainWidget);
+        /*QPushButton* removeRuleButton = new QPushButton("Remove", mainWidget);
         connect(removeRuleButton, &QPushButton::clicked, this, &MainWindow::removeRuleButtonClicked);
-        mainGrid->addWidget(removeRuleButton, rulesNumber, 4);
+        mainGrid->addWidget(removeRuleButton, rulesNumber, 4);*/
 
         rules.push_back(new QPair<QString, QString*>("Replace", args));
 
@@ -135,14 +135,33 @@ void MainWindow::applyButtonClicked()
         widgets->last()->push_back(replacedLabel);
         widgets->last()->push_back(withLabel);
         widgets->last()->push_back(replaceWithLabel);
-        widgets->last()->push_back(removeRuleButton);
+        //widgets->last()->push_back(removeRuleButton);
+        createRemoveButton(mainGrid, rulesNumber, 4);
     }
-    else if(ruleComboBox->currentText() == "Replace")
+    else if(ruleComboBox->currentText() == "Remove")
     {
+        QLabel* removeLabel = new QLabel(mainWidget);
+        removeLabel->setText(removeTextBox->toPlainText());
+        mainGrid->addWidget(removeLabel, rulesNumber, 1);
 
+        QString* args = new QString[1];
+        args[0] = removeTextBox->toPlainText();
+
+        rules.push_back(new QPair<QString, QString*>("Remove", args));
+
+        for(int i = 0; i < widgets->last()->count(); i++)
+        {
+            delete widgets->last()->at(i);
+        }
+        widgets->removeLast();
+
+        widgets->push_back(new QList<QWidget*>());
+        widgets->last()->push_back(ruleLabel);
+        widgets->last()->push_back(removeLabel);
+        createRemoveButton(mainGrid, rulesNumber, 2);
     }
-    /*delete ruleComboBox;
-    delete sender();*/
+
+
 }
 
 void MainWindow::ruleComboBoxTextChanged(const QString& text)
@@ -234,11 +253,24 @@ QString MainWindow::fix_name(QString old_name)
         {
             old_name = replace(old_name, rules[i]->second);
         }
+        else if(rules[i]->first == "Remove")
+        {
+            old_name = remove(old_name, rules[i]->second);
+        }
     }
     return old_name;
 }
 
 QString MainWindow::replace(QString old, QString* args)
 {
-    return old.replace(args[0], args[1]);
+    if(old.length() >= args[0].length())
+    {
+        return old.replace(args[0], args[1]);
+    }
+    return old;
+}
+
+QString MainWindow::remove(QString old, QString* args)
+{
+    return old.replace(args[0], "");
 }

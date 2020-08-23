@@ -1,1 +1,0 @@
-It seems more correctly to define all required widgets with old widgets info and then remove old widgets and appropriate list and then add a new list containing new widgets (applyButtonClicked)
