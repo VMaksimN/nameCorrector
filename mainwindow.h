@@ -37,9 +37,10 @@ private:
     void createRemoveButton(QGridLayout* layout, int row, int column);
 
     //Text methods
-    QString fix_name(QString old_name);
+    QString fixName(QString old_name);
     QString replace(QString old, QString* args);
     QString remove(QString old, QString* args);
+    QString removeFromTo(QString old, QString* args);
     void reset();
 
     //GUI fields
@@ -54,6 +55,8 @@ private:
     QTextEdit* replacedTextBox;
     QTextEdit* replaceWithTextBox;
     QTextEdit* removeTextBox;
+    QTextEdit* fromTextBox;
+    QTextEdit* toTextBox;
     QList<QList<QWidget*>*>* widgets;
 
     //Other fields
