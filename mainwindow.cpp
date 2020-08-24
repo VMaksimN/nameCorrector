@@ -13,17 +13,24 @@ MainWindow::MainWindow(QWidget *parent)
     mainGrid = new QGridLayout(mainWidget);
     mainWidget->setLayout(mainGrid);
 
+    //Init button adding new rules
+    addRuleButton = new QPushButton("New rule", mainWidget);
+    connect(addRuleButton, &QPushButton::clicked, this, &MainWindow::addRuleButtonClicked);
+    mainGrid->addWidget(addRuleButton, 0, 0);
+    widgets->first()->push_back(addRuleButton);
+
     //Init button starting fix operations
     fixButton = new QPushButton("Fix names", mainWidget);
     connect(fixButton, &QPushButton::clicked, this, &MainWindow::fixButtonClicked);
     mainGrid->addWidget(fixButton, 0, 1);
     widgets->first()->push_back(fixButton);
 
-    //Init button adding new rules
-    addRuleButton = new QPushButton("New rule", mainWidget);
-    connect(addRuleButton, &QPushButton::clicked, this, &MainWindow::addRuleButtonClicked);
-    mainGrid->addWidget(addRuleButton, 0, 0);
-    widgets->first()->push_back(fixButton);
+    //Init button replacing new names with old ones
+    resetButton = new QPushButton("Reset", mainWidget);
+    resetButton->setEnabled(false);
+    connect(resetButton, &QPushButton::clicked, this, &MainWindow::reset);
+    mainGrid->addWidget(resetButton, 0, 2);
+    widgets->first()->push_back(resetButton);
 }
 
 MainWindow::~MainWindow(){}
@@ -61,19 +68,22 @@ void MainWindow::addRuleButtonClicked()
 
 void MainWindow::fixButtonClicked()
 {
-    //User open a directory and program start fix operations
+    //User open a directory and the program start fix operations and remember old names
     QFileDialog dialog(this);
-    QString path = dialog.getExistingDirectory();
-    QDir dir(path);
+    currentPath = dialog.getExistingDirectory();
+    QDir dir(currentPath);
     QStringList path_list = dir.entryList();
+    oldNames = path_list;
     for(uint i = 0; i < dir.count(); i++)
     {
-        if(QFile::rename(path + "/" + path_list[i], path + "/" + fix_name(path_list[i])) != 0)
+        if(QFile::rename(currentPath + "/" + path_list[i], currentPath + "/" + fix_name(path_list[i])) != 0)
         {
             QMessageBox box(this);
-            box.setText("Operation fault! You are loser");
+            box.setText("Operation fault!");
+            box.show();
         }
     }
+    resetButton->setEnabled(true);
 }
 
 void MainWindow::removeRuleButtonClicked()
@@ -282,4 +292,21 @@ QString MainWindow::replace(QString old, QString* args)
 QString MainWindow::remove(QString old, QString* args)
 {
     return old.replace(args[0], "");
+}
+
+void MainWindow::reset()
+{
+    //This operation is similar to the fix one
+    resetButton->setEnabled(false);
+    QDir dir(currentPath);
+    QStringList path_list = dir.entryList();
+    for(uint i = 0; i < dir.count(); i++)
+    {
+        if(QFile::rename(currentPath + "/" + path_list[i], currentPath + "/" + oldNames[i]) != 0)
+        {
+            QMessageBox box(this);
+            box.setText("Operation fault!");
+            box.show();
+        }
+    }
 }
