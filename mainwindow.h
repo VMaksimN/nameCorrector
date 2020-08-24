@@ -41,6 +41,7 @@ private:
     QString replace(QString old, QString* args);
     QString remove(QString old, QString* args);
     QString removeFromTo(QString old, QString* args);
+    QString addStringTo(QString old, QString* args);
     void reset();
 
     //GUI fields
@@ -50,6 +51,7 @@ private:
     QPushButton* fixButton;
     QPushButton* addRuleButton;
     QPushButton* resetButton;
+    QLabel* logLabel;
 
     QComboBox* ruleComboBox = nullptr;
     QTextEdit* replacedTextBox;
@@ -57,6 +59,7 @@ private:
     QTextEdit* removeTextBox;
     QTextEdit* fromTextBox;
     QTextEdit* toTextBox;
+    QTextEdit* addTextBox;
     QList<QList<QWidget*>*>* widgets;
 
     //Other fields

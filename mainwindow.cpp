@@ -48,22 +48,13 @@ void MainWindow::addRuleButtonClicked()
     ruleComboBox->addItem("Replace");
     ruleComboBox->addItem("Remove");
     ruleComboBox->addItem("RemoveFromTo");
+    ruleComboBox->addItem("AddTo");
     connect(ruleComboBox, &QComboBox::currentTextChanged, this, &MainWindow::ruleComboBoxTextChanged);
     mainGrid->addWidget(ruleComboBox, rulesNumber, 0);
     widgets->last()->push_back(ruleComboBox);
 
     createRemoveButton(mainGrid, rulesNumber, 1);
-    /*QPushButton* removeRuleButton = new QPushButton("Remove", mainWidget);
-    connect(removeRuleButton, &QPushButton::clicked, this, &MainWindow::removeRuleButtonClicked);
-    mainGrid->addWidget(removeRuleButton, rulesNumber, 1);
-    widgets->last()->push_back(removeRuleButton);*/
-
     createApplyButton(mainGrid, rulesNumber, 2);
-    /*QPushButton* applyButton = new QPushButton(mainWidget);
-    applyButton->setText("Apply");
-    connect(applyButton, &QPushButton::clicked, this, &MainWindow::applyButtonClicked);
-    mainGrid->addWidget(applyButton, rulesNumber, 2);
-    widgets->last()->push_back(applyButton);*/
 }
 
 void MainWindow::fixButtonClicked()
@@ -211,7 +202,38 @@ void MainWindow::applyButtonClicked()
         widgets->last()->push_back(toLabel);
         createRemoveButton(mainGrid, rulesNumber, 6);
     }
+    else if(ruleComboBox->currentText() == "AddTo")
+    {
+        QLabel* addLabel = new QLabel(mainWidget);
+        addLabel->setText(addTextBox->toPlainText());
+        mainGrid->addWidget(addLabel, rulesNumber, 1);
 
+        QLabel* to = new QLabel("to", mainWidget);
+        mainGrid->addWidget(to, rulesNumber, 2);
+
+        QLabel* toLabel = new QLabel(mainWidget);
+        toLabel->setText(toTextBox->toPlainText());
+        mainGrid->addWidget(toLabel, rulesNumber, 3);
+
+        QString* args = new QString[2];
+        args[0] = addTextBox->toPlainText();
+        args[1] = toTextBox->toPlainText();
+
+        rules.push_back(new QPair<QString, QString*>("AddTo", args));
+
+        for(int i = 0; i < widgets->last()->count(); i++)
+        {
+            delete widgets->last()->at(i);
+        }
+        widgets->removeLast();
+
+        widgets->push_back(new QList<QWidget*>());
+        widgets->last()->push_back(ruleLabel);
+        widgets->last()->push_back(addLabel);
+        widgets->last()->push_back(to);
+        widgets->last()->push_back(toLabel);
+        createRemoveButton(mainGrid, rulesNumber, 4);
+    }
 }
 
 void MainWindow::ruleComboBoxTextChanged(const QString& text)
@@ -284,6 +306,25 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
 
         return;
     }
+    if(text == "AddTo")
+    {
+        addTextBox = new QTextEdit(mainWidget);
+        mainGrid->addWidget(addTextBox, rulesNumber, 1);
+        widgets->last()->push_back(addTextBox);
+
+        QLabel* toLabel = new QLabel("to", mainWidget);
+        mainGrid->addWidget(toLabel, rulesNumber, 2);
+        widgets->last()->push_back(toLabel);
+
+        toTextBox = new QTextEdit(mainWidget);
+        mainGrid->addWidget(toTextBox, rulesNumber, 3);
+        widgets->last()->push_back(toTextBox);
+
+        createRemoveButton(mainGrid, rulesNumber, 4);
+        createApplyButton(mainGrid, rulesNumber, 5);
+
+        return;
+    }
 }
 
 void MainWindow::createApplyButton(QGridLayout* layout, int row, int column)
@@ -322,6 +363,10 @@ QString MainWindow::fixName(QString old_name)
         {
             old_name = removeFromTo(old_name, rules[i]->second);
         }
+        else if(rules[i]->first == "AddTo")
+        {
+            old_name = addStringTo(old_name, rules[i]->second);
+        }
     }
     return old_name;
 }
@@ -346,6 +391,11 @@ QString MainWindow::removeFromTo(QString old, QString *args)
     QString new_str = old.mid(args[1].toInt(), args[2].toInt()).replace(args[0], "");
     old = old.replace(modified, new_str);
     return old;
+}
+
+QString MainWindow::addStringTo(QString old, QString* args)
+{
+    return old.insert(args[1].toInt(), args[0]);
 }
 
 void MainWindow::reset()

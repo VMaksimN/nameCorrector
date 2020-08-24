@@ -91,7 +91,7 @@ Use _**New rule**_ button to add a pattern according to which the program will c
 
 Then press _**Fix names**_ button to select a directory and check out the result
 
-
+If you not sure about correction just press _**Reset**_ button
 
 
 
