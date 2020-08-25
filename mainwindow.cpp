@@ -387,6 +387,10 @@ QString MainWindow::remove(QString old, QString* args)
 
 QString MainWindow::removeFromTo(QString old, QString *args)
 {
+    if(args[1].toInt() < 0 || args[2].toInt() < 0)
+    {
+        return old;
+    }
     QString modified = old.mid(args[1].toInt(), args[2].toInt());
     QString new_str = old.mid(args[1].toInt(), args[2].toInt()).replace(args[0], "");
     old = old.replace(modified, new_str);
@@ -395,6 +399,10 @@ QString MainWindow::removeFromTo(QString old, QString *args)
 
 QString MainWindow::addStringTo(QString old, QString* args)
 {
+    if(args[1].toInt() < 0)
+    {
+        return old;
+    }
     return old.insert(args[1].toInt(), args[0]);
 }
 

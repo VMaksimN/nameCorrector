@@ -89,11 +89,18 @@ and press Enter or if you use a file manager with GUI then just click right butt
 
 Use _**New rule**_ button to add a pattern according to which the program will correct names
 
-Then press _**Fix names**_ button to select a directory and check out the result
+Then press _**Fix names**_ button to select a directory. 
+
+Check out the result
 
 If you not sure about correction just press _**Reset**_ button
 
+_**Replace**_ usage: enter two strings (or symbols), the first will be replaced with the second
 
+_**Remove**_ usage: enter the string (or symbol) and all occurrences of this string will be removed from the object name
 
+_**RemoveFromTo**_ usage: enter the string and two numbers, the first and the last positions, then program remove all occurrences of the string from the object name
+
+_**AddTo**_ usage: enter the string and one number, the position of the addition, the program add your string to the position 
 
 
