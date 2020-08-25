@@ -17,6 +17,7 @@
 #include <QTextEdit>
 #include <QLabel>
 #include <QPair>
+#include <QCheckBox>
 
 class MainWindow : public QMainWindow
 {
@@ -35,6 +36,8 @@ private:
     void ruleComboBoxTextChanged(const QString& text);
     void createApplyButton(QGridLayout* layout, int row, int column);
     void createRemoveButton(QGridLayout* layout, int row, int column);
+    void fixFiles_CheckBox_Clicked();
+    void fixFolders_CheckBox_Clicked();
 
     //Text methods
     QString fixName(QString old_name);
@@ -51,6 +54,8 @@ private:
     QPushButton* fixButton;
     QPushButton* addRuleButton;
     QPushButton* resetButton;
+    QCheckBox* fixFiles_CheckBox;
+    QCheckBox* fixFolders_CheckBox;
     QLabel* logLabel;
 
     QComboBox* ruleComboBox = nullptr;

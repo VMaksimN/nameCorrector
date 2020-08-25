@@ -31,6 +31,19 @@ MainWindow::MainWindow(QWidget *parent)
     connect(resetButton, &QPushButton::clicked, this, &MainWindow::reset);
     mainGrid->addWidget(resetButton, 0, 2);
     widgets->first()->push_back(resetButton);
+
+    fixFiles_CheckBox = new QCheckBox("Fix files", mainWidget);
+    fixFiles_CheckBox->setCheckState(Qt::Checked);
+    connect(fixFiles_CheckBox, &QCheckBox::clicked, this, &MainWindow::fixFiles_CheckBox_Clicked);
+    mainGrid->addWidget(fixFiles_CheckBox, 0, 3);
+    widgets->first()->push_back(fixFiles_CheckBox);
+
+    fixFolders_CheckBox = new QCheckBox("Fix folders", mainWidget);
+    fixFolders_CheckBox->setCheckState(Qt::Unchecked);
+    connect(fixFolders_CheckBox, &QCheckBox::clicked, this, &MainWindow::fixFolders_CheckBox_Clicked);
+    mainGrid->addWidget(fixFolders_CheckBox, 0, 4);
+    widgets->first()->push_back(fixFolders_CheckBox);
+
 }
 
 MainWindow::~MainWindow(){}
@@ -422,3 +435,22 @@ void MainWindow::reset()
         }
     }
 }
+
+void MainWindow::fixFiles_CheckBox_Clicked()
+{
+    if(fixFiles_CheckBox->checkState() == Qt::Unchecked)
+    {
+        fixFolders_CheckBox->setCheckState(Qt::Checked);
+    }
+}
+
+void MainWindow::fixFolders_CheckBox_Clicked()
+{
+    if(fixFolders_CheckBox->checkState() == Qt::Unchecked)
+    {
+        fixFiles_CheckBox->setCheckState(Qt::Checked);
+    }
+}
+
+
+
