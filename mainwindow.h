@@ -70,7 +70,8 @@ private:
     //Other fields
     int rulesNumber = 0;
     QList<QPair<QString, QString*>*> rules;
-    QStringList oldNames;
+    QStringList oldFileNames;
+    QStringList oldDirNames;
     QString currentPath;
 };
 #endif // MAINWINDOW_H

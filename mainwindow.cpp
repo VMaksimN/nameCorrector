@@ -75,16 +75,36 @@ void MainWindow::fixButtonClicked()
     //User open a directory and the program start fix operations and remember old names
     QFileDialog dialog(this);
     currentPath = dialog.getExistingDirectory();
-    QDir dir(currentPath);
-    QStringList path_list = dir.entryList();
-    oldNames = path_list;
-    for(uint i = 0; i < dir.count(); i++)
+    QDir directory(currentPath);
+    QStringList file_list = directory.entryList(QDir::Files);
+    QStringList dir_list = directory.entryList(QDir::Dirs);
+    oldFileNames = file_list;
+    oldDirNames = dir_list;
+    for(int i = 0; i < file_list.count(); i++)
     {
-        if(QFile::rename(currentPath + "/" + path_list[i], currentPath + "/" + fixName(path_list[i])) != 0)
+        if(fixFiles_CheckBox->checkState() == Qt::Checked)
         {
-            QMessageBox box(this);
-            box.setText("Operation fault!");
-            box.show();
+            if(QFile::rename(currentPath + "/" + file_list[i],
+                             currentPath + "/" + fixName(file_list[i])) != 0)
+            {
+                QMessageBox box(this);
+                box.setText("Operation fault!");
+                box.show();
+            }
+        }
+    }
+    for(int i = 0; i < dir_list.count(); i++)
+    {
+        if(fixFolders_CheckBox->checkState() == Qt::Checked)
+        {
+            QDir dir(currentPath + "/" + dir_list[i]);
+            if(dir.rename(currentPath + "/" + dir_list[i],
+                             currentPath + "/" + fixName(dir_list[i])) != 0)
+            {
+                QMessageBox box(this);
+                box.setText("Operation fault!");
+                box.show();
+            }
         }
     }
     resetButton->setEnabled(true);
@@ -423,15 +443,36 @@ void MainWindow::reset()
 {
     //This operation is similar to the fix one
     resetButton->setEnabled(false);
-    QDir dir(currentPath);
-    QStringList path_list = dir.entryList();
-    for(uint i = 0; i < dir.count(); i++)
+    QDir directory(currentPath);
+    QStringList file_list = directory.entryList(QDir::Files);
+    QStringList dir_list = directory.entryList(QDir::Dirs);
+
+    for(int i = 0; i < file_list.count(); i++)
     {
-        if(QFile::rename(currentPath + "/" + path_list[i], currentPath + "/" + oldNames[i]) != 0)
+        if(fixFiles_CheckBox->checkState() == Qt::Checked)
         {
-            QMessageBox box(this);
-            box.setText("Operation fault!");
-            box.show();
+            if(QFile::rename(currentPath + "/" + file_list[i],
+                             currentPath + "/" + oldFileNames[i]) != 0)
+            {
+                QMessageBox box(this);
+                box.setText("Operation fault!");
+                box.show();
+            }
+        }
+    }
+
+    for(int i = 0; i < dir_list.count(); i++)
+    {
+        if(fixFolders_CheckBox->checkState() == Qt::Checked)
+        {
+            QDir dir(currentPath + "/" + dir_list[i]);
+            if(dir.rename(currentPath + "/" + dir_list[i],
+                             currentPath + "/" + oldDirNames[i]) != 0)
+            {
+                QMessageBox box(this);
+                box.setText("Operation fault!");
+                box.show();
+            }
         }
     }
 }
