@@ -18,6 +18,7 @@
 #include <QLabel>
 #include <QPair>
 #include <QCheckBox>
+#include <QQueue>
 
 class MainWindow : public QMainWindow
 {
@@ -70,8 +71,8 @@ private:
     //Other fields
     int rulesNumber = 0;
     QList<QPair<QString, QString*>*> rules;
-    QStringList oldFileNames;
-    QStringList oldDirNames;
+    QQueue<QStringList> oldFileNames;
+    QQueue<QStringList> oldDirNames;
     QString currentPath;
 };
 #endif // MAINWINDOW_H

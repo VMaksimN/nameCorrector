@@ -78,8 +78,8 @@ void MainWindow::fixButtonClicked()
     QDir directory(currentPath);
     QStringList file_list = directory.entryList(QDir::Files);
     QStringList dir_list = directory.entryList(QDir::Dirs);
-    oldFileNames = file_list;
-    oldDirNames = dir_list;
+    oldFileNames.enqueue(file_list);
+    oldDirNames.enqueue(dir_list);
     for(int i = 0; i < file_list.count(); i++)
     {
         if(fixFiles_CheckBox->checkState() == Qt::Checked)
@@ -447,33 +447,40 @@ void MainWindow::reset()
     QStringList file_list = directory.entryList(QDir::Files);
     QStringList dir_list = directory.entryList(QDir::Dirs);
 
-    for(int i = 0; i < file_list.count(); i++)
+    if(true)
     {
-        if(fixFiles_CheckBox->checkState() == Qt::Checked)
+        for(int i = 0; i < file_list.count(); i++)
         {
-            if(QFile::rename(currentPath + "/" + file_list[i],
-                             currentPath + "/" + oldFileNames[i]) != 0)
+            if(fixFiles_CheckBox->checkState() == Qt::Checked)
             {
-                QMessageBox box(this);
-                box.setText("Operation fault!");
-                box.show();
+                if(QFile::rename(currentPath + "/" + file_list[i],
+                                 currentPath + "/" + oldFileNames.head()[i]) != 0)
+                {
+                    QMessageBox box(this);
+                    box.setText("Operation fault!");
+                    box.show();
+                }
             }
         }
+        oldFileNames.dequeue();
     }
-
-    for(int i = 0; i < dir_list.count(); i++)
+    if(true)
     {
-        if(fixFolders_CheckBox->checkState() == Qt::Checked)
+        for(int i = 0; i < dir_list.count(); i++)
         {
-            QDir dir(currentPath + "/" + dir_list[i]);
-            if(dir.rename(currentPath + "/" + dir_list[i],
-                             currentPath + "/" + oldDirNames[i]) != 0)
+            if(fixFolders_CheckBox->checkState() == Qt::Checked)
             {
-                QMessageBox box(this);
-                box.setText("Operation fault!");
-                box.show();
+                QDir dir(currentPath + "/" + dir_list[i]);
+                if(dir.rename(currentPath + "/" + dir_list[i],
+                                 currentPath + "/" + oldDirNames.head()[i]) != 0)
+                {
+                    QMessageBox box(this);
+                    box.setText("Operation fault!");
+                    box.show();
+                }
             }
         }
+        oldDirNames.dequeue();
     }
 }
 
