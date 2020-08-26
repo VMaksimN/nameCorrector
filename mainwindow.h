@@ -54,9 +54,12 @@ private:
 
     QPushButton* fixButton;
     QPushButton* addRuleButton;
-    QPushButton* resetButton;
     QCheckBox* fixFiles_CheckBox;
     QCheckBox* fixFolders_CheckBox;
+    QPushButton* resetFilesButton;
+    QPushButton* resetDirButton;
+    QPushButton* resetAllButton;
+    QPushButton* fullResetButton;
     QLabel* logLabel;
 
     QComboBox* ruleComboBox = nullptr;

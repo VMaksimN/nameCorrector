@@ -25,24 +25,43 @@ MainWindow::MainWindow(QWidget *parent)
     mainGrid->addWidget(fixButton, 0, 1);
     widgets->first()->push_back(fixButton);
 
-    //Init button replacing new names with old ones
-    resetButton = new QPushButton("Reset", mainWidget);
-    resetButton->setEnabled(false);
-    connect(resetButton, &QPushButton::clicked, this, &MainWindow::reset);
-    mainGrid->addWidget(resetButton, 0, 2);
-    widgets->first()->push_back(resetButton);
-
+    //Init Checkboxes including(excluding) files or directories
     fixFiles_CheckBox = new QCheckBox("Fix files", mainWidget);
     fixFiles_CheckBox->setCheckState(Qt::Checked);
     connect(fixFiles_CheckBox, &QCheckBox::clicked, this, &MainWindow::fixFiles_CheckBox_Clicked);
-    mainGrid->addWidget(fixFiles_CheckBox, 0, 3);
+    mainGrid->addWidget(fixFiles_CheckBox, 0, 2);
     widgets->first()->push_back(fixFiles_CheckBox);
 
     fixFolders_CheckBox = new QCheckBox("Fix folders", mainWidget);
     fixFolders_CheckBox->setCheckState(Qt::Unchecked);
     connect(fixFolders_CheckBox, &QCheckBox::clicked, this, &MainWindow::fixFolders_CheckBox_Clicked);
-    mainGrid->addWidget(fixFolders_CheckBox, 0, 4);
+    mainGrid->addWidget(fixFolders_CheckBox, 0, 3);
     widgets->first()->push_back(fixFolders_CheckBox);
+
+    //Init buttons replacing new names with old ones
+    resetFilesButton = new QPushButton("Reset files", mainWidget);
+    resetFilesButton->setEnabled(false);
+    connect(resetFilesButton, &QPushButton::clicked, this, &MainWindow::reset);
+    mainGrid->addWidget(resetFilesButton, 0, 4);
+    widgets->first()->push_back(resetFilesButton);
+
+    resetDirButton = new QPushButton("Reset directories", mainWidget);
+    resetDirButton->setEnabled(false);
+    connect(resetDirButton, &QPushButton::clicked, this, &MainWindow::reset);
+    mainGrid->addWidget(resetDirButton, 0, 5);
+    widgets->first()->push_back(resetDirButton);
+
+    resetAllButton = new QPushButton("Reset all", mainWidget);
+    resetAllButton->setEnabled(false);
+    connect(resetAllButton, &QPushButton::clicked, this, &MainWindow::reset);
+    mainGrid->addWidget(resetAllButton, 0, 2);
+    widgets->first()->push_back(resetAllButton);
+
+    fullResetButton = new QPushButton("Full reset", mainWidget);
+    fullResetButton->setEnabled(false);
+    connect(fullResetButton, &QPushButton::clicked, this, &MainWindow::reset);
+    mainGrid->addWidget(fullResetButton, 0, 2);
+    widgets->first()->push_back(fullResetButton);
 
 }
 
@@ -442,45 +461,101 @@ QString MainWindow::addStringTo(QString old, QString* args)
 void MainWindow::reset()
 {
     //This operation is similar to the fix one
-    resetButton->setEnabled(false);
+    QPushButton* but = (QPushButton*)sender();
+
     QDir directory(currentPath);
     QStringList file_list = directory.entryList(QDir::Files);
     QStringList dir_list = directory.entryList(QDir::Dirs);
 
-    if(true)
+    if(but == fullResetButton)
     {
-        for(int i = 0; i < file_list.count(); i++)
+        if(!oldFileNames.empty())
         {
-            if(fixFiles_CheckBox->checkState() == Qt::Checked)
+            for(int i = 0; i < file_list.count(); i++)
             {
                 if(QFile::rename(currentPath + "/" + file_list[i],
-                                 currentPath + "/" + oldFileNames.head()[i]) != 0)
+                                 currentPath + "/" + oldFileNames.last()[i]) != 0)
                 {
                     QMessageBox box(this);
                     box.setText("Operation fault!");
                     box.show();
                 }
             }
+            oldFileNames.clear();
         }
-        oldFileNames.dequeue();
-    }
-    if(true)
-    {
-        for(int i = 0; i < dir_list.count(); i++)
+        if(!oldDirNames.empty())
         {
-            if(fixFolders_CheckBox->checkState() == Qt::Checked)
+            for(int i = 0; i < dir_list.count(); i++)
             {
                 QDir dir(currentPath + "/" + dir_list[i]);
                 if(dir.rename(currentPath + "/" + dir_list[i],
-                                 currentPath + "/" + oldDirNames.head()[i]) != 0)
+                              currentPath + "/" + oldDirNames.last()[i]) != 0)
                 {
                     QMessageBox box(this);
                     box.setText("Operation fault!");
                     box.show();
                 }
             }
+            oldDirNames.clear();
         }
-        oldDirNames.dequeue();
+        return;
+    }
+
+    bool need_files = but == resetFilesButton || but == resetAllButton;
+    bool need_dirs = but == resetDirButton || but == resetAllButton;
+
+    if(need_files)
+    {
+        if(!oldFileNames.empty())
+        {
+            for(int i = 0; i < file_list.count(); i++)
+            {
+                if(fixFiles_CheckBox->checkState() == Qt::Checked)
+                {
+                    if(QFile::rename(currentPath + "/" + file_list[i],
+                                     currentPath + "/" + oldFileNames.head()[i]) != 0)
+                    {
+                        QMessageBox box(this);
+                        box.setText("Operation fault!");
+                        box.show();
+                    }
+                }
+            }
+            oldFileNames.dequeue();
+        }
+        else
+        {
+            QMessageBox box(this);
+            box.setText("All operations with files were reset");
+            box.show();
+        }
+    }
+    if(need_dirs)
+    {
+        if(!oldDirNames.empty())
+        {
+            for(int i = 0; i < dir_list.count(); i++)
+            {
+                if(fixFolders_CheckBox->checkState() == Qt::Checked)
+                {
+                    QDir dir(currentPath + "/" + dir_list[i]);
+                    if(dir.rename(currentPath + "/" + dir_list[i],
+                                     currentPath + "/" + oldDirNames.head()[i]) != 0)
+                    {
+                        QMessageBox box(this);
+                        box.setText("Operation fault!");
+                        box.show();
+                    }
+                }
+            }
+            oldDirNames.dequeue();
+        }
+        else
+        {
+            QMessageBox box(this);
+            box.setText("All operations with directories were reset");
+            box.show();
+        }
     }
 }
 
