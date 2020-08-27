@@ -40,12 +40,14 @@ private:
     void fixFiles_CheckBox_Clicked();
     void fixFolders_CheckBox_Clicked();
 
-    //Text methods
+    //Functional methods
     QString fixName(QString old_name);
     QString replace(QString old, QString* args);
     QString remove(QString old, QString* args);
     QString removeFromTo(QString old, QString* args);
     QString addStringTo(QString old, QString* args);
+    void renameFiles(QString path, QStringList* old_names, QStringList* new_names);
+    void renameDirs(QString path, QStringList* old_names, QStringList* new_names);
     void reset();
 
     //GUI fields
@@ -56,9 +58,7 @@ private:
     QPushButton* addRuleButton;
     QCheckBox* fixFiles_CheckBox;
     QCheckBox* fixFolders_CheckBox;
-    QPushButton* resetFilesButton;
-    QPushButton* resetDirButton;
-    QPushButton* resetAllButton;
+    QPushButton* resetButton;
     QPushButton* fullResetButton;
     QLabel* logLabel;
 
@@ -74,8 +74,13 @@ private:
     //Other fields
     int rulesNumber = 0;
     QList<QPair<QString, QString*>*> rules;
-    QQueue<QStringList> oldFileNames;
-    QQueue<QStringList> oldDirNames;
+
+    QList<QPair<QString, QStringList>*> oldFileNames;
+    QList<QPair<QString, QStringList>*> oldDirNames;
+
+    QMap<QString, QQueue<QStringList>> oldFileNamesLog;
+    QMap<QString, QQueue<QStringList>> oldDirNamesLog;
+
     QString currentPath;
 };
 #endif // MAINWINDOW_H
