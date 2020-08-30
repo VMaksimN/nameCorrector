@@ -1,3 +1,4 @@
 *.html
 TODO
 build
+CMakeLists.txt.user
