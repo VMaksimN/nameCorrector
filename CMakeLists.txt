@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(name_fixer LANGUAGES CXX)
+project(name_corrector LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -33,11 +33,11 @@ if(ANDROID)
     mainwindow.h
   )
 else()
-  add_executable(name_fixer
+  add_executable(name_corrector
     main.cpp
     mainwindow.cpp
     mainwindow.h
   )
 endif()
 
-target_link_libraries(name_fixer PRIVATE Qt5::Widgets)
+target_link_libraries(name_corrector PRIVATE Qt5::Widgets)

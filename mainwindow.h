@@ -30,18 +30,18 @@ public:
 
 private:
     //GUI methods
-    void fixButtonClicked();
+    void correctButtonClicked();
     void addRuleButtonClicked();
     void removeRuleButtonClicked();
     void applyButtonClicked();
     void ruleComboBoxTextChanged(const QString& text);
     void createApplyButton(QGridLayout* layout, int row, int column);
     void createRemoveButton(QGridLayout* layout, int row, int column);
-    void fixFiles_CheckBox_Clicked();
-    void fixFolders_CheckBox_Clicked();
+    void correctFiles_CheckBox_Clicked();
+    void correctFolders_CheckBox_Clicked();
 
     //Functional methods
-    QString fixName(QString old_name);
+    QString correctName(QString old_name);
     QString replace(QString old, QString* args);
     QString remove(QString old, QString* args);
     QString removeFromTo(QString old, QString* args);
@@ -54,10 +54,10 @@ private:
     QWidget* mainWidget;
     QGridLayout* mainGrid;
 
-    QPushButton* fixButton;
+    QPushButton* correctButton;
     QPushButton* addRuleButton;
-    QCheckBox* fixFiles_CheckBox;
-    QCheckBox* fixFolders_CheckBox;
+    QCheckBox* correctFiles_CheckBox;
+    QCheckBox* correctFolders_CheckBox;
     QPushButton* resetButton;
     QPushButton* fullResetButton;
     QLabel* logLabel;

@@ -19,24 +19,24 @@ MainWindow::MainWindow(QWidget *parent)
     mainGrid->addWidget(addRuleButton, 0, 0);
     widgets->first()->push_back(addRuleButton);
 
-    //Init button starting fix operations
-    fixButton = new QPushButton("Fix names", mainWidget);
-    connect(fixButton, &QPushButton::clicked, this, &MainWindow::fixButtonClicked);
-    mainGrid->addWidget(fixButton, 0, 1);
-    widgets->first()->push_back(fixButton);
+    //Init button starting correct operations
+    correctButton = new QPushButton("correct names", mainWidget);
+    connect(correctButton, &QPushButton::clicked, this, &MainWindow::correctButtonClicked);
+    mainGrid->addWidget(correctButton, 0, 1);
+    widgets->first()->push_back(correctButton);
 
     //Init Checkboxes including(excluding) files or directories
-    fixFiles_CheckBox = new QCheckBox("Fix files", mainWidget);
-    fixFiles_CheckBox->setCheckState(Qt::Checked);
-    connect(fixFiles_CheckBox, &QCheckBox::clicked, this, &MainWindow::fixFiles_CheckBox_Clicked);
-    mainGrid->addWidget(fixFiles_CheckBox, 0, 2);
-    widgets->first()->push_back(fixFiles_CheckBox);
+    correctFiles_CheckBox = new QCheckBox("correct files", mainWidget);
+    correctFiles_CheckBox->setCheckState(Qt::Checked);
+    connect(correctFiles_CheckBox, &QCheckBox::clicked, this, &MainWindow::correctFiles_CheckBox_Clicked);
+    mainGrid->addWidget(correctFiles_CheckBox, 0, 2);
+    widgets->first()->push_back(correctFiles_CheckBox);
 
-    fixFolders_CheckBox = new QCheckBox("Fix folders", mainWidget);
-    fixFolders_CheckBox->setCheckState(Qt::Unchecked);
-    connect(fixFolders_CheckBox, &QCheckBox::clicked, this, &MainWindow::fixFolders_CheckBox_Clicked);
-    mainGrid->addWidget(fixFolders_CheckBox, 0, 3);
-    widgets->first()->push_back(fixFolders_CheckBox);
+    correctFolders_CheckBox = new QCheckBox("correct folders", mainWidget);
+    correctFolders_CheckBox->setCheckState(Qt::Unchecked);
+    connect(correctFolders_CheckBox, &QCheckBox::clicked, this, &MainWindow::correctFolders_CheckBox_Clicked);
+    mainGrid->addWidget(correctFolders_CheckBox, 0, 3);
+    widgets->first()->push_back(correctFolders_CheckBox);
 
     //Init buttons replacing new names with old ones
     resetButton = new QPushButton("Reset", mainWidget);
@@ -80,9 +80,9 @@ void MainWindow::addRuleButtonClicked()
     createApplyButton(mainGrid, rulesNumber, 2);
 }
 
-void MainWindow::fixButtonClicked()
+void MainWindow::correctButtonClicked()
 {
-    //User open a directory and the program start fix operations and remember old names
+    //User open a directory and the program start correct operations and remember old names
     QFileDialog dialog(this);
     currentPath = dialog.getExistingDirectory();
     QDir directory(currentPath);
@@ -94,10 +94,10 @@ void MainWindow::fixButtonClicked()
 
     for(int i = 0; i < file_list.count(); i++)
     {
-        if(fixFiles_CheckBox->checkState() == Qt::Checked)
+        if(correctFiles_CheckBox->checkState() == Qt::Checked)
         {
             if(QFile::rename(currentPath + "/" + file_list[i],
-                             currentPath + "/" + fixName(file_list[i])) != 0)
+                             currentPath + "/" + correctName(file_list[i])) != 0)
             {
                 QMessageBox box(this);
                 box.setText("Operation fault!");
@@ -107,11 +107,11 @@ void MainWindow::fixButtonClicked()
     }
     for(int i = 0; i < dir_list.count(); i++)
     {
-        if(fixFolders_CheckBox->checkState() == Qt::Checked)
+        if(correctFolders_CheckBox->checkState() == Qt::Checked)
         {
             QDir dir(currentPath + "/" + dir_list[i]);
             if(dir.rename(currentPath + "/" + dir_list[i],
-                             currentPath + "/" + fixName(dir_list[i])) != 0)
+                             currentPath + "/" + correctName(dir_list[i])) != 0)
             {
                 QMessageBox box(this);
                 box.setText("Operation fault!");
@@ -392,19 +392,19 @@ void MainWindow::createRemoveButton(QGridLayout* layout, int row, int column)
     widgets->at(row)->push_back(removeRuleButton);
 }
 
-void MainWindow::fixFiles_CheckBox_Clicked()
+void MainWindow::correctFiles_CheckBox_Clicked()
 {
-    if(fixFiles_CheckBox->checkState() == Qt::Unchecked)
+    if(correctFiles_CheckBox->checkState() == Qt::Unchecked)
     {
-        fixFolders_CheckBox->setCheckState(Qt::Checked);
+        correctFolders_CheckBox->setCheckState(Qt::Checked);
     }
 }
 
-void MainWindow::fixFolders_CheckBox_Clicked()
+void MainWindow::correctFolders_CheckBox_Clicked()
 {
-    if(fixFolders_CheckBox->checkState() == Qt::Unchecked)
+    if(correctFolders_CheckBox->checkState() == Qt::Unchecked)
     {
-        fixFiles_CheckBox->setCheckState(Qt::Checked);
+        correctFiles_CheckBox->setCheckState(Qt::Checked);
     }
 }
 
@@ -417,9 +417,9 @@ void MainWindow::fixFolders_CheckBox_Clicked()
 //////////////////////
 
 
-QString MainWindow::fixName(QString old_name)
+QString MainWindow::correctName(QString old_name)
 {
-    //Fix all names according the rule list
+    //correct all names according the rule list
     for(int i = 0; i < rules.count(); i++)
     {
         if(rules[i]->first == "Replace")
@@ -479,7 +479,7 @@ QString MainWindow::addStringTo(QString old, QString* args)
 
 void MainWindow::reset()
 {
-    //This operation is similar to the fix one
+    //This operation is similar to the correct one
     QPushButton* but = (QPushButton*)sender();
 
     if(but == fullResetButton)
