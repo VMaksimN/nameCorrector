@@ -17,8 +17,17 @@
 #include <QTextEdit>
 #include <QLabel>
 #include <QPair>
+#include <QTextBlock>
 #include <QCheckBox>
 #include <QQueue>
+
+enum LogStatus
+{
+    Info,
+    Success,
+    Failed,
+    Reset
+};
 
 class MainWindow : public QMainWindow
 {
@@ -39,6 +48,7 @@ private:
     void createRemoveButton(QGridLayout* layout, int row, int column);
     void correctFiles_CheckBox_Clicked();
     void correctFolders_CheckBox_Clicked();
+    void logOut(QString log, LogStatus st);
 
     //Functional methods
     QString correctName(QString old_name);
@@ -60,7 +70,7 @@ private:
     QCheckBox* correctFolders_CheckBox;
     QPushButton* resetButton;
     QPushButton* fullResetButton;
-    QLabel* logLabel;
+    QTextEdit* logBlock;
 
     QComboBox* ruleComboBox = nullptr;
     QTextEdit* replacedTextBox;
@@ -77,9 +87,6 @@ private:
 
     QList<QPair<QString, QStringList>*> oldFileNames;
     QList<QPair<QString, QStringList>*> oldDirNames;
-
-    QMap<QString, QQueue<QStringList>> oldFileNamesLog;
-    QMap<QString, QQueue<QStringList>> oldDirNamesLog;
 
     QString currentPath;
 };

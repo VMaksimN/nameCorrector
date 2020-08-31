@@ -51,6 +51,17 @@ MainWindow::MainWindow(QWidget *parent)
     mainGrid->addWidget(fullResetButton, 0, 5);
     widgets->first()->push_back(fullResetButton);
 
+
+    logBlock = new QTextEdit(mainWidget);
+    logBlock->setHtml("<p>Log:</p>");
+    logBlock->setMinimumSize(150, 50);
+    mainGrid->addWidget(logBlock, 0, 8, 1, 10);
+    widgets->first()->push_back(logBlock);
+
+    logOut("Reset and full reset", LogStatus::Reset);
+    logOut("Something went wrong", LogStatus::Failed);
+    logOut("Success", LogStatus::Success);
+    logOut("Some information", LogStatus::Info);
 }
 
 MainWindow::~MainWindow(){}
@@ -92,32 +103,23 @@ void MainWindow::correctButtonClicked()
     oldFileNames.push_back(new QPair<QString, QStringList>(currentPath, file_list));
     oldDirNames.push_back(new QPair<QString, QStringList>(currentPath, dir_list));
 
-    for(int i = 0; i < file_list.count(); i++)
+    if(correctFiles_CheckBox->checkState() == Qt::Checked)
     {
-        if(correctFiles_CheckBox->checkState() == Qt::Checked)
+        QStringList corrected_names;
+        for(int i = 0; i < file_list.count(); i++)
         {
-            if(QFile::rename(currentPath + "/" + file_list[i],
-                             currentPath + "/" + correctName(file_list[i])) != 0)
-            {
-                QMessageBox box(this);
-                box.setText("Operation fault!");
-                box.show();
-            }
+            corrected_names.push_back(correctName(file_list.at(i)));
         }
+        renameFiles(currentPath, &file_list, &corrected_names);
     }
-    for(int i = 0; i < dir_list.count(); i++)
+    if(correctFolders_CheckBox->checkState() == Qt::Checked)
     {
-        if(correctFolders_CheckBox->checkState() == Qt::Checked)
+        QStringList corrected_names;
+        for(int i = 0; i < dir_list.count(); i++)
         {
-            QDir dir(currentPath + "/" + dir_list[i]);
-            if(dir.rename(currentPath + "/" + dir_list[i],
-                             currentPath + "/" + correctName(dir_list[i])) != 0)
-            {
-                QMessageBox box(this);
-                box.setText("Operation fault!");
-                box.show();
-            }
+            corrected_names.push_back(correctName(dir_list.at(i)));
         }
+        renameDirs(currentPath, &dir_list, &corrected_names);
     }
     resetButton->setEnabled(true);
     fullResetButton->setEnabled(true);
@@ -408,6 +410,28 @@ void MainWindow::correctFolders_CheckBox_Clicked()
     }
 }
 
+void MainWindow::logOut(QString log, LogStatus st)
+{
+    if(st == LogStatus::Info)
+    {
+        log.prepend("<p style=\"color:cyan\">");
+    }
+    else if(st == LogStatus::Success)
+    {
+        log.prepend("<p style=\"color:green;\">");
+    }
+    else if(st == LogStatus::Failed)
+    {
+        log.prepend("<p style=\"color: red; font-weight: bold;\">");
+    }
+    else if(st == LogStatus::Reset)
+    {
+        log.prepend("<p style=\"color: purple; font-weight: bold;\">");
+    }
+    log.push_back("</p>");
+    logBlock->append(log);
+}
+
 ///////////////////
 //////////////////
 ///////////////////
@@ -484,6 +508,7 @@ void MainWindow::reset()
 
     if(but == fullResetButton)
     {
+        logOut("FULL RESET", LogStatus::Reset);
         while(!oldFileNames.empty())
         {
             QDir directory(oldFileNames.last()->first);
@@ -530,8 +555,13 @@ void MainWindow::reset()
         }
         fullResetButton->setEnabled(false);
         resetButton->setEnabled(false);
+        logOut("///////////", LogStatus::Reset);
+        logOut("///////////", LogStatus::Reset);
+        logOut(" ", LogStatus::Reset);
         return;
     }
+
+    logOut("Reset", LogStatus::Reset);
 
     QDir directory(oldDirNames.last()->first);
     QStringList file_list = directory.entryList(QDir::Files);
@@ -547,6 +577,9 @@ void MainWindow::reset()
         fullResetButton->setEnabled(false);
         resetButton->setEnabled(false);
     }
+    logOut("///////////", LogStatus::Reset);
+    logOut("///////////", LogStatus::Reset);
+    logOut(" ", LogStatus::Reset);
 }
 
 void MainWindow::renameFiles(QString path, QStringList* old_names, QStringList* new_names)
@@ -554,12 +587,14 @@ void MainWindow::renameFiles(QString path, QStringList* old_names, QStringList* 
     for(int i = 0; i < old_names->count(); i++)
     {
         if(QFile::rename(path + "/" + (*old_names)[i],
-                         path + "/" + (*new_names)[i]) != 0)
+                         path + "/" + (*new_names)[i]))
         {
-            QMessageBox box(this);
-            box.setText("Operation fault!");
-            box.show();
+            logOut("FILE " + old_names->at(i) +
+                   " has been renamed the " + new_names->at(i), LogStatus::Success);
+            continue;
         }
+        logOut("FILE " + old_names->at(i) +
+               " has not been renamed the " + new_names->at(i), LogStatus::Failed);
     }
 }
 void MainWindow::renameDirs(QString path, QStringList* old_names, QStringList* new_names)
@@ -568,12 +603,14 @@ void MainWindow::renameDirs(QString path, QStringList* old_names, QStringList* n
     {
         QDir dir(path + "/" + (*old_names)[i]);
         if(dir.rename(path + "/" + (*old_names)[i],
-                      path + "/" + (*new_names)[i]) != 0)
+                      path + "/" + (*new_names)[i]))
         {
-            QMessageBox box(this);
-            box.setText("Operation fault!");
-            box.show();
+            logOut("DIR " + old_names->at(i) +
+                   " has been renamed the " + new_names->at(i), LogStatus::Success);
+            continue;
         }
+        logOut("DIR " + old_names->at(i) +
+               " has not been renamed the " + new_names->at(i), LogStatus::Failed);
     }
 }
 
