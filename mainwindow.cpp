@@ -6,6 +6,8 @@ MainWindow::MainWindow(QWidget *parent)
     //Init widgets storage
     widgets = new QList<QList<QWidget*>*>();
     widgets->push_back(new QList<QWidget*>());
+    widgets->push_back(new QList<QWidget*>());
+    widgets->push_back(new QList<QWidget*>());
 
     mainWidget = new QWidget(this);
     setCentralWidget(mainWidget);
@@ -20,48 +22,54 @@ MainWindow::MainWindow(QWidget *parent)
     widgets->first()->push_back(addRuleButton);
 
     //Init button starting correct operations
-    correctButton = new QPushButton("correct names", mainWidget);
+    correctButton = new QPushButton("Correct names", mainWidget);
     connect(correctButton, &QPushButton::clicked, this, &MainWindow::correctButtonClicked);
     mainGrid->addWidget(correctButton, 0, 1);
     widgets->first()->push_back(correctButton);
 
     //Init Checkboxes including(excluding) files or directories
-    correctFiles_CheckBox = new QCheckBox("correct files", mainWidget);
+    correctFiles_CheckBox = new QCheckBox("Correct files", mainWidget);
     correctFiles_CheckBox->setCheckState(Qt::Checked);
     connect(correctFiles_CheckBox, &QCheckBox::clicked, this, &MainWindow::correctFiles_CheckBox_Clicked);
-    mainGrid->addWidget(correctFiles_CheckBox, 0, 2);
-    widgets->first()->push_back(correctFiles_CheckBox);
+    mainGrid->addWidget(correctFiles_CheckBox, 1, 0);
+    widgets->at(1)->push_back(correctFiles_CheckBox);
 
-    correctFolders_CheckBox = new QCheckBox("correct folders", mainWidget);
+    correctFolders_CheckBox = new QCheckBox("Correct folders", mainWidget);
     correctFolders_CheckBox->setCheckState(Qt::Unchecked);
     connect(correctFolders_CheckBox, &QCheckBox::clicked, this, &MainWindow::correctFolders_CheckBox_Clicked);
-    mainGrid->addWidget(correctFolders_CheckBox, 0, 3);
-    widgets->first()->push_back(correctFolders_CheckBox);
+    mainGrid->addWidget(correctFolders_CheckBox, 1, 1);
+    widgets->at(1)->push_back(correctFolders_CheckBox);
 
     //Init buttons replacing new names with old ones
     resetButton = new QPushButton("Reset", mainWidget);
     resetButton->setEnabled(false);
     connect(resetButton, &QPushButton::clicked, this, &MainWindow::reset);
-    mainGrid->addWidget(resetButton, 0, 4);
-    widgets->first()->push_back(resetButton);
+    mainGrid->addWidget(resetButton, 2, 0);
+    widgets->at(2)->push_back(resetButton);
 
     fullResetButton = new QPushButton("Full reset", mainWidget);
     fullResetButton->setEnabled(false);
     connect(fullResetButton, &QPushButton::clicked, this, &MainWindow::reset);
-    mainGrid->addWidget(fullResetButton, 0, 5);
-    widgets->first()->push_back(fullResetButton);
+    mainGrid->addWidget(fullResetButton, 2, 1);
+    widgets->at(2)->push_back(fullResetButton);
 
-
+    //Init log gui
     logBlock = new QTextEdit(mainWidget);
     logBlock->setHtml("<p>Log:</p>");
     logBlock->setMinimumSize(150, 50);
-    mainGrid->addWidget(logBlock, 0, 8, 1, 10);
+    mainGrid->addWidget(logBlock, 0, 8, 7, 10);
     widgets->first()->push_back(logBlock);
 
     logOut("Reset and full reset", LogStatus::Reset);
     logOut("Something went wrong", LogStatus::Failed);
     logOut("Success", LogStatus::Success);
     logOut("Some information", LogStatus::Info);
+
+    clearLogButton = new QPushButton(mainWidget);
+    clearLogButton->setText("Clear log");
+    mainGrid->addWidget(clearLogButton, 0, 2);
+    widgets->first()->push_back(clearLogButton);
+    connect(clearLogButton, &QPushButton::clicked, this, &MainWindow::clearLog);
 }
 
 MainWindow::~MainWindow(){}
@@ -84,11 +92,11 @@ void MainWindow::addRuleButtonClicked()
     ruleComboBox->addItem("RemoveFromTo");
     ruleComboBox->addItem("AddTo");
     connect(ruleComboBox, &QComboBox::currentTextChanged, this, &MainWindow::ruleComboBoxTextChanged);
-    mainGrid->addWidget(ruleComboBox, rulesNumber, 0);
+    mainGrid->addWidget(ruleComboBox, rulesNumber + 2, 0);
     widgets->last()->push_back(ruleComboBox);
 
-    createRemoveButton(mainGrid, rulesNumber, 1);
-    createApplyButton(mainGrid, rulesNumber, 2);
+    createRemoveButton(mainGrid, rulesNumber + 2, 1);
+    createApplyButton(mainGrid, rulesNumber + 2, 2);
 }
 
 void MainWindow::correctButtonClicked()
@@ -153,20 +161,20 @@ void MainWindow::applyButtonClicked()
     QLabel* ruleLabel = new QLabel(mainWidget);
     ruleLabel->setText(QString::fromStdString(std::to_string(rulesNumber))
                        + ". " + ruleComboBox->currentText());
-    mainGrid->addWidget(ruleLabel, rulesNumber, 0);
+    mainGrid->addWidget(ruleLabel, rulesNumber + 2, 0);
 
     if(ruleComboBox->currentText() == "Replace")
     {
         QLabel* replacedLabel = new QLabel(mainWidget);
         replacedLabel->setText(replacedTextBox->toPlainText());
-        mainGrid->addWidget(replacedLabel, rulesNumber, 1);
+        mainGrid->addWidget(replacedLabel, rulesNumber + 2, 1);
 
         QLabel* withLabel = new QLabel("with", mainWidget);
-        mainGrid->addWidget(withLabel, rulesNumber, 2);
+        mainGrid->addWidget(withLabel, rulesNumber + 2, 2);
 
         QLabel* replaceWithLabel = new QLabel(mainWidget);
         replaceWithLabel->setText(replaceWithTextBox->toPlainText());
-        mainGrid->addWidget(replaceWithLabel, rulesNumber, 3);
+        mainGrid->addWidget(replaceWithLabel, rulesNumber + 2, 3);
 
         QString* args = new QString[2];
         args[0] = replacedTextBox->toPlainText();
@@ -184,13 +192,13 @@ void MainWindow::applyButtonClicked()
         widgets->last()->push_back(replacedLabel);
         widgets->last()->push_back(withLabel);
         widgets->last()->push_back(replaceWithLabel);
-        createRemoveButton(mainGrid, rulesNumber, 4);
+        createRemoveButton(mainGrid, rulesNumber + 2, 4);
     }
     else if(ruleComboBox->currentText() == "Remove")
     {
         QLabel* removeLabel = new QLabel(mainWidget);
         removeLabel->setText(removeTextBox->toPlainText());
-        mainGrid->addWidget(removeLabel, rulesNumber, 1);
+        mainGrid->addWidget(removeLabel, rulesNumber + 2, 1);
 
         QString* args = new QString[1];
         args[0] = removeTextBox->toPlainText();
@@ -206,27 +214,27 @@ void MainWindow::applyButtonClicked()
         widgets->push_back(new QList<QWidget*>());
         widgets->last()->push_back(ruleLabel);
         widgets->last()->push_back(removeLabel);
-        createRemoveButton(mainGrid, rulesNumber, 2);
+        createRemoveButton(mainGrid, rulesNumber + 2, 2);
     }
     else if(ruleComboBox->currentText() == "RemoveFromTo")
     {
         QLabel* removeLabel = new QLabel(mainWidget);
         removeLabel->setText(removeTextBox->toPlainText());
-        mainGrid->addWidget(removeLabel, rulesNumber, 1);
+        mainGrid->addWidget(removeLabel, rulesNumber + 2, 1);
 
         QLabel* from = new QLabel("from", mainWidget);
-        mainGrid->addWidget(from, rulesNumber, 2);
+        mainGrid->addWidget(from, rulesNumber + 2, 2);
 
         QLabel* fromLabel = new QLabel(mainWidget);
         fromLabel->setText(fromTextBox->toPlainText());
-        mainGrid->addWidget(fromLabel, rulesNumber, 3);
+        mainGrid->addWidget(fromLabel, rulesNumber + 2, 3);
 
         QLabel* to = new QLabel("to", mainWidget);
-        mainGrid->addWidget(to, rulesNumber, 4);
+        mainGrid->addWidget(to, rulesNumber + 2, 4);
 
         QLabel* toLabel = new QLabel(mainWidget);
         toLabel->setText(toTextBox->toPlainText());
-        mainGrid->addWidget(toLabel, rulesNumber, 5);
+        mainGrid->addWidget(toLabel, rulesNumber + 2, 5);
 
         QString* args = new QString[3];
         args[0] = removeTextBox->toPlainText();
@@ -248,20 +256,20 @@ void MainWindow::applyButtonClicked()
         widgets->last()->push_back(fromLabel);
         widgets->last()->push_back(to);
         widgets->last()->push_back(toLabel);
-        createRemoveButton(mainGrid, rulesNumber, 6);
+        createRemoveButton(mainGrid, rulesNumber + 2, 6);
     }
     else if(ruleComboBox->currentText() == "AddTo")
     {
         QLabel* addLabel = new QLabel(mainWidget);
         addLabel->setText(addTextBox->toPlainText());
-        mainGrid->addWidget(addLabel, rulesNumber, 1);
+        mainGrid->addWidget(addLabel, rulesNumber + 2, 1);
 
         QLabel* to = new QLabel("to", mainWidget);
-        mainGrid->addWidget(to, rulesNumber, 2);
+        mainGrid->addWidget(to, rulesNumber + 2, 2);
 
         QLabel* toLabel = new QLabel(mainWidget);
         toLabel->setText(toTextBox->toPlainText());
-        mainGrid->addWidget(toLabel, rulesNumber, 3);
+        mainGrid->addWidget(toLabel, rulesNumber + 2, 3);
 
         QString* args = new QString[2];
         args[0] = addTextBox->toPlainText();
@@ -280,7 +288,7 @@ void MainWindow::applyButtonClicked()
         widgets->last()->push_back(addLabel);
         widgets->last()->push_back(to);
         widgets->last()->push_back(toLabel);
-        createRemoveButton(mainGrid, rulesNumber, 4);
+        createRemoveButton(mainGrid, rulesNumber + 2, 4);
     }
 }
 
@@ -300,76 +308,76 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
     if(text == "Replace")
     {
         replacedTextBox = new QTextEdit(mainWidget);
-        mainGrid->addWidget(replacedTextBox, rulesNumber, 1);
+        mainGrid->addWidget(replacedTextBox, rulesNumber + 2, 1);
         widgets->last()->push_back(replacedTextBox);
 
         QLabel* withLabel = new QLabel("with", mainWidget);
-        mainGrid->addWidget(withLabel, rulesNumber, 2);
+        mainGrid->addWidget(withLabel, rulesNumber + 2, 2);
         widgets->last()->push_back(withLabel);
 
         replaceWithTextBox = new QTextEdit(mainWidget);
-        mainGrid->addWidget(replaceWithTextBox, rulesNumber, 3);
+        mainGrid->addWidget(replaceWithTextBox, rulesNumber + 2, 3);
         widgets->last()->push_back(replaceWithTextBox);
 
-        createRemoveButton(mainGrid, rulesNumber, 4);
-        createApplyButton(mainGrid, rulesNumber, 5);
+        createRemoveButton(mainGrid, rulesNumber + 2, 4);
+        createApplyButton(mainGrid, rulesNumber + 2, 5);
 
         return;
     }
     if(text == "Remove")
     {
         removeTextBox = new QTextEdit(mainWidget);
-        mainGrid->addWidget(removeTextBox, rulesNumber, 1);
+        mainGrid->addWidget(removeTextBox, rulesNumber + 2, 1);
         widgets->last()->push_back(removeTextBox);
 
-        createRemoveButton(mainGrid, rulesNumber, 2);
-        createApplyButton(mainGrid, rulesNumber, 3);
+        createRemoveButton(mainGrid, rulesNumber + 2, 2);
+        createApplyButton(mainGrid, rulesNumber + 2, 3);
 
         return;
     }
     if(text == "RemoveFromTo")
     {
         removeTextBox = new QTextEdit(mainWidget);
-        mainGrid->addWidget(removeTextBox, rulesNumber, 1);
+        mainGrid->addWidget(removeTextBox, rulesNumber + 2, 1);
         widgets->last()->push_back(removeTextBox);
 
         QLabel* fromLabel = new QLabel("from", mainWidget);
-        mainGrid->addWidget(fromLabel, rulesNumber, 2);
+        mainGrid->addWidget(fromLabel, rulesNumber + 2, 2);
         widgets->last()->push_back(fromLabel);
 
         fromTextBox = new QTextEdit(mainWidget);
-        mainGrid->addWidget(fromTextBox, rulesNumber, 3);
+        mainGrid->addWidget(fromTextBox, rulesNumber + 2, 3);
         widgets->last()->push_back(fromTextBox);
 
         QLabel* toLabel = new QLabel("to", mainWidget);
-        mainGrid->addWidget(toLabel, rulesNumber, 4);
+        mainGrid->addWidget(toLabel, rulesNumber + 2, 4);
         widgets->last()->push_back(toLabel);
 
         toTextBox = new QTextEdit(mainWidget);
-        mainGrid->addWidget(toTextBox, rulesNumber, 5);
+        mainGrid->addWidget(toTextBox, rulesNumber + 2, 5);
         widgets->last()->push_back(toTextBox);
 
-        createRemoveButton(mainGrid, rulesNumber, 6);
-        createApplyButton(mainGrid, rulesNumber, 7);
+        createRemoveButton(mainGrid, rulesNumber + 2, 6);
+        createApplyButton(mainGrid, rulesNumber + 2, 7);
 
         return;
     }
     if(text == "AddTo")
     {
         addTextBox = new QTextEdit(mainWidget);
-        mainGrid->addWidget(addTextBox, rulesNumber, 1);
+        mainGrid->addWidget(addTextBox, rulesNumber + 2, 1);
         widgets->last()->push_back(addTextBox);
 
         QLabel* toLabel = new QLabel("to", mainWidget);
-        mainGrid->addWidget(toLabel, rulesNumber, 2);
+        mainGrid->addWidget(toLabel, rulesNumber + 2, 2);
         widgets->last()->push_back(toLabel);
 
         toTextBox = new QTextEdit(mainWidget);
-        mainGrid->addWidget(toTextBox, rulesNumber, 3);
+        mainGrid->addWidget(toTextBox, rulesNumber + 2, 3);
         widgets->last()->push_back(toTextBox);
 
-        createRemoveButton(mainGrid, rulesNumber, 4);
-        createApplyButton(mainGrid, rulesNumber, 5);
+        createRemoveButton(mainGrid, rulesNumber + 2, 4);
+        createApplyButton(mainGrid, rulesNumber + 2, 5);
 
         return;
     }
@@ -432,15 +440,19 @@ void MainWindow::logOut(QString log, LogStatus st)
     logBlock->append(log);
 }
 
+void MainWindow::clearLog()
+{
+    logBlock->clear();
+}
 ///////////////////
 //////////////////
 ///////////////////
+
+
 
 //////////////////
 ///FUNCTIONAL METHODS
 //////////////////////
-
-
 QString MainWindow::correctName(QString old_name)
 {
     //correct all names according the rule list
@@ -597,6 +609,7 @@ void MainWindow::renameFiles(QString path, QStringList* old_names, QStringList* 
                " has not been renamed the " + new_names->at(i), LogStatus::Failed);
     }
 }
+
 void MainWindow::renameDirs(QString path, QStringList* old_names, QStringList* new_names)
 {
     for(int i = 0; i < old_names->count(); i++)

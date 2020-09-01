@@ -49,6 +49,7 @@ private:
     void correctFiles_CheckBox_Clicked();
     void correctFolders_CheckBox_Clicked();
     void logOut(QString log, LogStatus st);
+    void clearLog();
 
     //Functional methods
     QString correctName(QString old_name);
@@ -71,6 +72,7 @@ private:
     QPushButton* resetButton;
     QPushButton* fullResetButton;
     QTextEdit* logBlock;
+    QPushButton* clearLogButton;
 
     QComboBox* ruleComboBox = nullptr;
     QTextEdit* replacedTextBox;
