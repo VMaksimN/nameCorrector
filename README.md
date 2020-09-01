@@ -127,4 +127,4 @@ _**RemoveFromTo**_ usage: enter the string and two numbers, the first and the la
 
 _**AddTo**_ usage: enter the string and one number, the position of the addition, the program add your string to the position 
 
-
+If your input **_incorrect_** then program draws your attention to it using **_red_** backlighting
