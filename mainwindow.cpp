@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //Init button starting correct operations
     correctButton = new QPushButton("Correct names", mainWidget);
+    correctButton->setEnabled(false);
     connect(correctButton, &QPushButton::clicked, this, &MainWindow::correctButtonClicked);
     mainGrid->addWidget(correctButton, 0, 1);
     widgets->first()->push_back(correctButton);
@@ -97,6 +98,8 @@ void MainWindow::addRuleButtonClicked()
 
     createRemoveButton(mainGrid, rulesNumber + 2, 1);
     createApplyButton(mainGrid, rulesNumber + 2, 2);
+
+    widgets->last()->last()->setEnabled(false);
 }
 
 void MainWindow::correctButtonClicked()
@@ -310,6 +313,7 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
         replacedTextBox = new QTextEdit(mainWidget);
         mainGrid->addWidget(replacedTextBox, rulesNumber + 2, 1);
         widgets->last()->push_back(replacedTextBox);
+        connect(replacedTextBox, &QTextEdit::textChanged, this, &MainWindow::checkEmptyTextBox);
 
         QLabel* withLabel = new QLabel("with", mainWidget);
         mainGrid->addWidget(withLabel, rulesNumber + 2, 2);
@@ -329,6 +333,7 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
         removeTextBox = new QTextEdit(mainWidget);
         mainGrid->addWidget(removeTextBox, rulesNumber + 2, 1);
         widgets->last()->push_back(removeTextBox);
+        connect(removeTextBox, &QTextEdit::textChanged, this, &MainWindow::checkEmptyTextBox);
 
         createRemoveButton(mainGrid, rulesNumber + 2, 2);
         createApplyButton(mainGrid, rulesNumber + 2, 3);
@@ -340,6 +345,7 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
         removeTextBox = new QTextEdit(mainWidget);
         mainGrid->addWidget(removeTextBox, rulesNumber + 2, 1);
         widgets->last()->push_back(removeTextBox);
+        connect(removeTextBox, &QTextEdit::textChanged, this, &MainWindow::checkEmptyTextBox);
 
         QLabel* fromLabel = new QLabel("from", mainWidget);
         mainGrid->addWidget(fromLabel, rulesNumber + 2, 2);
@@ -348,6 +354,7 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
         fromTextBox = new QTextEdit(mainWidget);
         mainGrid->addWidget(fromTextBox, rulesNumber + 2, 3);
         widgets->last()->push_back(fromTextBox);
+        connect(fromTextBox, &QTextEdit::textChanged, this, &MainWindow::checkFromToTextBox);
 
         QLabel* toLabel = new QLabel("to", mainWidget);
         mainGrid->addWidget(toLabel, rulesNumber + 2, 4);
@@ -356,6 +363,7 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
         toTextBox = new QTextEdit(mainWidget);
         mainGrid->addWidget(toTextBox, rulesNumber + 2, 5);
         widgets->last()->push_back(toTextBox);
+        connect(toTextBox, &QTextEdit::textChanged, this, &MainWindow::checkFromToTextBox);
 
         createRemoveButton(mainGrid, rulesNumber + 2, 6);
         createApplyButton(mainGrid, rulesNumber + 2, 7);
@@ -367,6 +375,7 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
         addTextBox = new QTextEdit(mainWidget);
         mainGrid->addWidget(addTextBox, rulesNumber + 2, 1);
         widgets->last()->push_back(addTextBox);
+        connect(addTextBox, &QTextEdit::textChanged, this, &MainWindow::checkEmptyTextBox);
 
         QLabel* toLabel = new QLabel("to", mainWidget);
         mainGrid->addWidget(toLabel, rulesNumber + 2, 2);
@@ -375,6 +384,7 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
         toTextBox = new QTextEdit(mainWidget);
         mainGrid->addWidget(toTextBox, rulesNumber + 2, 3);
         widgets->last()->push_back(toTextBox);
+        connect(toTextBox, &QTextEdit::textChanged, this, &MainWindow::checkFromToTextBox);
 
         createRemoveButton(mainGrid, rulesNumber + 2, 4);
         createApplyButton(mainGrid, rulesNumber + 2, 5);
@@ -444,6 +454,87 @@ void MainWindow::clearLog()
 {
     logBlock->clear();
 }
+
+void MainWindow::checkFromToTextBox()
+{
+    int from_num = 0;
+    bool from_ok;
+    int to_num = 0;
+    bool to_ok;
+
+    QPalette redPal;
+    redPal.setColor(QPalette::Text, QColor::fromRgb(255, 0, 0));
+    redPal.setColor(QPalette::Background, QColor::fromRgb(255,0,0));
+
+    QPalette defaultPal;
+    defaultPal.setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
+    defaultPal.setColor(QPalette::Background, QColor::fromRgb(0, 100, 255));
+
+    from_num = fromTextBox->toPlainText().toInt(&from_ok);
+    to_num = toTextBox->toPlainText().toInt(&to_ok);
+
+    if(from_ok)
+    {
+        if(from_num < 0 || from_num > to_num)
+        {
+            fromTextBox->setPalette(redPal);
+            from_ok = false;
+        }
+        else
+        {
+            fromTextBox->setPalette(defaultPal);
+        }
+    }
+    else
+    {
+        fromTextBox->setPalette(redPal);
+    }
+    if(to_ok)
+    {
+        if(to_num < 0 || to_num < from_num)
+        {
+            toTextBox->setPalette(redPal);
+            to_ok = false;
+        }
+        else
+        {
+            toTextBox->setPalette(defaultPal);
+        }
+    }
+    else
+    {
+        toTextBox->setPalette(redPal);
+    }
+    if(from_ok && to_ok)
+    {
+        correctButton->setEnabled(true);
+        return;
+    }
+    correctButton->setEnabled(false);
+}
+
+void MainWindow::checkEmptyTextBox()
+{
+    QPalette redPal;
+    redPal.setColor(QPalette::Text, QColor::fromRgb(255, 0, 0));
+    redPal.setColor(QPalette::Background, QColor::fromRgb(255,0,0));
+
+    QPalette defaultPal;
+    defaultPal.setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
+    defaultPal.setColor(QPalette::Background, QColor::fromRgb(0, 100, 255));
+
+    QString text = ((QTextEdit*)sender())->toPlainText();
+
+    if(text.isNull() || text.isEmpty())
+    {
+        ((QTextEdit*)sender())->setPalette(redPal);
+        correctButton->setEnabled(false);
+        return;
+    }
+    ((QTextEdit*)sender())->setPalette(defaultPal);
+    correctButton->setEnabled(true);
+}
+
 ///////////////////
 //////////////////
 ///////////////////
