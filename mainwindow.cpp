@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //Init log gui
     logBlock = new QTextEdit(mainWidget);
+    logBlock->setEnabled(false);
     logBlock->setHtml("<p>Log:</p>");
     logBlock->setMinimumSize(150, 50);
     mainGrid->addWidget(logBlock, 0, 8, 7, 10);

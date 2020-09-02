@@ -110,9 +110,11 @@ and press Enter or if you use a file manager with GUI then just click right butt
 
 Use _**New rule**_ button to add a pattern according to which the program will correct names
 
+You can choose what objects will be corrected (Files or/and folders) with check boxes **_Correct files_** and **_Correct folders_**
+
 Then press _**Correct names**_ button to select a directory. 
 
-Check out the result
+Check out the result in the log-console on the right, with file manager or ls
 
 If you not sure about correction just press _**Reset**_ button
 
@@ -123,7 +125,7 @@ _**Replace**_ usage: enter two strings (or symbols), the first will be replaced 
 
 _**Remove**_ usage: enter the string (or symbol) and all occurrences of this string will be removed from the object name
 
-_**RemoveFromTo**_ usage: enter the string and two numbers, the first and the last positions, then program remove all occurrences (between the first and the last positions) of the string from the object name
+_**RemoveFromTo**_ usage: enter the string and two numbers, the first and the last positions, then program remove all occurrences (between the first and the last positions) of the string from the object name(You can enter empty string - enter nothing in the first text box - and the program removes all symbols between the first and the second positions )
 
 _**AddTo**_ usage: enter the string and one number, the position of the addition, the program add your string to the position 
 
