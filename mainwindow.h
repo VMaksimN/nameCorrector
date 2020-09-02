@@ -50,8 +50,7 @@ private:
     void correctFolders_CheckBox_Clicked();
     void logOut(QString log, LogStatus st);
     void clearLog();
-    void checkFromToTextBox();
-    void checkEmptyTextBox();
+    void checkTextBox();
 
     //Functional methods
     QString correctName(QString old_name);
