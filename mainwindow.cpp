@@ -98,7 +98,7 @@ void MainWindow::addRuleButtonClicked()
     widgets->last()->push_back(ruleComboBox);
 
     createRemoveButton(mainGrid, rulesNumber  + reserved_rows - 1, 1, "0");
-    createApplyButton(mainGrid, rulesNumber  + reserved_rows - 1, 2);
+    createApplyButton(mainGrid, rulesNumber  + reserved_rows - 1, 2, false);
 
     widgets->last()->last()->setEnabled(false);
 }
@@ -160,12 +160,17 @@ void MainWindow::removeRuleButtonClicked()
     }
     addRuleButton->setEnabled(true);
     rulesNumber--;
+    if(rulesNumber == 0)
+    {
+        correctButton->setEnabled(false);
+    }
 }
 
 void MainWindow::applyButtonClicked()
 {
     //Replace current widgets with new inactive ones according selected rule
     addRuleButton->setEnabled(true);
+    correctButton->setEnabled(true);
 
     QLabel* ruleLabel = new QLabel(mainWidget);
     ruleLabel->setText(QString::fromStdString(std::to_string(rulesNumber))
@@ -339,7 +344,7 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
         widgets->last()->push_back(replaceWithTextBox);
 
         createRemoveButton(mainGrid, rulesNumber  + reserved_rows - 1, 4, "0");
-        createApplyButton(mainGrid, rulesNumber  + reserved_rows - 1, 5);
+        createApplyButton(mainGrid, rulesNumber  + reserved_rows - 1, 5, false);
 
         return;
     }
@@ -351,7 +356,7 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
         connect(removeTextBox, &QTextEdit::textChanged, this, &MainWindow::checkTextBox);
 
         createRemoveButton(mainGrid, rulesNumber  + reserved_rows - 1, 2, "0");
-        createApplyButton(mainGrid, rulesNumber  + reserved_rows - 1, 3);
+        createApplyButton(mainGrid, rulesNumber  + reserved_rows - 1, 3, false);
 
         return;
     }
@@ -381,7 +386,7 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
         connect(toTextBox, &QTextEdit::textChanged, this, &MainWindow::checkTextBox);
 
         createRemoveButton(mainGrid, rulesNumber  + reserved_rows - 1, 6, "0");
-        createApplyButton(mainGrid, rulesNumber  + reserved_rows - 1, 7);
+        createApplyButton(mainGrid, rulesNumber  + reserved_rows - 1, 7, false);
 
         return;
     }
@@ -402,17 +407,18 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
         connect(toTextBox, &QTextEdit::textChanged, this, &MainWindow::checkTextBox);
 
         createRemoveButton(mainGrid, rulesNumber  + reserved_rows - 1, 4, "0");
-        createApplyButton(mainGrid, rulesNumber  + reserved_rows - 1, 5);
+        createApplyButton(mainGrid, rulesNumber  + reserved_rows - 1, 5, false);
 
         return;
     }
 }
 
-void MainWindow::createApplyButton(QGridLayout* layout, int row, int column)
+void MainWindow::createApplyButton(QGridLayout* layout, int row, int column, bool enabled)
 {
     //Add a new applyButton to the selected grid cell
     QPushButton* applyButton = new QPushButton(mainWidget);
     applyButton->setText("Apply");
+    applyButton->setEnabled(enabled);
     connect(applyButton, &QPushButton::clicked, this, &MainWindow::applyButtonClicked);
     layout->addWidget(applyButton, row, column);
     widgets->at(row)->push_back(applyButton);
@@ -473,6 +479,19 @@ void MainWindow::clearLog()
 
 void MainWindow::checkTextBox()
 {
+    QPushButton* applyButt;
+
+    for(int i = widgets->count() - 1; i > -1; i--)
+    {
+        for(int j = 0; j < widgets->at(i)->count(); j++)
+        {
+            if(sender() == widgets->at(i)->at(j))
+            {
+                applyButt = (QPushButton*)widgets->at(i)->last();
+            }
+        }
+    }
+
     QPalette red_pal;
     red_pal.setColor(QPalette::Background, QColor::fromRgb(255, 0, 0));
     red_pal.setColor(QPalette::Text, QColor::fromRgb(255, 0, 0));
@@ -486,12 +505,12 @@ void MainWindow::checkTextBox()
         QString text = replacedTextBox->toPlainText();
         if(text.isNull() || text.isEmpty())
         {
-            correctButton->setEnabled(false);
+            applyButt->setEnabled(false);
             replacedTextBox->setPalette(red_pal);
         }
         else
         {
-            correctButton->setEnabled(true);
+            applyButt->setEnabled(true);
             replacedTextBox->setPalette(def_pal);
         }
     }
@@ -500,12 +519,12 @@ void MainWindow::checkTextBox()
         QString text = removeTextBox->toPlainText();
         if(text.isNull() || text.isEmpty())
         {
-            correctButton->setEnabled(false);
+            applyButt->setEnabled(false);
             removeTextBox->setPalette(red_pal);
         }
         else
         {
-            correctButton->setEnabled(true);
+            applyButt->setEnabled(true);
             removeTextBox->setPalette(def_pal);
         }
     }
@@ -553,10 +572,10 @@ void MainWindow::checkTextBox()
         }
         if(from_ok && to_ok)
         {
-            correctButton->setEnabled(true);
+             applyButt->setEnabled(true);
             return;
         }
-        correctButton->setEnabled(false);
+         applyButt->setEnabled(false);
     }
     else if(ruleComboBox->currentText() == "AddTo")
     {
@@ -575,7 +594,7 @@ void MainWindow::checkTextBox()
             else
             {
                 toTextBox->setPalette(def_pal);
-                correctButton->setEnabled(true);
+                 applyButt->setEnabled(true);
                 return;
             }
         }
@@ -584,7 +603,7 @@ void MainWindow::checkTextBox()
             toTextBox->setPalette(red_pal);
         }
 
-        correctButton->setEnabled(false);
+         applyButt->setEnabled(false);
     }
 }
 ///////////////////

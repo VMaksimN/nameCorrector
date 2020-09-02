@@ -44,7 +44,7 @@ private:
     void removeRuleButtonClicked();
     void applyButtonClicked();
     void ruleComboBoxTextChanged(const QString& text);
-    void createApplyButton(QGridLayout* layout, int row, int column);
+    void createApplyButton(QGridLayout* layout, int row, int column, bool enabled);
     void createRemoveButton(QGridLayout* layout, int row, int column, QString status);
     void correctFiles_CheckBox_Clicked();
     void correctFolders_CheckBox_Clicked();
