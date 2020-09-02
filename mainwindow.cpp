@@ -71,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
     mainGrid->addWidget(clearLogButton, 0, 2);
     widgets->first()->push_back(clearLogButton);
     connect(clearLogButton, &QPushButton::clicked, this, &MainWindow::clearLog);
+
 }
 
 MainWindow::~MainWindow(){}
@@ -107,6 +108,10 @@ void MainWindow::correctButtonClicked()
     //User open a directory and the program start correct operations and remember old names
     QFileDialog dialog(this);
     currentPath = dialog.getExistingDirectory();
+    if(currentPath == "")
+    {
+        return;
+    }
     QDir directory(currentPath);
 
     QStringList file_list = directory.entryList(QDir::Files);
