@@ -19,6 +19,7 @@
 #include <QPair>
 #include <QTextBlock>
 #include <QCheckBox>
+#include <QScrollBar>
 #include <QQueue>
 
 enum LogStatus

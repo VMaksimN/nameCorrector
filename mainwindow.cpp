@@ -56,7 +56,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     //Init log gui
     logBlock = new QTextEdit(mainWidget);
-    logBlock->setEnabled(false);
     logBlock->setHtml("<p>Log:</p>");
     logBlock->setMinimumSize(150, 50);
     mainGrid->addWidget(logBlock, 0, 8, 7, 10);
@@ -688,6 +687,19 @@ QString MainWindow::addStringTo(QString old, QString* args)
 
 void MainWindow::reset()
 {
+    QMessageBox box("Warning", "", QMessageBox::NoIcon,
+                    QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel, this);
+    box.setText("Please, do not add new files or remove existing ones before reset. "
+                " It may cause errors and damage your files. "
+                " Do you want to continue?");
+    box.exec();
+
+    if(box.result() == QMessageBox::No || box.result() == QMessageBox::Cancel)
+    {
+        logOut("Reset aborted", LogStatus::Info);
+        return;
+    }
+
     //This operation is similar to the correct one
     QPushButton* but = (QPushButton*)sender();
 
