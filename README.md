@@ -81,7 +81,7 @@ Windows:
 	
 	https://doc.qt.io/qt-5/gettingstarted.html
 
-Visit getting started page and follow directions
+Visit the getting started page and follow directions
 	
 
 ## How to build
@@ -101,7 +101,7 @@ You can use the code below:
 Just paste it in the command line and press Enter
 
 ## How to use
-Find **_name_corrector_** file in your build directory and run it, in the terminal type:
+Find the **_name_corrector_** file in your build directory and run it, in the terminal type:
 		
 	./name_corrector			
 		
@@ -112,21 +112,21 @@ Use _**New rule**_ button to add a pattern according to which the program will c
 
 You can choose what objects will be corrected (Files or/and folders) with check boxes **_Correct files_** and **_Correct folders_**
 
-Then press _**Correct names**_ button to select a directory. 
+Then press _**Correct names**_ button to select a directory and start correction. 
 
-Check out the result in the log-console on the right, with file manager or ls
+Check out the result in the log-console on the right, with your file manager or ls
 
-If you not sure about correction just press _**Reset**_ button
+If you not sure about the correction just press _**Reset**_ button
 
-_**Full reset**_ button aborts all changes done by program
+_**Full reset**_ button aborts all the changes done by the program
 
 
 _**Replace**_ usage: enter two strings (or symbols), the first will be replaced with the second
 
-_**Remove**_ usage: enter the string (or symbol) and all occurrences of this string will be removed from the object name
+_**Remove**_ usage: enter the string (or symbol) and all the occurrences of this string will be removed from the object name
 
-_**RemoveFromTo**_ usage: enter the string and two numbers, the first and the last positions, then program remove all occurrences (between the first and the last positions) of the string from the object name(You can enter empty string - enter nothing in the first text box - and the program removes all symbols between the first and the second positions )
+_**RemoveFromTo**_ usage: enter the string and two numbers, the first and the last positions, then program remove all the occurrences (between the first and the last positions) of the string from the object name (you can enter empty string - enter nothing in the first text box - and the program removes all the symbols between the first and the second positions)
 
 _**AddTo**_ usage: enter the string and one number, the position of the addition, the program add your string to the position 
 
-If your input **_incorrect_** then program draws your attention to it using **_red_** backlighting
+If your input **_incorrect_** then the program draws your attention to it using **_red_** backlighting
