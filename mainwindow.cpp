@@ -100,12 +100,13 @@ void MainWindow::addRuleButtonClicked()
     createRemoveButton(mainGrid, rulesNumber  + reserved_rows - 1, 1, "0");
     createApplyButton(mainGrid, rulesNumber  + reserved_rows - 1, 2, false);
 
+    //Apply button is disabled until the user set the rule
     widgets->last()->last()->setEnabled(false);
 }
 
 void MainWindow::correctButtonClicked()
 {
-    //User open a directory and the program start correct operations and remember old names
+    //User open a directory
     QFileDialog dialog(this);
     currentPath = dialog.getExistingDirectory();
     if(currentPath == "")
@@ -114,11 +115,13 @@ void MainWindow::correctButtonClicked()
     }
     QDir directory(currentPath);
 
+    //Load files and directories names
     QStringList file_list = directory.entryList(QDir::Files);
     QStringList dir_list = directory.entryList(QDir::Dirs);
     oldFileNames.push_back(new QPair<QString, QStringList>(currentPath, file_list));
     oldDirNames.push_back(new QPair<QString, QStringList>(currentPath, dir_list));
 
+    //Correct files if the file-checkbox was checked
     if(correctFiles_CheckBox->checkState() == Qt::Checked)
     {
         QStringList corrected_names;
@@ -128,6 +131,7 @@ void MainWindow::correctButtonClicked()
         }
         renameFiles(currentPath, &file_list, &corrected_names);
     }
+    //Correct files if the directory-checkbox was checked
     if(correctFolders_CheckBox->checkState() == Qt::Checked)
     {
         QStringList corrected_names;
@@ -154,6 +158,7 @@ void MainWindow::removeRuleButtonClicked()
                 delete widgets->at(i)->at(j);
             }
             widgets->removeAt(i);
+            //Also remove the rule
             rules.removeAt(i - reserved_rows);
             break;
         }
@@ -168,7 +173,7 @@ void MainWindow::removeRuleButtonClicked()
 
 void MainWindow::applyButtonClicked()
 {
-    //Replace current widgets with new inactive ones according selected rule
+    //Replace current widgets with new inactive ones according the selected rule
     addRuleButton->setEnabled(true);
     correctButton->setEnabled(true);
 
@@ -317,7 +322,7 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
 {
     correctButton->setEnabled(false);
 
-    //Replace current widgets with new ones according selected rule
+    //Replace current widgets with new ones according the selected rule
     for(int i = 0; i < widgets->last()->count(); i++)
     {
         if(widgets->last()->at(i) != ruleComboBox)
@@ -436,6 +441,7 @@ void MainWindow::createRemoveButton(QGridLayout* layout, int row, int column, QS
 
 void MainWindow::correctFiles_CheckBox_Clicked()
 {
+    //At least one of these checkboxes must be checked
     if(correctFiles_CheckBox->checkState() == Qt::Unchecked)
     {
         correctFolders_CheckBox->setCheckState(Qt::Checked);
@@ -444,6 +450,7 @@ void MainWindow::correctFiles_CheckBox_Clicked()
 
 void MainWindow::correctFolders_CheckBox_Clicked()
 {
+    //At least one of these checkboxes must be checked
     if(correctFolders_CheckBox->checkState() == Qt::Unchecked)
     {
         correctFiles_CheckBox->setCheckState(Qt::Checked);
@@ -452,6 +459,7 @@ void MainWindow::correctFolders_CheckBox_Clicked()
 
 void MainWindow::logOut(QString log, LogStatus st)
 {
+    //Add a html tag to the log text according the log type
     if(st == LogStatus::Info)
     {
         log.prepend("<p style=\"color:cyan\">");
@@ -468,12 +476,14 @@ void MainWindow::logOut(QString log, LogStatus st)
     {
         log.prepend("<p style=\"color: purple; font-weight: bold;\">");
     }
+    //Log it out
     log.push_back("</p>");
     logBlock->append(log);
 }
 
 void MainWindow::clearLog()
 {
+    //No comments
     logBlock->clear();
 }
 
@@ -481,6 +491,7 @@ void MainWindow::checkTextBox()
 {
     QPushButton* applyButt;
 
+    //Search for the required line
     for(int i = widgets->count() - 1; i > -1; i--)
     {
         for(int j = 0; j < widgets->at(i)->count(); j++)
@@ -491,17 +502,19 @@ void MainWindow::checkTextBox()
             }
         }
     }
-
+    //Palette for errors
     QPalette red_pal;
     red_pal.setColor(QPalette::Background, QColor::fromRgb(255, 0, 0));
     red_pal.setColor(QPalette::Text, QColor::fromRgb(255, 0, 0));
 
+    //Standart palette
     QPalette def_pal;
     def_pal.setColor(QPalette::Background, QColor::fromRgb(0, 100, 255));
     def_pal.setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
 
     if(ruleComboBox->currentText() == "Replace")
     {
+        //At least the replacedTextBox must have a value
         QString text = replacedTextBox->toPlainText();
         if(text.isNull() || text.isEmpty())
         {
@@ -516,6 +529,7 @@ void MainWindow::checkTextBox()
     }
     else if(ruleComboBox->currentText() == "Remove")
     {
+        //removeTextBox must have a value(program needs to know what to remove)
         QString text = removeTextBox->toPlainText();
         if(text.isNull() || text.isEmpty())
         {
@@ -530,6 +544,7 @@ void MainWindow::checkTextBox()
     }
     else if(ruleComboBox->currentText() == "RemoveFromTo")
     {
+        //fromTextBox and toTextBox must have a value (program needs to know the range)
         int from_num = 0;
         bool from_ok;
         int to_num = 0;
@@ -579,6 +594,7 @@ void MainWindow::checkTextBox()
     }
     else if(ruleComboBox->currentText() == "AddTo")
     {
+        //toTextBox must have a value (program needs to know the position)
         int to_num = 0;
         bool to_ok;
 
@@ -640,6 +656,8 @@ QString MainWindow::correctName(QString old_name)
     return old_name;
 }
 
+////***/////
+///SEE README.md file for more INFORMATION
 QString MainWindow::replace(QString old, QString* args)
 {
     if(old.length() >= args[0].length())
@@ -778,9 +796,10 @@ void MainWindow::reset()
     logOut("///////////", LogStatus::Reset);
     logOut(" ", LogStatus::Reset);
 }
-
+////***/////
 void MainWindow::renameFiles(QString path, QStringList* old_names, QStringList* new_names)
 {
+    //Try to rename the file and log out the result
     for(int i = 0; i < old_names->count(); i++)
     {
         if(QFile::rename(path + "/" + (*old_names)[i],
@@ -797,6 +816,7 @@ void MainWindow::renameFiles(QString path, QStringList* old_names, QStringList* 
 
 void MainWindow::renameDirs(QString path, QStringList* old_names, QStringList* new_names)
 {
+    //Try to rename the directory and log out the result
     for(int i = 0; i < old_names->count(); i++)
     {
         QDir dir(path + "/" + (*old_names)[i]);
