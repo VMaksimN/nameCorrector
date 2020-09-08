@@ -46,6 +46,10 @@ private:
     void addRuleButtonClicked();
     void removeRuleButtonClicked();
     void applyButtonClicked();
+    void addReplaceRule(QLabel* ruleLabel, QString replaced, QString replace_with, bool is_new);
+    void addRemoveRule(QLabel* ruleLabel, QString remove, bool is_new);
+    void addRemoveFromToRule(QLabel* ruleLabel, QString remove, QString from_p, QString to_p, bool is_new);
+    void addAddToRule(QLabel* ruleLabel, QString addition, QString to_p, bool is_new);
     void ruleComboBoxTextChanged(const QString& text);
     void createApplyButton(QGridLayout* layout, int row, int column, bool enabled);
     void createRemoveButton(QGridLayout* layout, int row, int column, QString status);
