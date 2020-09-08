@@ -3,6 +3,21 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+
+    fileMenu = menuBar()->addMenu("&File");
+
+    saveRuleListAction = new QAction("Save rule list");
+    fileMenu->addAction(saveRuleListAction);
+    connect(saveRuleListAction, &QAction::triggered, this, &MainWindow::saveRuleList);
+
+    loadRuleListAction = new QAction("Load rule list");
+    fileMenu->addAction(loadRuleListAction);
+    connect(loadRuleListAction, &QAction::triggered, this, &MainWindow::loadRuleList);
+
+    quitAction = new QAction("Quit");
+    fileMenu->addAction(quitAction);
+    connect(quitAction, &QAction::triggered, this, &QApplication::exit);
+
     //Init widgets storage
     widgets = new QList<QList<QWidget*>*>();
     widgets->push_back(new QList<QWidget*>());
@@ -621,6 +636,71 @@ void MainWindow::checkTextBox()
 
          applyButt->setEnabled(false);
     }
+}
+
+void MainWindow::saveRuleList()
+{
+    if(rulesNumber == 0)
+    {
+        QMessageBox msg(this);
+        msg.setText("Nothing to save");
+        msg.exec();
+        return;
+    }
+
+    QString data = "";
+    for(int i = 0; i < rulesNumber; i++)
+    {
+        if(rules.at(i)->first == "Replace")
+        {
+            data.push_back(rules.at(i)->first + " " +
+                           rules.at(i)->second[0] + " " +
+                           rules.at(i)->second[1]);
+        }
+        else if(rules.at(i)->first == "Remove")
+        {
+            data.push_back(rules.at(i)->first + " " +
+                           rules.at(i)->second[0]);
+        }
+        else if(rules.at(i)->first == "RemoveFromTo")
+        {
+            data.push_back(rules.at(i)->first + " " +
+                           rules.at(i)->second[0] + " " +
+                           rules.at(i)->second[1] +  " " +
+                           rules.at(i)->second[2]);
+        }
+        else if(rules.at(i)->first == "AddTo")
+        {
+            data.push_back(rules.at(i)->first + " " +
+                           rules.at(i)->second[0] + " " +
+                           rules.at(i)->second[1]);
+        }
+        data.push_back("\n");
+    }
+    QFileDialog dialog(this);
+    dialog.setFilter(QDir::Dirs);
+    QString path = dialog.getExistingDirectory();
+    QFile file(path + "/rules");
+
+    if(file.open(QFile::WriteOnly))
+    {
+        file.write(data.toUtf8());
+        file.close();
+    }
+}
+
+void MainWindow::loadRuleList()
+{
+    QString data = "";
+    QFileDialog dialog(this);
+    dialog.setFilter(QDir::Files);
+    QString path = dialog.getOpenFileName();
+    QFile file(path);
+    if(file.open(QFile::ReadOnly))
+    {
+        data = QString::fromUtf8(file.readAll());
+    }
+
 }
 ///////////////////
 //////////////////

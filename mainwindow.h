@@ -20,6 +20,8 @@
 #include <QTextBlock>
 #include <QCheckBox>
 #include <QScrollBar>
+#include <QMenuBar>
+#include <QMenu>
 #include <QQueue>
 
 enum LogStatus
@@ -52,6 +54,8 @@ private:
     void logOut(QString log, LogStatus st);
     void clearLog();
     void checkTextBox();
+    void saveRuleList();
+    void loadRuleList();
 
     //Functional methods
     QString correctName(QString old_name);
@@ -66,6 +70,13 @@ private:
     //GUI fields
     QWidget* mainWidget;
     QGridLayout* mainGrid;
+
+    QMenu* fileMenu;
+    QAction* saveRuleListAction;
+    QAction* loadRuleListAction;
+    QAction* quitAction;
+
+    QMenu* aboutMenu;
 
     QPushButton* correctButton;
     QPushButton* addRuleButton;
