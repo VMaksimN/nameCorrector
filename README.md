@@ -1,6 +1,9 @@
 # nameCorrector
 Simple app to correct names of any objects (files, directories)
 
+## Who needs nameCorrector
+Book-keepers, secretaries, and others who has to work with many files. nameCorrector is intendend to help to keep order in the file storage.
+
 ## How to get
 You can use the code below:
     

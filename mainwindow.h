@@ -60,6 +60,7 @@ private:
     void checkTextBox();
     void saveRuleList();
     void loadRuleList();
+    void showHelp();
 
     //Functional methods
     QString correctName(QString old_name);
@@ -81,6 +82,7 @@ private:
     QAction* quitAction;
 
     QMenu* aboutMenu;
+    QAction* aboutAction;
 
     QPushButton* correctButton;
     QPushButton* addRuleButton;
@@ -108,6 +110,9 @@ private:
 
     QList<QPair<QString, QStringList>*> oldFileNames;
     QList<QPair<QString, QStringList>*> oldDirNames;
+
+    QList<QPair<QString, QStringList>*> newFileNames;
+    QList<QPair<QString, QStringList>*> newDirNames;
 
     QString currentPath;
 };

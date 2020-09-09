@@ -18,6 +18,13 @@ MainWindow::MainWindow(QWidget *parent)
     fileMenu->addAction(quitAction);
     connect(quitAction, &QAction::triggered, this, &QApplication::exit);
 
+    aboutMenu = menuBar()->addMenu("&About");
+
+    aboutAction = new QAction("About");
+    aboutMenu->addAction(aboutAction);
+    connect(aboutAction, &QAction::triggered, this, &MainWindow::showHelp);
+
+
     //Init widgets storage
     widgets = new QList<QList<QWidget*>*>();
     widgets->push_back(new QList<QWidget*>());
@@ -133,28 +140,30 @@ void MainWindow::correctButtonClicked()
     //Load files and directories names
     QStringList file_list = directory.entryList(QDir::Files);
     QStringList dir_list = directory.entryList(QDir::Dirs);
-    oldFileNames.push_back(new QPair<QString, QStringList>(currentPath, file_list));
-    oldDirNames.push_back(new QPair<QString, QStringList>(currentPath, dir_list));
 
     //Correct files if the file-checkbox was checked
     if(correctFiles_CheckBox->checkState() == Qt::Checked)
     {
+        oldFileNames.push_back(new QPair<QString, QStringList>(currentPath, file_list));
         QStringList corrected_names;
         for(int i = 0; i < file_list.count(); i++)
         {
             corrected_names.push_back(correctName(file_list.at(i)));
         }
         renameFiles(currentPath, &file_list, &corrected_names);
+        newFileNames.push_back(new QPair<QString, QStringList>(currentPath, corrected_names));
     }
-    //Correct files if the directory-checkbox was checked
+    //Correct directories if the directory-checkbox was checked
     if(correctFolders_CheckBox->checkState() == Qt::Checked)
     {
+        oldDirNames.push_back(new QPair<QString, QStringList>(currentPath, dir_list));
         QStringList corrected_names;
         for(int i = 0; i < dir_list.count(); i++)
         {
             corrected_names.push_back(correctName(dir_list.at(i)));
         }
         renameDirs(currentPath, &dir_list, &corrected_names);
+        newDirNames.push_back(new QPair<QString, QStringList>(currentPath, corrected_names));
     }
     resetButton->setEnabled(true);
     fullResetButton->setEnabled(true);
@@ -788,6 +797,11 @@ void MainWindow::loadRuleList()
         }
     }
 }
+
+void MainWindow::showHelp()
+{
+
+}
 ///////////////////
 //////////////////
 ///////////////////
@@ -871,9 +885,9 @@ QString MainWindow::addStringTo(QString old, QString* args)
 
 void MainWindow::reset()
 {
-    QMessageBox box("Warning", "", QMessageBox::NoIcon,
+    /*QMessageBox box("Warning", "", QMessageBox::NoIcon,
                     QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel, this);
-    box.setText("Please, do not add new files or remove existing ones before reset. "
+    box.setText("Please, do not add new files and directories or remove existing ones before reset. "
                 " It may cause errors and damage your files. "
                 " Do you want to continue?");
     box.exec();
@@ -882,11 +896,12 @@ void MainWindow::reset()
     {
         logOut("Reset aborted", LogStatus::Info);
         return;
-    }
+    }*/
 
     //This operation is similar to the correct one
     QPushButton* but = (QPushButton*)sender();
 
+    //Reset all the operations
     if(but == fullResetButton)
     {
         logOut("FULL RESET", LogStatus::Reset);
@@ -944,15 +959,19 @@ void MainWindow::reset()
 
     logOut("Reset", LogStatus::Reset);
 
-    QDir directory(oldDirNames.last()->first);
-    QStringList file_list = directory.entryList(QDir::Files);
-    QStringList dir_list = directory.entryList(QDir::Dirs);
+    if(!oldFileNames.isEmpty())
+    {
+        renameFiles(oldFileNames.last()->first, &newFileNames.last()->second, &(oldFileNames.last()->second));
+        oldFileNames.removeLast();
+        newFileNames.removeLast();
+    }
+    if(!oldDirNames.isEmpty())
+    {
+        renameDirs(oldDirNames.last()->first, &newDirNames.last()->second, &(oldDirNames.last()->second));
+        oldDirNames.removeLast();
+        newDirNames.removeLast();
+    }
 
-    renameFiles(oldFileNames.last()->first, &file_list, &(oldFileNames.last()->second));
-    renameDirs(oldDirNames.last()->first, &dir_list, &(oldDirNames.last()->second));
-
-    oldDirNames.removeLast();
-    oldFileNames.removeLast();
     if(oldDirNames.empty() && oldFileNames.empty())
     {
         fullResetButton->setEnabled(false);
@@ -998,4 +1017,6 @@ void MainWindow::renameDirs(QString path, QStringList* old_names, QStringList* n
     }
 }
 
-
+///////////////////
+//////////////////
+///////////////////
