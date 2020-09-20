@@ -740,6 +740,10 @@ void MainWindow::loadRuleList()
     QFileDialog dialog(this);
     dialog.setFilter(QDir::Files);
     QString path = dialog.getOpenFileName();
+    if(path == "")
+    {
+        return;
+    }
     QFile file(path);
     if(file.open(QFile::ReadOnly))
     {
