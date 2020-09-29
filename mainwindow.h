@@ -68,6 +68,7 @@ private:
     QString remove(QString old, QString* args);
     QString removeFromTo(QString old, QString* args);
     QString addStringTo(QString old, QString* args);
+    QString makeList(QString old, QString* args);
     void renameFiles(QString path, QStringList* old_names, QStringList* new_names);
     void renameDirs(QString path, QStringList* old_names, QStringList* new_names);
     void reset();
@@ -115,5 +116,7 @@ private:
     QList<QPair<QString, QStringList>*> newDirNames;
 
     QString currentPath;
+    char last_char = 'A';
+    int last_num = 0;
 };
 #endif // MAINWINDOW_H

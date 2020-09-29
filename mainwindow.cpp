@@ -812,6 +812,20 @@ void MainWindow::showHelp()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //////////////////
 ///FUNCTIONAL METHODS
 //////////////////////
@@ -835,6 +849,10 @@ QString MainWindow::correctName(QString old_name)
         else if(rules[i]->first == "AddTo")
         {
             old_name = addStringTo(old_name, rules[i]->second);
+        }
+        else if(rules[i]->first == "MakeList")
+        {
+            old_name = makeList(old_name, rules[i]->second);
         }
     }
     return old_name;
@@ -885,6 +903,37 @@ QString MainWindow::addStringTo(QString old, QString* args)
         return old;
     }
     return old.insert(args[1].toInt(), args[0]);
+}
+
+QString MainWindow::makeList(QString old, QString* args)
+{
+    if(args[0] == "numeric")
+    {
+        if(args[1] == "prefix")
+        {
+            old = old.prepend(QString::fromStdString(std::to_string(last_num)) + args[2]);
+        }
+        else
+        {
+            old = old.append(args[2] + QString::fromStdString(std::to_string(last_num)));
+        }
+        last_num++;
+    }
+    else
+    {
+        if(args[1] == "prefix")
+        {
+            old = old.prepend(last_char + args[2]);
+        }
+        else
+        {
+            old = old.append(args[2] + last_char);
+        }
+        if(last_char < 'Z')
+        {
+            last_char++;
+        }
+    }
 }
 
 void MainWindow::reset()
@@ -986,6 +1035,9 @@ void MainWindow::reset()
     logOut(" ", LogStatus::Reset);
 }
 ////***/////
+
+
+
 void MainWindow::renameFiles(QString path, QStringList* old_names, QStringList* new_names)
 {
     //Try to rename the file and log out the result
