@@ -115,6 +115,7 @@ void MainWindow::addRuleButtonClicked()
     ruleComboBox->addItem("Remove");
     ruleComboBox->addItem("RemoveFromTo");
     ruleComboBox->addItem("AddTo");
+    ruleComboBox->addItem("MakeList");
     connect(ruleComboBox, &QComboBox::currentTextChanged, this, &MainWindow::ruleComboBoxTextChanged);
     mainGrid->addWidget(ruleComboBox, rulesNumber  + reserved_rows - 1, 0);
     widgets->last()->push_back(ruleComboBox);
@@ -225,6 +226,11 @@ void MainWindow::applyButtonClicked()
     {
         addAddToRule(ruleLabel, addTextBox->toPlainText(),
                      toTextBox->toPlainText(), true);
+    }
+    else if(ruleComboBox->currentText() == "MakeList")
+    {
+        addMakeListRule(ruleLabel, positionComboBox->currentText(),
+                        typeComboBox->currentText(), addTextBox->toPlainText(), true);
     }
 }
 
@@ -378,6 +384,54 @@ void MainWindow::addAddToRule(QLabel* ruleLabel, QString addition, QString to_p,
     createRemoveButton(mainGrid, rulesNumber  + reserved_rows - 1, 4, "1");
 }
 
+void MainWindow::addMakeListRule(QLabel* ruleLabel, QString position, QString mode, QString separator, bool is_new)
+{
+    QLabel* positionLabel = new QLabel(mainWidget);
+    positionLabel->setText(position);
+    mainGrid->addWidget(positionLabel, rulesNumber  + reserved_rows - 1, 1);
+
+    QLabel* modeLabel = new QLabel(mainWidget);
+    modeLabel->setText(mode);
+    mainGrid->addWidget(modeLabel, rulesNumber  + reserved_rows - 1, 2);
+
+    QLabel* withLabel = new QLabel(mainWidget);
+    withLabel->setText("with");
+    mainGrid->addWidget(withLabel, rulesNumber  + reserved_rows - 1, 3);
+
+    QLabel* sepLabel = new QLabel(mainWidget);
+    sepLabel->setText(separator);
+    mainGrid->addWidget(sepLabel, rulesNumber  + reserved_rows - 1, 4);
+
+    QLabel* separLabel = new QLabel(mainWidget);
+    separLabel->setText("as separator");
+    mainGrid->addWidget(separLabel, rulesNumber  + reserved_rows - 1, 5);
+
+    QString* args = new QString[3];
+    args[1] = mode;
+    args[0] = position;
+    args[2] = separator;
+
+    rules.push_back(new QPair<QString, QString*>("MakeList", args));
+
+    if(is_new)
+    {
+        for(int i = 0; i < widgets->last()->count(); i++)
+        {
+            delete widgets->last()->at(i);
+        }
+        widgets->removeLast();
+    }
+
+    widgets->push_back(new QList<QWidget*>());
+    widgets->last()->push_back(ruleLabel);
+    widgets->last()->push_back(positionLabel);
+    widgets->last()->push_back(modeLabel);
+    widgets->last()->push_back(withLabel);
+    widgets->last()->push_back(sepLabel);
+    widgets->last()->push_back(separLabel);
+    createRemoveButton(mainGrid, rulesNumber  + reserved_rows - 1, 6, "1");
+}
+
 void MainWindow::ruleComboBoxTextChanged(const QString& text)
 {
     correctButton->setEnabled(false);
@@ -473,6 +527,40 @@ void MainWindow::ruleComboBoxTextChanged(const QString& text)
 
         createRemoveButton(mainGrid, rulesNumber  + reserved_rows - 1, 4, "0");
         createApplyButton(mainGrid, rulesNumber  + reserved_rows - 1, 5, false);
+
+        return;
+    }
+    if(text == "MakeList")
+    {
+        typeComboBox = new QComboBox(mainWidget);
+        typeComboBox->addItem("prefix");
+        typeComboBox->addItem("postfix");
+        typeComboBox->setCurrentIndex(0);
+        mainGrid->addWidget(typeComboBox, rulesNumber + reserved_rows - 1, 1);
+        widgets->last()->push_back(typeComboBox);
+
+        positionComboBox = new QComboBox(mainWidget);
+        positionComboBox->addItem("numeric");
+        positionComboBox->addItem("alphabetic");
+        positionComboBox->setCurrentIndex(0);
+        mainGrid->addWidget(positionComboBox, rulesNumber + reserved_rows - 1, 2);
+        widgets->last()->push_back(positionComboBox);
+
+        QLabel* withLabel = new QLabel("with", mainWidget);
+        mainGrid->addWidget(withLabel, rulesNumber + reserved_rows - 1, 3);
+        widgets->last()->push_back(withLabel);
+
+        QLabel* sepLabel = new QLabel("separator", mainWidget);
+        mainGrid->addWidget(sepLabel, rulesNumber + reserved_rows - 1, 4);
+        widgets->last()->push_back(sepLabel);
+
+        addTextBox = new QTextEdit(mainWidget);
+        mainGrid->addWidget(addTextBox, rulesNumber + reserved_rows - 1, 5);
+        widgets->last()->push_back(addTextBox);
+        connect(addTextBox, &QTextEdit::textChanged, this, &MainWindow::checkTextBox);
+
+        createRemoveButton(mainGrid, rulesNumber  + reserved_rows - 1, 6, "0");
+        createApplyButton(mainGrid, rulesNumber  + reserved_rows - 1, 7, true);
 
         return;
     }
@@ -799,6 +887,15 @@ void MainWindow::loadRuleList()
 
             addAddToRule(ruleLabel, args.at(1), args.at(2), false);
         }
+        else if(rules.at(i).startsWith("MakeList "))
+        {
+            QLabel* ruleLabel = new QLabel(mainWidget);
+            ruleLabel->setText(QString::fromStdString(std::to_string(rulesNumber))
+                               + ". " + "MakeList");
+            mainGrid->addWidget(ruleLabel, rulesNumber  + reserved_rows - 1, 0);
+
+            addMakeListRule(ruleLabel, args.at(1), args.at(2), args.at(3), false);
+        }
     }
 }
 
@@ -934,6 +1031,7 @@ QString MainWindow::makeList(QString old, QString* args)
             last_char++;
         }
     }
+    return old;
 }
 
 void MainWindow::reset()

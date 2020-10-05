@@ -50,6 +50,7 @@ private:
     void addRemoveRule(QLabel* ruleLabel, QString remove, bool is_new);
     void addRemoveFromToRule(QLabel* ruleLabel, QString remove, QString from_p, QString to_p, bool is_new);
     void addAddToRule(QLabel* ruleLabel, QString addition, QString to_p, bool is_new);
+    void addMakeListRule(QLabel* ruleLabel, QString position, QString mode, QString separator, bool is_new);
     void ruleComboBoxTextChanged(const QString& text);
     void createApplyButton(QGridLayout* layout, int row, int column, bool enabled);
     void createRemoveButton(QGridLayout* layout, int row, int column, QString status);
@@ -101,6 +102,8 @@ private:
     QTextEdit* fromTextBox;
     QTextEdit* toTextBox;
     QTextEdit* addTextBox;
+    QComboBox* positionComboBox;
+    QComboBox* typeComboBox;
     QList<QList<QWidget*>*>* widgets;
 
     const int reserved_rows = 3;
