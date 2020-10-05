@@ -94,6 +94,18 @@ MainWindow::MainWindow(QWidget *parent)
     widgets->first()->push_back(clearLogButton);
     connect(clearLogButton, &QPushButton::clicked, this, &MainWindow::clearLog);
 
+
+    //Init invalid symbols array
+    danderous_symbols = new char[10];
+    danderous_symbols[0] = '<';
+    danderous_symbols[1] = '>';
+    danderous_symbols[3] = ':';
+    danderous_symbols[4] = '"';
+    danderous_symbols[5] = '/';
+    danderous_symbols[6] = '\\';
+    danderous_symbols[7] = '|';
+    danderous_symbols[8] = '?';
+    danderous_symbols[9] = '*';
 }
 
 MainWindow::~MainWindow(){}
@@ -768,6 +780,24 @@ void MainWindow::checkTextBox()
         }
 
          applyButt->setEnabled(false);
+    }
+    else if(ruleComboBox->currentText() == "MakeList")
+    {
+        for(int i = 0; i < 10 ; i++)
+        {
+            if(addTextBox->toPlainText().contains(danderous_symbols[i]))
+            {
+                addTextBox->setPalette(red_pal);
+                QRect rect(addTextBox->pos().x(),addTextBox->pos().y(), 150, 70);
+                QToolTip::showText(addTextBox->pos(),
+                                   "Please, pay your attention to that some OS not support these symbols in files or/and directories names",
+                                   addTextBox, rect, 10000);
+                return;
+            }
+        }
+        addTextBox->setPalette(def_pal);
+        applyButt->setEnabled(true);
+        return;
     }
 }
 

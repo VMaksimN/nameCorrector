@@ -9,6 +9,7 @@
 #include <QApplication>
 #include <QFileInfo>
 #include <QString>
+#include <QToolTip>
 #include <QMessageBox>
 #include <QWidget>
 #include <QGridLayout>
@@ -121,5 +122,6 @@ private:
     QString currentPath;
     char last_char = 'A';
     int last_num = 0;
+    char* danderous_symbols;
 };
 #endif // MAINWINDOW_H
