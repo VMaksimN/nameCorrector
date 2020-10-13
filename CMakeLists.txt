@@ -36,7 +36,13 @@ else()
   add_executable(name_corrector
     main.cpp
     mainwindow.cpp
+    listelement.cpp
+    listelement_gui.cpp
+    listwindow.cpp
     mainwindow.h
+    listelement_gui.h
+    listelement.h
+    listwindow.h
   )
 endif()
 
