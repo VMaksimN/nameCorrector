@@ -8,6 +8,14 @@ class ListWindow : public QMainWindow
     Q_OBJECT
 public:
     explicit ListWindow(QWidget *parent = nullptr);
+    ListWindow(ListWindow&){}
+    explicit ListWindow(QList<ListElement>* source, QWidget *parent = nullptr);
+private:
+
+    QWidget mainWidget;
+
+
+    QList<ListElement>* source;
 
 signals:
 

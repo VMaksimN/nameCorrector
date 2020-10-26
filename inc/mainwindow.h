@@ -26,6 +26,7 @@
 #include <QMenu>
 #include <QVBoxLayout>
 #include <QQueue>
+#include <QScrollArea>
 #include "listwindow.h"
 enum LogStatus
 {
@@ -43,7 +44,21 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    //GUI methods
     void logOut(QString log, LogStatus st);
+    void clearLog();
+
+    //Functional methods
+    QString correctName(QString old_name);
+    QString replace(QString old, QString* args);
+    QString remove(QString old, QString* args);
+    QString removeFromTo(QString old, QString* args);
+    QString addStringTo(QString old, QString* args);
+    QString makeList(QString old, QString* args);
+    void renameFiles(QString path, QStringList* old_names, QStringList* new_names);
+    void renameDirs(QString path, QStringList* old_names, QStringList* new_names);
+    void reset();
+
 private:
 
     //GUI fields
@@ -69,6 +84,7 @@ private:
     QPushButton* showRuleWindow_Button;
     QWidget* ruleBox;
     QVBoxLayout* ruleLayout;
+    QScrollArea* area;
 
     QTextEdit* logBlock;
     QPushButton* clearLogButton;
@@ -90,5 +106,23 @@ private:
     QTextEdit* addTextBox;
     QComboBox* positionComboBox;
     QComboBox* typeComboBox;
+
+
+    //Other fields
+    int rulesNumber = 0;
+    QList<ListElement> rules;
+
+    QList<QPair<QString, QStringList>*> oldFileNames;
+    QList<QPair<QString, QStringList>*> oldDirNames;
+
+    QList<QPair<QString, QStringList>*> newFileNames;
+    QList<QPair<QString, QStringList>*> newDirNames;
+
+    QList<ListElement> directoriesList;
+
+    QString currentPath;
+    char last_char = 'A';
+    int last_num = 0;
+    char* danderous_symbols;
 };
 #endif // MAINWINDOW_H
