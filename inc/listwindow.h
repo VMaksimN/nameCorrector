@@ -2,18 +2,30 @@
 #define LISTWINDOW_H
 
 #include <QMainWindow>
+#include <QScrollArea>
+#include <QGridLayout>
 #include "listelement_gui.h"
 class ListWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit ListWindow(QWidget *parent = nullptr);
+    explicit ListWindow(QString title, QWidget *parent = nullptr);
     ListWindow(ListWindow&){}
-    explicit ListWindow(QList<ListElement>* source, QWidget *parent = nullptr);
+    explicit ListWindow(QList<ListElement>* source, QString title, QWidget *parent = nullptr);
 private:
 
-    QWidget mainWidget;
+    void init();
 
+    QWidget* mainWidget;
+    QGridLayout* mainGrid;
+    QWidget* listWidget;
+    QVBoxLayout* listLayout;
+    QScrollArea* scrollArea;
+
+    QPushButton* removeSelectedButton;
+    QPushButton* disableSelectedButton;
+    QPushButton* clearListButton;
+    QPushButton* addButton;
 
     QList<ListElement>* source;
 

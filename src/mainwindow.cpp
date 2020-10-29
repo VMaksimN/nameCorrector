@@ -8,7 +8,6 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(mainWidget);
 
     mainGrid = new QGridLayout(mainWidget);
-    mainWidget->setLayout(mainGrid);
 
     //Init directories GUI
     addDirectoryButton = new QPushButton("Add", mainWidget);
