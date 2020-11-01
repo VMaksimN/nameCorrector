@@ -16,6 +16,10 @@ private:
 
     void init();
     void claerList_ButtonClicked();
+    void disableSelected_ButtonClicked();
+    void enableSelected_ButtonClicked();
+    void removeSelected_ButtonClicked();
+    void elementSelectedStateChanged(bool state);
 
     QWidget* mainWidget;
     QGridLayout* mainGrid;
@@ -25,10 +29,13 @@ private:
 
     QPushButton* removeSelectedButton;
     QPushButton* disableSelectedButton;
+    QPushButton* enableSelectedButton;
     QPushButton* clearListButton;
     QPushButton* addButton;
 
     QList<ListElement>* source;
+
+    QList<ListElement_GUI*>* selectedElements;
 
 signals:
 

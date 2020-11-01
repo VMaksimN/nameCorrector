@@ -19,8 +19,16 @@ ListElement_GUI::ListElement_GUI(ListElement* source, QWidget *parent) : QPushBu
     mainStack->addWidget(info);
 
     enableCheckBox = new QCheckBox("Enabled", this);
+    if(source->isEnabled())
+    {
+        enableCheckBox->setCheckState(Qt::Checked);
+    }
+    else
+    {
+        enableCheckBox->setCheckState(Qt::Unchecked);
+    }
+    connect(enableCheckBox, &QCheckBox::stateChanged, this, &ListElement_GUI::enableCheckBox_StateChanged);
     mainStack->addWidget(enableCheckBox);
-    connect(enableCheckBox, &QCheckBox::clicked, this, &ListElement_GUI::enableCheckBox_Clicked);
 
     if(source->isEditable())
     {
@@ -77,7 +85,7 @@ bool ListElement_GUI::isSelected()
 void ListElement_GUI::setSelected(bool value)
 {
     is_selected = value;
-
+    selectedStateChanged(value);
     if(value)
     {
         title->setStyleSheet(selectedStyleSheet);
@@ -97,16 +105,32 @@ void ListElement_GUI::editButton_Clicked()
 
 }
 
-void ListElement_GUI::enableCheckBox_Clicked()
+void ListElement_GUI::enableCheckBox_StateChanged()
 {
     source->setEnabled(enableCheckBox->isChecked());
 }
 
+bool ListElement_GUI::isEnabled()
+{
+    return source->isEnabled();
+}
+
+void ListElement_GUI::setEnabled(bool value)
+{
+    source->setEnabled(value);
+
+    if(value)
+    {
+        enableCheckBox->setCheckState(Qt::Checked);
+        return;
+    }
+    enableCheckBox->setCheckState(Qt::Unchecked);
+}
 
 void ListElement_GUI::this_clicked()
 {
     is_selected = !is_selected;
-
+    selectedStateChanged(is_selected);
     if(is_selected)
     {
         title->setStyleSheet(selectedStyleSheet);

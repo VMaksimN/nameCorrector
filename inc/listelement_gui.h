@@ -16,17 +16,19 @@ public:
 
     void removeButton_Clicked();
     void editButton_Clicked();
-    void enableCheckBox_Clicked();
+    void enableCheckBox_StateChanged();
     void this_clicked();
 
     QString getTitle();
     QString getInfo();
     ListElement getSource();
     bool isSelected();
+    bool isEnabled();
 
     void setTitle(QString text);
     void setInfo(QString text);
     void setSelected(bool value);
+    void setEnabled(bool value);
 
 private:
     //GUI fields
@@ -43,7 +45,7 @@ private:
     //Other
     ListElement* source;
 signals:
-
+    void selectedStateChanged(bool);
 };
 
 #endif // LISTELEMENT_GUI_H
