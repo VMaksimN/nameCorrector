@@ -7,7 +7,7 @@
 #include <QCheckBox>
 #include <QPushButton>
 #include "listelement.h"
-class ListElement_GUI : public QWidget
+class ListElement_GUI : public QPushButton
 {
     Q_OBJECT
 public:
@@ -17,6 +17,7 @@ public:
     void removeButton_Clicked();
     void editButton_Clicked();
     void enableCheckBox_Clicked();
+    void this_clicked();
 
     QString getTitle();
     QString getInfo();
@@ -36,8 +37,9 @@ private:
     QPushButton* removeButton;
     QPushButton* editButton;
     bool is_selected;
-    static QPalette* default_pal;
-    static QPalette* selected_pal;
+    const QString defaultStyleSheet = "QLabel {color : white}";
+    const QString selectedStyleSheet = "QLabel {color : red}";
+
     //Other
     ListElement* source;
 signals:

@@ -1,10 +1,13 @@
 #include "listelement_gui.h"
 
 
-ListElement_GUI::ListElement_GUI(ListElement* source, QWidget *parent) : QWidget(parent)
+ListElement_GUI::ListElement_GUI(ListElement* source, QWidget *parent) : QPushButton(parent)
 {
-    //INit layout
+    //INit this
     this->source = source;
+    connect(this, &QPushButton::clicked, this, &ListElement_GUI::this_clicked);
+
+    //INit layout
     mainStack = new  QHBoxLayout(this);
     setLayout(mainStack);
 
@@ -33,15 +36,6 @@ ListElement_GUI::ListElement_GUI(ListElement* source, QWidget *parent) : QWidget
         connect(removeButton, &QPushButton::clicked, this, &ListElement_GUI::removeButton_Clicked);
     }
     is_selected = false;
-
-    //INit palettes
-    default_pal = new QPalette();
-    default_pal->setColor(QPalette::Background, QColor::fromRgb(0, 100, 255));
-    default_pal->setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
-
-    selected_pal = new QPalette();
-    selected_pal->setColor(QPalette::Background, QColor::fromRgb(0, 100, 255));
-    selected_pal->setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
 
 }
 
@@ -86,10 +80,10 @@ void ListElement_GUI::setSelected(bool value)
 
     if(value)
     {
-        title->setPalette(*selected_pal);
+        title->setStyleSheet(selectedStyleSheet);
         return;
     }
-    title->setPalette(*default_pal);
+    title->setStyleSheet(defaultStyleSheet);
 }
 
 void ListElement_GUI::removeButton_Clicked()
@@ -106,4 +100,17 @@ void ListElement_GUI::editButton_Clicked()
 void ListElement_GUI::enableCheckBox_Clicked()
 {
     source->setEnabled(enableCheckBox->isChecked());
+}
+
+
+void ListElement_GUI::this_clicked()
+{
+    is_selected = !is_selected;
+
+    if(is_selected)
+    {
+        title->setStyleSheet(selectedStyleSheet);
+        return;
+    }
+    title->setStyleSheet(defaultStyleSheet);
 }
