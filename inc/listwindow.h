@@ -15,6 +15,7 @@ public:
 private:
 
     void init();
+    void claerList_ButtonClicked();
 
     QWidget* mainWidget;
     QGridLayout* mainGrid;

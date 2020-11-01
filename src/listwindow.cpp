@@ -47,8 +47,22 @@ void ListWindow::init()
     mainGrid->addWidget(disableSelectedButton, 1, 1, 1, 1);
 
     clearListButton = new QPushButton("Clear list", mainWidget);
+    connect(clearListButton, &QPushButton::clicked, this, &ListWindow::claerList_ButtonClicked);
     mainGrid->addWidget(clearListButton, 2, 0, 1, 1);
 
     addButton = new QPushButton("Add", mainWidget);
     mainGrid->addWidget(addButton, 2, 1, 1, 1);
+}
+
+
+void ListWindow::claerList_ButtonClicked()
+{
+    for(int i = listLayout->count(); i > -1; i--)
+    {
+        if(listWidget->children().at(i) != (QLayout*)listLayout &&
+           listWidget->children().at(i) != (QLayout*)scrollArea)
+        {
+            delete listWidget->children().at(i);
+        }
+    }
 }
