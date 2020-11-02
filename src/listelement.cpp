@@ -10,10 +10,11 @@ ListElement::ListElement(ListElement&)
 
 }
 
-ListElement::ListElement(QString name, QString desc, bool is_editable, bool is_closable) : QObject()
+ListElement::ListElement(QString name, QString desc, QString type, bool is_editable, bool is_closable) : QObject()
 {
     *(this->name) = name;
     *(this->description) = desc;
+    this->type = type;
     this->is_editable = is_editable;
     this->is_closable = is_closable;
 }

@@ -11,7 +11,7 @@ class ListElement : QObject
 public:
     explicit ListElement();
     ListElement(ListElement&);
-    explicit ListElement(QString name, QString desc = "", bool is_editable = false, bool is_closable = true);
+    explicit ListElement(QString name, QString desc = "", QString type = "rule", bool is_editable = false, bool is_closable = true);
 
     int getId();
     QString getName();
@@ -20,6 +20,7 @@ public:
     bool isEditable();
     QString getDescription();
     bool isClosable();
+    QString getType();
 
     void setName(QString name);
     void setEnabled(bool val);
@@ -35,6 +36,7 @@ private:
     bool is_editable;
     QString* description = new QString();
     bool is_closable;
+    QString type;
 signals:
 
 };
