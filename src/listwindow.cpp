@@ -87,9 +87,11 @@ void ListWindow::disableSelected_ButtonClicked()
 
 void ListWindow::removeSelected_ButtonClicked()
 {
-    for(int i = 0; i < selectedElements->count(); i++)
+    for(int i = selectedElements->count() - 1; i > -1; i--)
     {
-        delete selectedElements->at(i);
+        ListElement_GUI* deleted = selectedElements->at(i);
+        selectedElements->removeOne(deleted);
+        delete deleted;
     }
 }
 
