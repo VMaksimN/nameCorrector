@@ -66,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     clearLogButton = new QPushButton("Clear log", mainWidget);
     connect(clearLogButton, &QPushButton::clicked, this, &MainWindow::clearLog);
-    mainGrid->addWidget(clearLogButton, 3, 3, 1, 3);
+    mainGrid->addWidget(clearLogButton, 3, 3, 1, 3, Qt::AlignBottom);
 
     //Init Exceptions GUI
     correctFiles_CheckBox = new QCheckBox("Correct files", mainWidget);

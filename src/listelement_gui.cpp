@@ -8,11 +8,13 @@ ListElement_GUI::ListElement_GUI(ListElement* source, QWidget *parent) : QPushBu
     connect(this, &QPushButton::clicked, this, &ListElement_GUI::this_clicked);
 
     //INit layout
-    mainStack = new  QHBoxLayout(this);
+    mainStack = new QHBoxLayout(this);
+    mainStack->setMargin(0);
     setLayout(mainStack);
 
     //INit lables and other gui's
     title = new QLabel(source->getName(), this);
+    title->setMargin(5);
     mainStack->addWidget(title);
 
     info = new QLabel(source->getDescription(), this);
