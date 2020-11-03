@@ -35,7 +35,7 @@ void ListWindow::init()
 
     for(int i = 0; i < 10; i++)
     {
-        ListElement* el = new ListElement("QW", "qw", true);
+        ListElement* el = new ListElement("QW", "qw", "rule", true);
         ListElement_GUI* elg = new ListElement_GUI(el, listWidget);
         connect(elg, &ListElement_GUI::selectedStateChanged, this, &ListWindow::elementSelectedStateChanged);
         listLayout->addWidget(elg);

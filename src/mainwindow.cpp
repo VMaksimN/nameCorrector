@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     for(int i = 0; i < 10; i++)
     {
-        ListElement* el = new ListElement("QW", "qw", true);
+        ListElement* el = new ListElement("QW", "qw", "rule", true);
         ListElement_GUI* elg = new ListElement_GUI(el, ruleBox);
         ruleLayout->addWidget(elg);
     }

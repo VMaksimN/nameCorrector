@@ -21,10 +21,12 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
     src/listelement.cpp
     src/listelement_gui.cpp
     src/listwindow.cpp
+    src/newelementwindow.cpp
     inc/mainwindow.h
     inc/listelement_gui.h
     inc/listelement.h
     inc/listwindow.h
+    inc/newelementwindow.h
   )
 
 target_link_libraries(name_corrector PRIVATE Qt5::Widgets)
