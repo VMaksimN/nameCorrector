@@ -3,15 +3,6 @@
 
 NewElementWindow::NewElementWindow(QString type, QWidget *parent) : QMainWindow(parent)
 {
-    if(type == "rule")
-    {
-        //Some code
-    }
-    else
-    {
-        //Another code
-    }
-
     //INit main
     mainWidget = new QWidget(this);
     setCentralWidget(mainWidget);
@@ -28,9 +19,21 @@ NewElementWindow::NewElementWindow(QString type, QWidget *parent) : QMainWindow(
     typeLayout->addWidget(typeLabel);
 
     typeComboBox = new QComboBox(mainWidget);
-    typeComboBox->addItem("Some action");
-    typeComboBox->addItem("The second action");
-    typeComboBox->addItem("Another action");
+    if(type == "rules")
+    {
+        typeComboBox->addItem("None");
+        typeComboBox->addItem("Replace");
+        typeComboBox->addItem("Remove");
+        typeComboBox->addItem("Add");
+        typeComboBox->addItem("MakeList");
+    }
+    else //type == directory
+    {
+        typeComboBox->addItem("None");
+        typeComboBox->addItem("Directory");
+    }
+    connect(typeComboBox, &QComboBox::currentTextChanged,
+            this, &NewElementWindow::typeComboBox_ItemChanged);
     typeLayout->addWidget(typeComboBox);
 
     helpButton = new QPushButton("Help", mainWidget);
@@ -56,12 +59,283 @@ NewElementWindow::NewElementWindow(QString type, QWidget *parent) : QMainWindow(
     buttonsLayout->addWidget(clearButton);
 
     createButton = new QPushButton("Create", mainWidget);
+    createButton->setEnabled(false);
     buttonsLayout->addWidget(createButton);
+
+
+    //Init dangerous symbols array
+    dangerous_symbols = new char[10];
+    dangerous_symbols[0] = '<';
+    dangerous_symbols[1] = '>';
+    dangerous_symbols[3] = ':';
+    dangerous_symbols[4] = '"';
+    dangerous_symbols[5] = '/';
+    dangerous_symbols[6] = '\\';
+    dangerous_symbols[7] = '|';
+    dangerous_symbols[8] = '?';
+    dangerous_symbols[9] = '*';
 }
 
 
+void NewElementWindow::typeComboBox_ItemChanged()
+{
+    createButton->setEnabled(false);
+    ruleLabel->setText(typeComboBox->currentText());
 
+    if(typeComboBox->currentText() == "Directory")
+    {
+        pathTextBox = new QTextEdit();
+        connect(pathTextBox, &QTextEdit::textChanged, this, &NewElementWindow::checkTextBox);
+        ruleLayout->addWidget(pathTextBox);
+        return;
+    }
+    else if(typeComboBox->currentText() == "Replace")
+    {
+        replacedTextBox = new QTextEdit();
+        connect(replacedTextBox, &QTextEdit::textChanged, this, &NewElementWindow::checkTextBox);
+        ruleLayout->addWidget(replacedTextBox);
 
+        ruleLayout->addWidget(new QLabel("with"));
+
+        replaceWithTextBox = new QTextEdit();
+        connect(replaceWithTextBox, &QTextEdit::textChanged, this, &NewElementWindow::checkTextBox);
+        ruleLayout->addWidget(replaceWithTextBox);
+        return;
+    }
+    else if(typeComboBox->currentText() == "Remove")
+    {
+        removeTextBox = new QTextEdit();
+        connect(removeTextBox, &QTextEdit::textChanged, this, &NewElementWindow::checkTextBox);
+        ruleLayout->addWidget(removeTextBox);
+
+        ruleLayout->addWidget(new QLabel("from"));
+
+        fromTextBox = new QTextEdit();
+        connect(fromTextBox, &QTextEdit::textChanged, this, &NewElementWindow::checkTextBox);
+        ruleLayout->addWidget(fromTextBox);
+
+        ruleLayout->addWidget(new QLabel("to"));
+
+        toTextBox = new QTextEdit();
+        connect(toTextBox, &QTextEdit::textChanged, this, &NewElementWindow::checkTextBox);
+        ruleLayout->addWidget(toTextBox);
+        return;
+    }
+    else if(typeComboBox->currentText() == "Add")
+    {
+        addTextBox = new QTextEdit();
+        connect(addTextBox, &QTextEdit::textChanged, this, &NewElementWindow::checkTextBox);
+        ruleLayout->addWidget(addTextBox);
+
+        ruleLayout->addWidget(new QLabel("to"));
+
+        toTextBox = new QTextEdit();
+        connect(toTextBox, &QTextEdit::textChanged, this, &NewElementWindow::checkTextBox);
+        ruleLayout->addWidget(toTextBox);
+        return;
+    }
+    else if(typeComboBox->currentText() == "MakeList")
+    {
+        ruleLabel->setText("Make");
+        positionComboBox = new QComboBox();
+        positionComboBox->addItem("prefix");
+        positionComboBox->addItem("postfix");
+        positionComboBox->setCurrentIndex(0);
+        ruleLayout->addWidget(positionComboBox);
+
+        listType_ComboBox = new QComboBox();
+        listType_ComboBox->addItem("numeric");
+        listType_ComboBox->addItem("alphabetic");
+        listType_ComboBox->setCurrentIndex(0);
+        ruleLayout->addWidget(listType_ComboBox);
+
+        ruleLayout->addWidget(new QLabel("list with"));
+        ruleLayout->addWidget(new QLabel("separator"));
+
+        addTextBox = new QTextEdit();
+        ruleLayout->addWidget(addTextBox);
+        connect(addTextBox, &QTextEdit::textChanged, this, &NewElementWindow::checkTextBox);
+
+        return;
+    }
+
+    int cc = mainWidget->children().count();
+    int rc = ruleLayout->count();
+
+    for(int i = cc - 1; i > cc - rc; i--)
+    {
+        delete mainWidget->children().at(i);
+    }
+    ruleLabel->setText("");
+}
+
+void NewElementWindow::checkTextBox()
+{
+    //Palette for errors
+    QPalette red_pal;
+    red_pal.setColor(QPalette::Background, QColor::fromRgb(255, 0, 0));
+    red_pal.setColor(QPalette::Text, QColor::fromRgb(255, 0, 0));
+
+    //Standart palette
+    QPalette def_pal;
+    def_pal.setColor(QPalette::Background, QColor::fromRgb(0, 100, 255));
+    def_pal.setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
+
+    if(typeComboBox->currentText() == "Replace")
+    {
+        //At least the replacedTextBox must have a value
+        QString text = replacedTextBox->toPlainText();
+        if(text.isNull() || text.isEmpty())
+        {
+            createButton->setEnabled(false);
+            replacedTextBox->setPalette(red_pal);
+            QRect rect(pos().x(), pos().y(), 150, 70);
+            QToolTip::showText(replacedTextBox->mapToGlobal(replacedTextBox->pos()),
+                               "This textbox must not be empty",
+                               replacedTextBox, rect, 4000);
+        }
+        else
+        {
+            createButton->setEnabled(true);
+            replacedTextBox->setPalette(def_pal);
+        }
+    }
+    else if(typeComboBox->currentText() == "Remove")
+    {
+        //fromTextBox and toTextBox must have a value (program needs to know the range)
+        int from_num = 0;
+        bool from_ok;
+        int to_num = 0;
+        bool to_ok;
+
+        from_num = fromTextBox->toPlainText().toInt(&from_ok);
+        to_num = toTextBox->toPlainText().toInt(&to_ok);
+
+        if(from_ok)
+        {
+            if(from_num < 0 || from_num > to_num)
+            {
+                fromTextBox->setPalette(red_pal);
+                from_ok = false;
+            }
+            else
+            {
+                fromTextBox->setPalette(def_pal);
+            }
+        }
+        else
+        {
+            fromTextBox->setPalette(red_pal);
+        }
+        if(to_ok)
+        {
+            if(to_num < 0 || to_num < from_num)
+            {
+                toTextBox->setPalette(red_pal);
+                to_ok = false;
+            }
+            else
+            {
+                toTextBox->setPalette(def_pal);
+            }
+        }
+        else
+        {
+            toTextBox->setPalette(red_pal);
+        }
+        if(from_ok && to_ok)
+        {
+             createButton->setEnabled(true);
+            return;
+        }
+        createButton->setEnabled(false);
+        QRect rect(0,0,0,0);
+        QToolTip::showText(fromTextBox->mapToGlobal(fromTextBox->pos()),
+                           "The range is wrong", fromTextBox, rect, 4000);
+    }
+    else if(typeComboBox->currentText() == "Add")
+    {
+        //Both textBoxes must have a value
+        int to_num = 0;
+        bool to_ok;
+
+        to_num = toTextBox->toPlainText().toInt(&to_ok);
+
+        if(to_ok)
+        {
+            if(to_num < 0)
+            {
+                toTextBox->setPalette(red_pal);
+                to_ok = false;
+            }
+            else
+            {
+                QString text = addTextBox->toPlainText();
+                if(text.isNull() && !text.isEmpty())
+                {
+                    toTextBox->setPalette(def_pal);
+                    createButton->setEnabled(true);
+                    return;
+                }
+                else
+                {
+                    QRect rect(0,0,0,0);
+                    QToolTip::showText(addTextBox->mapToGlobal(addTextBox->pos()),
+                                       "This textbox must not be empty",
+                                       addTextBox, rect, 4000);
+                    return;
+                }
+            }
+        }
+        else
+        {
+            toTextBox->setPalette(red_pal);
+        }
+
+        QRect rect(0,0,0,0);
+        QToolTip::showText(toTextBox->mapToGlobal(toTextBox->pos()),
+                           "The position is wrong",
+                           toTextBox, rect, 4000);
+
+        createButton->setEnabled(false);
+    }
+    else if(typeComboBox->currentText() == "MakeList")
+    {
+        for(int i = 0; i < 10 ; i++)
+        {
+            if(addTextBox->toPlainText().contains(dangerous_symbols[i]))
+            {
+                addTextBox->setPalette(red_pal);
+                QRect rect(0,0,0,0);
+                QToolTip::showText(addTextBox->mapToGlobal(addTextBox->pos()),
+                                   "Please, pay your attention to that some OS not support these symbols in files or/and directories names",
+                                   addTextBox, rect, 10000);
+                return;
+            }
+        }
+        addTextBox->setPalette(def_pal);
+        createButton->setEnabled(true);
+        return;
+    }
+    else if(typeComboBox->currentText() == "Directory")
+    {
+        QDir dir(pathTextBox->toPlainText());
+        if(!dir.exists())
+        {
+            createButton->setEnabled(false);
+            pathTextBox->setPalette(red_pal);
+            QRect rect(pos().x(), pos().y(), 150, 70);
+            QToolTip::showText(pathTextBox->mapToGlobal(pathTextBox->pos()),
+                               "The directory does not exist",
+                               pathTextBox, rect, 4000);
+            return;
+        }
+
+        pathTextBox->setPalette(def_pal);
+        createButton->setEnabled(true);
+        return;
+    }
+}
 
 
 
