@@ -1,8 +1,11 @@
 #include "newelementwindow.h"
 
 
-NewElementWindow::NewElementWindow(QString type, QWidget *parent) : QMainWindow(parent)
+NewElementWindow::NewElementWindow(QString type, ListElement* res, QWidget *parent) : QMainWindow(parent)
 {
+    //
+    result = res;
+
     //INit main
     mainWidget = new QWidget(this);
     setCentralWidget(mainWidget);
@@ -60,7 +63,17 @@ NewElementWindow::NewElementWindow(QString type, QWidget *parent) : QMainWindow(
 
     createButton = new QPushButton("Create", mainWidget);
     createButton->setEnabled(false);
+    connect(createButton, &QPushButton::clicked, this, &NewElementWindow::createButtonClicked);
     buttonsLayout->addWidget(createButton);
+
+
+    //INit error palette
+    red_pal.setColor(QPalette::Background, QColor::fromRgb(255, 0, 0));
+    red_pal.setColor(QPalette::Text, QColor::fromRgb(255, 0, 0));
+
+    //INit default palette
+    def_pal.setColor(QPalette::Background, QColor::fromRgb(0, 100, 255));
+    def_pal.setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
 
 
     //Init dangerous symbols array
@@ -74,8 +87,16 @@ NewElementWindow::NewElementWindow(QString type, QWidget *parent) : QMainWindow(
     dangerous_symbols[7] = '|';
     dangerous_symbols[8] = '?';
     dangerous_symbols[9] = '*';
+
+    QApplication::setActiveWindow(this);
 }
 
+
+void NewElementWindow::createButtonClicked()
+{
+    result->setCreated(true);
+    close();
+}
 
 void NewElementWindow::typeComboBox_ItemChanged()
 {
@@ -173,16 +194,6 @@ void NewElementWindow::typeComboBox_ItemChanged()
 
 void NewElementWindow::checkTextBox()
 {
-    //Palette for errors
-    QPalette red_pal;
-    red_pal.setColor(QPalette::Background, QColor::fromRgb(255, 0, 0));
-    red_pal.setColor(QPalette::Text, QColor::fromRgb(255, 0, 0));
-
-    //Standart palette
-    QPalette def_pal;
-    def_pal.setColor(QPalette::Background, QColor::fromRgb(0, 100, 255));
-    def_pal.setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
-
     if(typeComboBox->currentText() == "Replace")
     {
         //At least the replacedTextBox must have a value
@@ -200,6 +211,8 @@ void NewElementWindow::checkTextBox()
         {
             createButton->setEnabled(true);
             replacedTextBox->setPalette(def_pal);
+            writeDataToResult();
+            return;
         }
     }
     else if(typeComboBox->currentText() == "Remove")
@@ -247,13 +260,16 @@ void NewElementWindow::checkTextBox()
         }
         if(from_ok && to_ok)
         {
-             createButton->setEnabled(true);
+            createButton->setEnabled(true);
+            writeDataToResult();
             return;
         }
-        createButton->setEnabled(false);
+
         QRect rect(0,0,0,0);
         QToolTip::showText(fromTextBox->mapToGlobal(fromTextBox->pos()),
                            "The range is wrong", fromTextBox, rect, 4000);
+        createButton->setEnabled(false);
+        return;
     }
     else if(typeComboBox->currentText() == "Add")
     {
@@ -277,6 +293,7 @@ void NewElementWindow::checkTextBox()
                 {
                     toTextBox->setPalette(def_pal);
                     createButton->setEnabled(true);
+                    writeDataToResult();
                     return;
                 }
                 else
@@ -302,6 +319,7 @@ void NewElementWindow::checkTextBox()
                            toTextBox, rect, 4000);
 
         createButton->setEnabled(false);
+        return;
     }
     else if(typeComboBox->currentText() == "MakeList")
     {
@@ -319,6 +337,7 @@ void NewElementWindow::checkTextBox()
         }
         addTextBox->setPalette(def_pal);
         createButton->setEnabled(true);
+        writeDataToResult();
         return;
     }
     else if(typeComboBox->currentText() == "Directory")
@@ -337,13 +356,42 @@ void NewElementWindow::checkTextBox()
 
         pathTextBox->setPalette(def_pal);
         createButton->setEnabled(true);
+        writeDataToResult();
         return;
     }
 }
 
+void NewElementWindow::writeDataToResult()
+{
+    result->setName(typeComboBox->currentText());
 
-
-
+    if(typeComboBox->currentText() == "Replace")
+    {
+        result->setDescription("Replace " + replacedTextBox->toPlainText()
+                                    + " " + replaceWithTextBox->toPlainText());
+    }
+    else if(typeComboBox->currentText() == "Remove")
+    {
+        result->setDescription("Remove " + removeTextBox->toPlainText()
+                                   + " " + fromTextBox->toPlainText()
+                                   + " " + toTextBox->toPlainText());
+    }
+    else if(typeComboBox->currentText() == "Add")
+    {
+        result->setDescription("Add " + addTextBox->toPlainText()
+                               + " " + toTextBox->toPlainText());
+    }
+    else if(typeComboBox->currentText() == "MakeList")
+    {
+        result->setDescription("MakeList " + positionComboBox->currentText()
+                               + " " + listType_ComboBox->currentText()
+                               +  addTextBox->toPlainText() + " as separator");
+    }
+    else if(typeComboBox->currentText() == "Directory")
+    {
+        result->setDescription(pathTextBox->toPlainText());
+    }
+}
 
 
 

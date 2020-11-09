@@ -5,6 +5,7 @@
 #include <QHBoxLayout>
 #include <QDir>
 #include <QLabel>
+#include <QApplication>
 #include <QComboBox>
 #include <QPushButton>
 #include <QString>
@@ -19,12 +20,16 @@ class NewElementWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit NewElementWindow(QString type, QWidget *parent = nullptr);
+    explicit NewElementWindow(QString type, ListElement* res, QWidget *parent = nullptr);
+    ~NewElementWindow(){}
 
+    bool openWindow();
 private:
-        void typeComboBox_ItemChanged();
-        void checkTextBox();
-        void createButtonClicked();
+    void typeComboBox_ItemChanged();
+    void checkTextBox();
+    void createButtonClicked();
+    void writeDataToResult();
+
 
     QWidget* mainWidget;
     QVBoxLayout* mainLayout;
@@ -58,7 +63,13 @@ private:
 
 
     //Other fields
+
+    ListElement* result;
+    bool was_created = false;
+
     char* dangerous_symbols;
+    QPalette def_pal;
+    QPalette red_pal;
 
 signals:
 

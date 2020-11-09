@@ -54,6 +54,15 @@ bool ListElement::isClosable()
     return is_closable;
 }
 
+bool ListElement::wasCreated()
+{
+    return was_created;
+}
+
+
+
+
+
 void ListElement::setName(QString name)
 {
     *(this->name) = name;
@@ -77,4 +86,9 @@ void ListElement::setDescription(QString desc)
 void ListElement::setClosable(bool val)
 {
     is_closable = val;
+}
+
+void ListElement::setCreated(bool val)
+{
+    was_created = val;
 }
