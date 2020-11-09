@@ -24,6 +24,7 @@ public:
 private:
         void typeComboBox_ItemChanged();
         void checkTextBox();
+        void createButtonClicked();
 
     QWidget* mainWidget;
     QVBoxLayout* mainLayout;

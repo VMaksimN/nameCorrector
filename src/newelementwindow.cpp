@@ -79,9 +79,20 @@ NewElementWindow::NewElementWindow(QString type, QWidget *parent) : QMainWindow(
 
 void NewElementWindow::typeComboBox_ItemChanged()
 {
+    //Delete old GUI
+    int cc = mainWidget->children().count();
+    int rc = ruleLayout->count();
+
+    for(int i = cc - 1; i > cc - rc; i--)
+    {
+        delete mainWidget->children().at(i);
+    }
+    ruleLabel->setText("");
+
     createButton->setEnabled(false);
     ruleLabel->setText(typeComboBox->currentText());
 
+    //Create new GUI
     if(typeComboBox->currentText() == "Directory")
     {
         pathTextBox = new QTextEdit();
@@ -158,15 +169,6 @@ void NewElementWindow::typeComboBox_ItemChanged()
 
         return;
     }
-
-    int cc = mainWidget->children().count();
-    int rc = ruleLayout->count();
-
-    for(int i = cc - 1; i > cc - rc; i--)
-    {
-        delete mainWidget->children().at(i);
-    }
-    ruleLabel->setText("");
 }
 
 void NewElementWindow::checkTextBox()
@@ -271,7 +273,7 @@ void NewElementWindow::checkTextBox()
             else
             {
                 QString text = addTextBox->toPlainText();
-                if(text.isNull() && !text.isEmpty())
+                if(!text.isNull() && !text.isEmpty())
                 {
                     toTextBox->setPalette(def_pal);
                     createButton->setEnabled(true);
@@ -283,6 +285,8 @@ void NewElementWindow::checkTextBox()
                     QToolTip::showText(addTextBox->mapToGlobal(addTextBox->pos()),
                                        "This textbox must not be empty",
                                        addTextBox, rect, 4000);
+                    addTextBox->setPalette(red_pal);
+                    createButton->setEnabled(false);
                     return;
                 }
             }
