@@ -21,14 +21,12 @@ public:
     QString getDescription();
     bool isClosable();
     QString getType();
-    bool wasCreated();
 
     void setName(QString name);
     void setEnabled(bool val);
     void setEditable(bool val);
     void setDescription(QString desc);
     void setClosable(bool val);
-    void setCreated(bool val);
 
 private:
     int id;
@@ -39,7 +37,6 @@ private:
     QString* description = new QString();
     bool is_closable;
     QString type;
-    bool was_created = false;
 signals:
 
 };

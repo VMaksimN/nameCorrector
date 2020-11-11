@@ -7,7 +7,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    ListWindow lw("Rules");
+    QList<ListElement>* source = new QList<ListElement>();
+    ListWindow lw(source, "Rules");
     lw.show();
 
     /*ListElement* lel = new ListElement();

@@ -1,12 +1,5 @@
 #include "listwindow.h"
 
-ListWindow::ListWindow(QString title, QWidget* parent) : QMainWindow(parent)
-{
-    setWindowTitle(title);
-    this->source = new QList<ListElement>();
-    init();
-}
-
 ListWindow::ListWindow(QList<ListElement>* source, QString title, QWidget* parent) : QMainWindow(parent)
 {
     setWindowTitle(title);
@@ -58,6 +51,7 @@ void ListWindow::init()
     mainGrid->addWidget(clearListButton, 2, 0, 1, 1);
 
     addButton = new QPushButton("Add", mainWidget);
+    connect(addButton, &QPushButton::clicked, this, &ListWindow::addButtonClicked);
     mainGrid->addWidget(addButton, 2, 1, 2, 1);
 
     selectedElements = new QList<ListElement_GUI*>();
@@ -103,8 +97,14 @@ void ListWindow::enableSelected_ButtonClicked()
     }
 }
 
-
-
+void ListWindow::addButtonClicked()
+{
+    ListElement* new_el = new ListElement();
+    NewElementWindow* nelw = new NewElementWindow("rules", new_el);
+    connect(nelw, &NewElementWindow::elementWasCreated, this, &ListWindow::elementWasCreated);
+    QApplication::setActiveWindow(nelw);
+    nelw->show();
+}
 
 void ListWindow::elementSelectedStateChanged(bool state)
 {
@@ -114,4 +114,11 @@ void ListWindow::elementSelectedStateChanged(bool state)
         return;
     }
     selectedElements->removeOne((ListElement_GUI*)sender());
+}
+
+
+void ListWindow::elementWasCreated()
+{
+    ListElement* a = ((NewElementWindow*)sender())->getResult();
+    a->getDescription();
 }

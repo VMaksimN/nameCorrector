@@ -5,11 +5,11 @@
 #include <QScrollArea>
 #include <QGridLayout>
 #include "listelement_gui.h"
+#include "newelementwindow.h"
 class ListWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit ListWindow(QString title, QWidget *parent = nullptr);
     ListWindow(ListWindow&){}
     explicit ListWindow(QList<ListElement>* source, QString title, QWidget *parent = nullptr);
 private:
@@ -20,6 +20,8 @@ private:
     void enableSelected_ButtonClicked();
     void removeSelected_ButtonClicked();
     void elementSelectedStateChanged(bool state);
+    void addButtonClicked();
+    void elementWasCreated();
 
     QWidget* mainWidget;
     QGridLayout* mainGrid;

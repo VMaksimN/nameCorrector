@@ -56,6 +56,7 @@ NewElementWindow::NewElementWindow(QString type, ListElement* res, QWidget *pare
     mainLayout->addLayout(buttonsLayout);
 
     cancelButton = new QPushButton("Cancel", mainWidget);
+    connect(cancelButton, &QPushButton::clicked, this, &NewElementWindow::cancelButtonClicked);
     buttonsLayout->addWidget(cancelButton);
 
     clearButton = new QPushButton("Clear", mainWidget);
@@ -87,14 +88,17 @@ NewElementWindow::NewElementWindow(QString type, ListElement* res, QWidget *pare
     dangerous_symbols[7] = '|';
     dangerous_symbols[8] = '?';
     dangerous_symbols[9] = '*';
-
-    QApplication::setActiveWindow(this);
 }
 
 
 void NewElementWindow::createButtonClicked()
 {
-    result->setCreated(true);
+    elementWasCreated();
+    close();
+}
+
+void NewElementWindow::cancelButtonClicked()
+{
     close();
 }
 
@@ -393,7 +397,10 @@ void NewElementWindow::writeDataToResult()
     }
 }
 
-
+ListElement* NewElementWindow::getResult()
+{
+    return result;
+}
 
 
 

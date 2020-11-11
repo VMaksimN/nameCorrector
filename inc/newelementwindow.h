@@ -23,11 +23,12 @@ public:
     explicit NewElementWindow(QString type, ListElement* res, QWidget *parent = nullptr);
     ~NewElementWindow(){}
 
-    bool openWindow();
+    ListElement* getResult();
 private:
     void typeComboBox_ItemChanged();
     void checkTextBox();
     void createButtonClicked();
+    void cancelButtonClicked();
     void writeDataToResult();
 
 
@@ -72,7 +73,7 @@ private:
     QPalette red_pal;
 
 signals:
-
+    void elementWasCreated();
 };
 
 #endif // NEWELEMENTWINDOW_H
