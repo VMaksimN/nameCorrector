@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    QList<ListElement>* source = new QList<ListElement>();
+    ConnectableList* source = new ConnectableList();
     ListWindow lw(source, "Rules");
     lw.show();
 

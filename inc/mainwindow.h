@@ -28,6 +28,7 @@
 #include <QQueue>
 #include <QScrollArea>
 #include "listwindow.h"
+#include "connectablelist.h"
 enum LogStatus
 {
     Info,
@@ -110,7 +111,7 @@ private:
 
     //Other fields
     int rulesNumber = 0;
-    QList<ListElement> rules;
+    ConnectableList rules;
 
     QList<QPair<QString, QStringList>*> oldFileNames;
     QList<QPair<QString, QStringList>*> oldDirNames;
@@ -118,7 +119,7 @@ private:
     QList<QPair<QString, QStringList>*> newFileNames;
     QList<QPair<QString, QStringList>*> newDirNames;
 
-    QList<ListElement> directoriesList;
+    ConnectableList directoriesList;
 
     QString currentPath;
     char last_char = 'A';

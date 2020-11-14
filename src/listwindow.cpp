@@ -1,9 +1,11 @@
 #include "listwindow.h"
 
-ListWindow::ListWindow(QList<ListElement>* source, QString title, QWidget* parent) : QMainWindow(parent)
+ListWindow::ListWindow(ConnectableList* source, QString title, QWidget* parent) : QMainWindow(parent)
 {
     setWindowTitle(title);
     this->source = source;
+    connect(this->source, &ConnectableList::elementWasAdded,
+            this, &ListWindow::addGUIElement);
     init();
 }
 
@@ -120,5 +122,33 @@ void ListWindow::elementSelectedStateChanged(bool state)
 void ListWindow::elementWasCreated()
 {
     ListElement* a = ((NewElementWindow*)sender())->getResult();
-    a->getDescription();
+    source->push_back(a);
 }
+
+void ListWindow::addGUIElement()
+{
+    ListElement_GUI* leg = new ListElement_GUI(source->last(), listWidget);
+    listLayout->addWidget(leg);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

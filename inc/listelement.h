@@ -37,6 +37,7 @@ private:
     QString* description = new QString();
     bool is_closable;
     QString type;
+
 signals:
 
 };

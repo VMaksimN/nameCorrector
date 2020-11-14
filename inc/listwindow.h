@@ -6,12 +6,13 @@
 #include <QGridLayout>
 #include "listelement_gui.h"
 #include "newelementwindow.h"
+#include "connectablelist.h"
 class ListWindow : public QMainWindow
 {
     Q_OBJECT
 public:
     ListWindow(ListWindow&){}
-    explicit ListWindow(QList<ListElement>* source, QString title, QWidget *parent = nullptr);
+    explicit ListWindow(ConnectableList* source, QString title, QWidget *parent = nullptr);
 private:
 
     void init();
@@ -22,6 +23,7 @@ private:
     void elementSelectedStateChanged(bool state);
     void addButtonClicked();
     void elementWasCreated();
+    void addGUIElement();
 
     QWidget* mainWidget;
     QGridLayout* mainGrid;
@@ -35,7 +37,7 @@ private:
     QPushButton* clearListButton;
     QPushButton* addButton;
 
-    QList<ListElement>* source;
+    ConnectableList* source;
 
     QList<ListElement_GUI*>* selectedElements;
 

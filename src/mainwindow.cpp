@@ -392,3 +392,19 @@ void MainWindow::renameDirs(QString path, QStringList* old_names, QStringList* n
                " has not been renamed the " + new_names->at(i), LogStatus::Failed);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
