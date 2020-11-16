@@ -20,7 +20,7 @@ class NewElementWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit NewElementWindow(QString type, ListElement* res, QWidget *parent = nullptr);
+    explicit NewElementWindow(QString type, QWidget *parent = nullptr);
     ~NewElementWindow(){}
 
     ListElement* getResult();

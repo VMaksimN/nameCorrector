@@ -7,16 +7,16 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    ConnectableList* source = new ConnectableList();
+    /*ConnectableList* source = new ConnectableList();
     ListWindow lw(source, "Rules");
-    lw.show();
+    lw.show();*/
 
     /*ListElement* lel = new ListElement();
     NewElementWindow nelw("rules", lel);
     nelw.show();*/
 
 
-    /*MainWindow w;
-    w.show();*/
+    MainWindow w;
+    w.show();
     return a.exec();
 }

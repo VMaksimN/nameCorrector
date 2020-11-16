@@ -11,30 +11,28 @@ class ListElement : QObject
 public:
     explicit ListElement();
     ListElement(ListElement&);
-    explicit ListElement(QString name, QString desc = "", QString type = "rule", bool is_editable = false, bool is_closable = true);
+    explicit ListElement(QString name, QString info = "", QString type = "rule", bool is_editable = false, bool is_closable = true);
 
     int getId();
     QString getName();
     bool isEnabled();
-    QList<QPair<QString, QString>>* getData();
     bool isEditable();
-    QString getDescription();
+    QString getInfo();
     bool isClosable();
     QString getType();
 
     void setName(QString name);
     void setEnabled(bool val);
     void setEditable(bool val);
-    void setDescription(QString desc);
+    void setInfo(QString info);
     void setClosable(bool val);
 
 private:
     int id;
     QString* name = new QString();
     bool* is_enabled = new bool();
-    QList<QPair<QString, QString>>* data;
     bool is_editable;
-    QString* description = new QString();
+    QString* info = new QString();
     bool is_closable;
     QString type;
 

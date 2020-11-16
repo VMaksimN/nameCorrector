@@ -20,6 +20,8 @@ public:
     void pop_back();
     ListElement* last();
     int count();
+    ListElement* at(int i);
+    void clear();
 private:
 
     QList<ListElement*>* list;

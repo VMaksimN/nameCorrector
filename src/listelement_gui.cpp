@@ -17,7 +17,7 @@ ListElement_GUI::ListElement_GUI(ListElement* source, QWidget *parent) : QPushBu
     title->setMargin(5);
     mainStack->addWidget(title);
 
-    info = new QLabel(source->getDescription(), this);
+    info = new QLabel(source->getInfo(), this);
     mainStack->addWidget(info);
 
     enableCheckBox = new QCheckBox("Enabled", this);

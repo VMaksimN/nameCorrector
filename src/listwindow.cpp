@@ -27,6 +27,7 @@ void ListWindow::init()
     mainGrid->addWidget(scrollArea, 0, 0, 1, 3, Qt::AlignTop);
 
     listLayout = new QVBoxLayout(listWidget);
+    listLayout->setAlignment(Qt::AlignTop);
 
     for(int i = 0; i < 10; i++)
     {
@@ -101,8 +102,7 @@ void ListWindow::enableSelected_ButtonClicked()
 
 void ListWindow::addButtonClicked()
 {
-    ListElement* new_el = new ListElement();
-    NewElementWindow* nelw = new NewElementWindow("rules", new_el);
+    NewElementWindow* nelw = new NewElementWindow(windowTitle());
     connect(nelw, &NewElementWindow::elementWasCreated, this, &ListWindow::elementWasCreated);
     QApplication::setActiveWindow(nelw);
     nelw->show();
@@ -125,9 +125,10 @@ void ListWindow::elementWasCreated()
     source->push_back(a);
 }
 
-void ListWindow::addGUIElement()
+void ListWindow::addGUIElement(int i)
 {
-    ListElement_GUI* leg = new ListElement_GUI(source->last(), listWidget);
+    ListElement_GUI* leg = new ListElement_GUI(source->at(i), listWidget);
+    connect(leg, &ListElement_GUI::selectedStateChanged, this, &ListWindow::elementSelectedStateChanged);
     listLayout->addWidget(leg);
 }
 

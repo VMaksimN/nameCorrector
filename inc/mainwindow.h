@@ -48,6 +48,18 @@ public:
     //GUI methods
     void logOut(QString log, LogStatus st);
     void clearLog();
+    void winButtonClicked();
+    void addDirectoryButton_Clicked();
+    void addRuleButton_Clicked();
+    void clearDirListButton_Clicked();
+    void clearRuleListButton_Clicked();
+
+
+    void addRule();
+    void addDir();
+    void addRule_GUI(int i);
+    void addDir_GUI(int i);
+    void elementSelectedStateChanged(bool state);
 
     //Functional methods
     QString correctName(QString old_name);
@@ -79,13 +91,14 @@ private:
     QPushButton* showDirWindow_Button;
     QWidget* dirBox;
     QVBoxLayout* dirLayout;
+    QScrollArea* dirScrollArea;
 
     QPushButton* addRuleButton;
     QPushButton* clearRuleList_Button;
     QPushButton* showRuleWindow_Button;
     QWidget* ruleBox;
     QVBoxLayout* ruleLayout;
-    QScrollArea* area;
+    QScrollArea* ruleScrollArea;
 
     QTextEdit* logBlock;
     QPushButton* clearLogButton;
@@ -112,6 +125,7 @@ private:
     //Other fields
     int rulesNumber = 0;
     ConnectableList rules;
+    QList<ListElement_GUI*>* selectedRules;
 
     QList<QPair<QString, QStringList>*> oldFileNames;
     QList<QPair<QString, QStringList>*> oldDirNames;
@@ -120,6 +134,7 @@ private:
     QList<QPair<QString, QStringList>*> newDirNames;
 
     ConnectableList directoriesList;
+    QList<ListElement_GUI*>* selectedDirs;
 
     QString currentPath;
     char last_char = 'A';

@@ -23,7 +23,7 @@ private:
     void elementSelectedStateChanged(bool state);
     void addButtonClicked();
     void elementWasCreated();
-    void addGUIElement();
+    void addGUIElement(int i);
 
     QWidget* mainWidget;
     QGridLayout* mainGrid;

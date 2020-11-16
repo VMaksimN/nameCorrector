@@ -3,60 +3,74 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    //Init main widgets
+    //INit main widgets
     mainWidget = new QWidget();
     setCentralWidget(mainWidget);
 
     mainGrid = new QGridLayout(mainWidget);
 
-    //Init directories GUI
+
+    //INit directories fields
     addDirectoryButton = new QPushButton("Add", mainWidget);
+    connect(addDirectoryButton, &QPushButton::clicked, this, &MainWindow::addDirectoryButton_Clicked);
     mainGrid->addWidget(addDirectoryButton, 0, 0);
 
     clearDirList_Button = new QPushButton("Clear", mainWidget);
+    connect(clearDirList_Button, &QPushButton::clicked, this, &MainWindow::clearDirListButton_Clicked);
     mainGrid->addWidget(clearDirList_Button, 0, 1);
 
     showDirWindow_Button = new QPushButton("Win", mainWidget);
+    connect(showDirWindow_Button, &QPushButton::clicked, this, &MainWindow::winButtonClicked);
     mainGrid->addWidget(showDirWindow_Button, 0, 2);
 
     dirBox = new QWidget(mainWidget);
-    mainGrid->addWidget(dirBox, 1, 0, 1, 3, Qt::AlignTop);
 
-    dirLayout = new QVBoxLayout(mainWidget);
+    dirScrollArea = new QScrollArea(mainWidget);
+    dirScrollArea->setWidgetResizable(true);
+    dirScrollArea->setWidget(dirBox);
+    dirScrollArea->setMinimumWidth(400);
+    dirScrollArea->setMinimumHeight(250);
+    mainGrid->addWidget(dirScrollArea, 1, 0, 1, 3, Qt::AlignTop);
+
+    dirLayout = new QVBoxLayout(dirBox);
+    dirLayout->setAlignment(Qt::AlignTop);
     dirLayout->addWidget(new QLabel("Directories"));
-    dirBox->setLayout(dirLayout);
+
+    connect(&directoriesList, &ConnectableList::elementWasAdded, this, &MainWindow::addDir_GUI);
+    selectedDirs = new QList<ListElement_GUI*>();
 
 
-    //Init rules GUI
+    //INit rules fields
     addRuleButton = new QPushButton("Add", mainWidget);
+    connect(addRuleButton, &QPushButton::clicked, this, &MainWindow::addRuleButton_Clicked);
     mainGrid->addWidget(addRuleButton, 2, 0);
 
     clearRuleList_Button = new QPushButton("Clear", mainWidget);
+    connect(clearRuleList_Button, &QPushButton::clicked, this, &MainWindow::clearRuleListButton_Clicked);
     mainGrid->addWidget(clearRuleList_Button, 2, 1);
 
     showRuleWindow_Button = new QPushButton("Win", mainWidget);
+    connect(showRuleWindow_Button, &QPushButton::clicked, this, &MainWindow::winButtonClicked);
     mainGrid->addWidget(showRuleWindow_Button, 2, 2);
 
     ruleBox = new QWidget(mainWidget);
 
-    area = new QScrollArea(mainWidget);
-    area->setWidgetResizable(true);
-    area->setWidget(ruleBox);
-    area->setMinimumWidth(400);
-    mainGrid->addWidget(area, 3, 0, 1, 3, Qt::AlignTop);
-
+    ruleScrollArea = new QScrollArea(mainWidget);
+    ruleScrollArea->setWidgetResizable(true);
+    ruleScrollArea->setWidget(ruleBox);
+    ruleScrollArea->setMinimumWidth(400);
+    ruleScrollArea->setMinimumHeight(250);
+    mainGrid->addWidget(ruleScrollArea, 3, 0, 1, 3, Qt::AlignTop);
 
     ruleLayout = new QVBoxLayout(ruleBox);
+    ruleLayout->setAlignment(Qt::AlignTop);
     ruleLayout->addWidget(new QLabel("Rules"));
 
-    for(int i = 0; i < 10; i++)
-    {
-        ListElement* el = new ListElement("QW", "qw", "rule", true);
-        ListElement_GUI* elg = new ListElement_GUI(el, ruleBox);
-        ruleLayout->addWidget(elg);
-    }
+    connect(&rules, &ConnectableList::elementWasAdded, this, &MainWindow::addRule_GUI);
+    selectedRules = new QList<ListElement_GUI*>();
 
-    //Init Log GUI
+
+    //INit Log GUI
     logBlock = new QTextEdit(mainWidget);
     mainGrid->addWidget(logBlock, 0, 3, 3, 3);
     logOut("Reset and full reset", LogStatus::Reset);
@@ -68,14 +82,18 @@ MainWindow::MainWindow(QWidget *parent)
     connect(clearLogButton, &QPushButton::clicked, this, &MainWindow::clearLog);
     mainGrid->addWidget(clearLogButton, 3, 3, 1, 3, Qt::AlignBottom);
 
-    //Init Exceptions GUI
+
+
+    //INit Exceptions GUI
     correctFiles_CheckBox = new QCheckBox("Correct files", mainWidget);
     mainGrid->addWidget(correctFiles_CheckBox, 4, 3);
 
     correctDirs_CheckBox = new QCheckBox("Correct directories", mainWidget);
     mainGrid->addWidget(correctDirs_CheckBox, 4, 4);
 
-    //Init correct, reset and full reset
+
+
+    //INit correct, reset and full reset
     resetButton = new QPushButton("Reset", mainWidget);
     mainGrid->addWidget(resetButton, 5, 3);
 
@@ -124,6 +142,116 @@ void MainWindow::clearLog()
 {
     //No comments
     logBlock->clear();
+}
+
+void MainWindow::winButtonClicked()
+{
+    ListWindow* lw;
+    if(sender() == showDirWindow_Button)
+    {
+        lw = new ListWindow(&directoriesList, "Directories");
+        QApplication::setActiveWindow(lw);
+        lw->show();
+        return;
+    }
+
+    lw = new ListWindow(&rules, "Rules");
+    QApplication::setActiveWindow(lw);
+    lw->show();
+}
+
+void MainWindow::addDirectoryButton_Clicked()
+{
+    NewElementWindow* nelw = new NewElementWindow("Dirs");
+    connect(nelw, &NewElementWindow::elementWasCreated, this, &MainWindow::addDir);
+    QApplication::setActiveWindow(nelw);
+    nelw->show();
+}
+
+void MainWindow::addRuleButton_Clicked()
+{
+    NewElementWindow* nelw = new NewElementWindow("Rules");
+    connect(nelw, &NewElementWindow::elementWasCreated, this, &MainWindow::addRule);
+    QApplication::setActiveWindow(nelw);
+    nelw->show();
+}
+
+void MainWindow::clearDirListButton_Clicked()
+{
+    directoriesList.clear();
+    for(int i = dirLayout->count(); i > -1; i--)
+    {
+        if(dirBox->children().at(i) != (QLayout*)dirLayout &&
+           dirBox->children().at(i) != (QLayout*)dirScrollArea)
+        {
+            delete dirBox->children().at(i);
+        }
+    }
+    selectedDirs = new QList<ListElement_GUI*>();
+
+}
+
+void MainWindow::clearRuleListButton_Clicked()
+{
+    rules.clear();
+    for(int i = ruleLayout->count(); i > -1; i--)
+    {
+        if(ruleBox->children().at(i) != (QLayout*)ruleLayout &&
+           ruleBox->children().at(i) != (QLayout*)ruleScrollArea)
+        {
+            delete ruleBox->children().at(i);
+        }
+    }
+    selectedRules = new QList<ListElement_GUI*>();
+}
+
+
+void MainWindow::addRule()
+{
+    ListElement* a = ((NewElementWindow*)sender())->getResult();
+    rules.push_back(a);
+}
+
+void MainWindow::addDir()
+{
+    ListElement* a = ((NewElementWindow*)sender())->getResult();
+    directoriesList.push_back(a);
+}
+
+void MainWindow::addRule_GUI(int i)
+{
+    ListElement_GUI* leg = new ListElement_GUI(rules.at(i), ruleBox);
+    connect(leg, &ListElement_GUI::selectedStateChanged, this, &MainWindow::elementSelectedStateChanged);
+    ruleLayout->addWidget(leg);
+}
+
+void MainWindow::addDir_GUI(int i)
+{
+    ListElement_GUI* leg = new ListElement_GUI(directoriesList.at(i), dirBox);
+    connect(leg, &ListElement_GUI::selectedStateChanged, this, &MainWindow::elementSelectedStateChanged);
+    dirLayout->addWidget(leg);
+}
+
+void MainWindow::elementSelectedStateChanged(bool state)
+{
+    if(((ListElement_GUI*)sender())->getSource().getType() == "Rules")
+    {
+        if(state)
+        {
+            selectedRules->push_back((ListElement_GUI*)sender());
+            return;
+        }
+        selectedRules->removeOne((ListElement_GUI*)sender());
+        return;
+    }
+
+    if(state)
+    {
+        selectedDirs->push_back((ListElement_GUI*)sender());
+        return;
+    }
+    selectedDirs->removeOne((ListElement_GUI*)sender());
+    return;
 }
 ////////////////////////
 ////////////////////////

@@ -1,19 +1,12 @@
 #include "listelement.h"
 
-ListElement::ListElement() : QObject()
+ListElement::ListElement() : QObject(){}
+ListElement::ListElement(ListElement&){}
+
+ListElement::ListElement(QString name, QString info, QString type, bool is_editable, bool is_closable) : QObject()
 {
-
-}
-
-ListElement::ListElement(ListElement&)
-{
-
-}
-
-ListElement::ListElement(QString name, QString desc, QString type, bool is_editable, bool is_closable) : QObject()
-{
-    *(this->name) = name;
-    *(this->description) = desc;
+    *this->name = name;
+    *this->info = info;
     this->type = type;
     this->is_editable = is_editable;
     this->is_closable = is_closable;
@@ -34,19 +27,14 @@ bool ListElement::isEnabled()
     return is_enabled;
 }
 
-QList<QPair<QString, QString>>* ListElement::getData()
-{
-    return data;
-}
-
 bool ListElement::isEditable()
 {
     return is_editable;
 }
 
-QString ListElement::getDescription()
+QString ListElement::getInfo()
 {
-    return *description;
+    return *info;
 }
 
 bool ListElement::isClosable()
@@ -72,12 +60,17 @@ void ListElement::setEditable(bool val)
     is_editable = val;
 }
 
-void ListElement::setDescription(QString desc)
+void ListElement::setInfo(QString info)
 {
-    *description = desc;
+    *this->info = info;
 }
 
 void ListElement::setClosable(bool val)
 {
     is_closable = val;
+}
+
+QString ListElement::getType()
+{
+    return type;
 }

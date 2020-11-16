@@ -1,6 +1,9 @@
 #include "connectablelist.h"
 
-ConnectableList::ConnectableList(QObject *parent) : QObject(parent){ }
+ConnectableList::ConnectableList(QObject *parent) : QObject(parent)
+{
+    list = new QList<ListElement*>();
+}
 
 
 
@@ -44,3 +47,31 @@ int ConnectableList::count()
 {
     return list->count();
 }
+
+ListElement* ConnectableList::at(int i)
+{
+    return list->at(i);
+}
+
+void ConnectableList::clear()
+{
+    list->clear();
+    listWasCleared();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

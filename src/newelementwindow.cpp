@@ -1,10 +1,10 @@
 #include "newelementwindow.h"
 
 
-NewElementWindow::NewElementWindow(QString type, ListElement* res, QWidget *parent) : QMainWindow(parent)
+NewElementWindow::NewElementWindow(QString type, QWidget *parent) : QMainWindow(parent)
 {
-    //
-    result = res;
+    //INit result
+    result = new ListElement("", "", type);
 
     //INit main
     mainWidget = new QWidget(this);
@@ -22,7 +22,7 @@ NewElementWindow::NewElementWindow(QString type, ListElement* res, QWidget *pare
     typeLayout->addWidget(typeLabel);
 
     typeComboBox = new QComboBox(mainWidget);
-    if(type == "rules")
+    if(type == "Rules")
     {
         typeComboBox->addItem("None");
         typeComboBox->addItem("Replace");
@@ -30,7 +30,7 @@ NewElementWindow::NewElementWindow(QString type, ListElement* res, QWidget *pare
         typeComboBox->addItem("Add");
         typeComboBox->addItem("MakeList");
     }
-    else //type == directory
+    else //type == directories
     {
         typeComboBox->addItem("None");
         typeComboBox->addItem("Directory");
@@ -368,32 +368,31 @@ void NewElementWindow::checkTextBox()
 void NewElementWindow::writeDataToResult()
 {
     result->setName(typeComboBox->currentText());
-
     if(typeComboBox->currentText() == "Replace")
     {
-        result->setDescription("Replace " + replacedTextBox->toPlainText()
+        result->setInfo("Replace " + replacedTextBox->toPlainText()
                                     + " " + replaceWithTextBox->toPlainText());
     }
     else if(typeComboBox->currentText() == "Remove")
     {
-        result->setDescription("Remove " + removeTextBox->toPlainText()
+        result->setInfo("Remove " + removeTextBox->toPlainText()
                                    + " " + fromTextBox->toPlainText()
                                    + " " + toTextBox->toPlainText());
     }
     else if(typeComboBox->currentText() == "Add")
     {
-        result->setDescription("Add " + addTextBox->toPlainText()
+        result->setInfo("Add " + addTextBox->toPlainText()
                                + " " + toTextBox->toPlainText());
     }
     else if(typeComboBox->currentText() == "MakeList")
     {
-        result->setDescription("MakeList " + positionComboBox->currentText()
+        result->setInfo("MakeList " + positionComboBox->currentText()
                                + " " + listType_ComboBox->currentText()
                                +  addTextBox->toPlainText() + " as separator");
     }
     else if(typeComboBox->currentText() == "Directory")
     {
-        result->setDescription(pathTextBox->toPlainText());
+        result->setInfo(pathTextBox->toPlainText());
     }
 }
 
