@@ -98,7 +98,8 @@ void ListElement_GUI::setSelected(bool value)
 
 void ListElement_GUI::removeButton_Clicked()
 {
-    ((QWidget*)parent())->layout()->removeWidget(this);
+    //((QWidget*)parent())->layout()->removeWidget(this);
+    deleted();
     delete this;
 }
 

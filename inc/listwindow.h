@@ -24,6 +24,7 @@ private:
     void addButtonClicked();
     void elementWasCreated();
     void addGUIElement(int i);
+    void elementDeleted();
 
     QWidget* mainWidget;
     QGridLayout* mainGrid;

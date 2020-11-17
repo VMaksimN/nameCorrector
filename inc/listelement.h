@@ -13,6 +13,8 @@ public:
     ListElement(ListElement&);
     explicit ListElement(QString name, QString info = "", QString type = "rule", bool is_editable = false, bool is_closable = true);
 
+    bool operator==(ListElement a);
+
     int getId();
     QString getName();
     bool isEnabled();
@@ -35,6 +37,8 @@ private:
     QString* info = new QString();
     bool is_closable;
     QString type;
+
+    static int id_counter;
 
 signals:
 

@@ -1,16 +1,26 @@
 #include "listelement.h"
 
+int ListElement::id_counter = 0;
+
 ListElement::ListElement() : QObject(){}
 ListElement::ListElement(ListElement&){}
 
 ListElement::ListElement(QString name, QString info, QString type, bool is_editable, bool is_closable) : QObject()
 {
+    id = id_counter;
+    id_counter++;
     *this->name = name;
     *this->info = info;
     this->type = type;
     this->is_editable = is_editable;
     this->is_closable = is_closable;
 }
+
+bool ListElement::operator==(ListElement a)
+{
+    return id == a.getId();
+}
+
 
 int ListElement::getId()
 {

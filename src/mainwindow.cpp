@@ -229,6 +229,7 @@ void MainWindow::addDir_GUI(int i)
 {
     ListElement_GUI* leg = new ListElement_GUI(directoriesList.at(i), dirBox);
     connect(leg, &ListElement_GUI::selectedStateChanged, this, &MainWindow::elementSelectedStateChanged);
+    connect(leg, &ListElement_GUI::deleted, this, &MainWindow::elementDeleted);
     dirLayout->addWidget(leg);
 }
 
@@ -252,6 +253,20 @@ void MainWindow::elementSelectedStateChanged(bool state)
     }
     selectedDirs->removeOne((ListElement_GUI*)sender());
     return;
+}
+
+void ListWindow::elementDeleted()
+{
+    selectedElements->removeOne((ListElement_GUI*)sender());
+
+    int del_id = ((ListElement_GUI*)sender())->getSource().getId();
+    for(int i = 0; i < source->count(); i++)
+    {
+        if(source->at(i)->getId() == del_id)
+        {
+            source->remove(i);
+        }
+    }
 }
 ////////////////////////
 ////////////////////////

@@ -60,6 +60,7 @@ public:
     void addRule_GUI(int i);
     void addDir_GUI(int i);
     void elementSelectedStateChanged(bool state);
+    void elementDeleted();
 
     //Functional methods
     QString correctName(QString old_name);

@@ -129,7 +129,22 @@ void ListWindow::addGUIElement(int i)
 {
     ListElement_GUI* leg = new ListElement_GUI(source->at(i), listWidget);
     connect(leg, &ListElement_GUI::selectedStateChanged, this, &ListWindow::elementSelectedStateChanged);
+    connect(leg, &ListElement_GUI::deleted, this, &ListWindow::elementDeleted);
     listLayout->addWidget(leg);
+}
+
+void ListWindow::elementDeleted()
+{
+    selectedElements->removeOne((ListElement_GUI*)sender());
+
+    int del_id = ((ListElement_GUI*)sender())->getSource().getId();
+    for(int i = 0; i < source->count(); i++)
+    {
+        if(source->at(i)->getId() == del_id)
+        {
+            source->remove(i);
+        }
+    }
 }
 
 
