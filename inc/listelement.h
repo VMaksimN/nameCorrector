@@ -3,6 +3,9 @@
 
 #include<QObject>
 #include<QList>
+#include<QSet>
+#include<QWidget>
+#include<QLayout>
 #include<QPair>
 
 class ListElement : QObject
@@ -29,6 +32,9 @@ public:
     void setInfo(QString info);
     void setClosable(bool val);
 
+    void addGUI(QWidget* gui);
+    void removeGUI();
+
 private:
     int id;
     QString* name = new QString();
@@ -39,6 +45,7 @@ private:
     QString type;
 
     static int id_counter;
+    QSet<QWidget*> connectedGUI;
 
 signals:
 

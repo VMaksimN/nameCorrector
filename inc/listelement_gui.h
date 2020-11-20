@@ -44,9 +44,12 @@ private:
 
     //Other
     ListElement* source;
+
 signals:
     void selectedStateChanged(bool);
     void deleted();
 };
+
+ListElement_GUI empty();
 
 #endif // LISTELEMENT_GUI_H

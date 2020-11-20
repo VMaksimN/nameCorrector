@@ -61,6 +61,7 @@ public:
     void addDir_GUI(int i);
     void elementSelectedStateChanged(bool state);
     void elementDeleted();
+    void removeGUIElement();
 
     //Functional methods
     QString correctName(QString old_name);
@@ -136,6 +137,8 @@ private:
 
     ConnectableList directoriesList;
     QList<ListElement_GUI*>* selectedDirs;
+
+    ListElement_GUI* deletedElement;
 
     QString currentPath;
     char last_char = 'A';

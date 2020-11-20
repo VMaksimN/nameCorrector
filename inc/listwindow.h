@@ -5,6 +5,7 @@
 #include <QScrollArea>
 #include <QGridLayout>
 #include "listelement_gui.h"
+#include <memory>
 #include "newelementwindow.h"
 #include "connectablelist.h"
 class ListWindow : public QMainWindow
@@ -25,6 +26,7 @@ private:
     void elementWasCreated();
     void addGUIElement(int i);
     void elementDeleted();
+    void removeGUIElement();
 
     QWidget* mainWidget;
     QGridLayout* mainGrid;
@@ -41,6 +43,7 @@ private:
     ConnectableList* source;
 
     QList<ListElement_GUI*>* selectedElements;
+    ListElement_GUI* deletedElement;
 
 signals:
 

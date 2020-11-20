@@ -37,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent)
     dirLayout->addWidget(new QLabel("Directories"));
 
     connect(&directoriesList, &ConnectableList::elementWasAdded, this, &MainWindow::addDir_GUI);
+    connect(&directoriesList, &ConnectableList::elementWasRemoved, this, &MainWindow::removeGUIElement);
     selectedDirs = new QList<ListElement_GUI*>();
 
 
@@ -67,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent)
     ruleLayout->addWidget(new QLabel("Rules"));
 
     connect(&rules, &ConnectableList::elementWasAdded, this, &MainWindow::addRule_GUI);
+    connect(&rules, &ConnectableList::elementWasRemoved, this, &MainWindow::removeGUIElement);
     selectedRules = new QList<ListElement_GUI*>();
 
 
@@ -104,7 +106,11 @@ MainWindow::MainWindow(QWidget *parent)
     mainGrid->addWidget(correctButton, 5, 5);
 }
 
-MainWindow::~MainWindow(){}
+MainWindow::~MainWindow()
+{
+    QApplication::allWidgets().clear();
+    QApplication::exit();
+}
 
 
 //////////           ////////
@@ -222,6 +228,7 @@ void MainWindow::addRule_GUI(int i)
 {
     ListElement_GUI* leg = new ListElement_GUI(rules.at(i), ruleBox);
     connect(leg, &ListElement_GUI::selectedStateChanged, this, &MainWindow::elementSelectedStateChanged);
+    connect(leg, &ListElement_GUI::deleted, this, &MainWindow::elementDeleted);
     ruleLayout->addWidget(leg);
 }
 
@@ -255,18 +262,48 @@ void MainWindow::elementSelectedStateChanged(bool state)
     return;
 }
 
-void ListWindow::elementDeleted()
+void MainWindow::elementDeleted()
 {
-    selectedElements->removeOne((ListElement_GUI*)sender());
+    deletedElement = (ListElement_GUI*)sender();
 
-    int del_id = ((ListElement_GUI*)sender())->getSource().getId();
-    for(int i = 0; i < source->count(); i++)
+    if(deletedElement->getSource().getType() == "Rules")
     {
-        if(source->at(i)->getId() == del_id)
+        selectedRules->removeOne(deletedElement);
+
+        int del_id = (deletedElement)->getSource().getId();
+        for(int i = 0; i < rules.count(); i++)
         {
-            source->remove(i);
+            if(rules.at(i)->getId() == del_id)
+            {
+                rules.remove(i);
+                return;
+            }
+        }
+        return;
+    }
+
+    selectedDirs->removeOne(deletedElement);
+
+    int del_id = deletedElement->getSource().getId();
+    for(int i = 0; i < directoriesList.count(); i++)
+    {
+        if(directoriesList.at(i)->getId() == del_id)
+        {
+            directoriesList.remove(i);
+            return;
         }
     }
+}
+
+void MainWindow::removeGUIElement()
+{
+    /*ruleLayout->removeWidget(deletedElement);
+    dirLayout->removeWidget(deletedElement);
+    if(deletedElement != NULL)
+    {
+        delete deletedElement;
+
+    }*/
 }
 ////////////////////////
 ////////////////////////

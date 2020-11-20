@@ -16,14 +16,14 @@ void ConnectableList::insert(ListElement* el, int i)
 void ConnectableList::remove(int i)
 {
     list->removeAt(i);
-    elementWasRemoved(i);
+    elementWasRemoved();
 }
 
 void ConnectableList::remove(ListElement* el)
 {
     int i = list->indexOf(el);
     list->removeAt(i);
-    elementWasRemoved(i);
+    elementWasRemoved();
 }
 
 void ConnectableList::push_back(ListElement* el)

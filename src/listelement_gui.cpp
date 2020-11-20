@@ -5,6 +5,7 @@ ListElement_GUI::ListElement_GUI(ListElement* source, QWidget *parent) : QPushBu
 {
     //INit this
     this->source = source;
+    source->addGUI(this);
     connect(this, &QPushButton::clicked, this, &ListElement_GUI::this_clicked);
 
     //INit layout
@@ -98,9 +99,8 @@ void ListElement_GUI::setSelected(bool value)
 
 void ListElement_GUI::removeButton_Clicked()
 {
-    //((QWidget*)parent())->layout()->removeWidget(this);
     deleted();
-    delete this;
+    source->removeGUI();
 }
 
 void ListElement_GUI::editButton_Clicked()

@@ -28,7 +28,7 @@ private:
 
 signals:
     void elementWasAdded(int i);
-    void elementWasRemoved(int i);
+    void elementWasRemoved();
     void listWasCleared();
 };
 

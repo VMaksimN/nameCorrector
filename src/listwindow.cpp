@@ -6,6 +6,8 @@ ListWindow::ListWindow(ConnectableList* source, QString title, QWidget* parent) 
     this->source = source;
     connect(this->source, &ConnectableList::elementWasAdded,
             this, &ListWindow::addGUIElement);
+    connect(this->source, &ConnectableList::elementWasRemoved,
+            this, &ListWindow::removeGUIElement);
     init();
 }
 
@@ -29,12 +31,12 @@ void ListWindow::init()
     listLayout = new QVBoxLayout(listWidget);
     listLayout->setAlignment(Qt::AlignTop);
 
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < source->count(); i++)
     {
-        ListElement* el = new ListElement("QW", "qw", "rule", true);
-        ListElement_GUI* elg = new ListElement_GUI(el, listWidget);
-        connect(elg, &ListElement_GUI::selectedStateChanged, this, &ListWindow::elementSelectedStateChanged);
-        listLayout->addWidget(elg);
+        ListElement_GUI* leg = new ListElement_GUI(source->at(i), listWidget);
+        connect(leg, &ListElement_GUI::selectedStateChanged, this, &ListWindow::elementSelectedStateChanged);
+        connect(leg, &ListElement_GUI::deleted, this, &ListWindow::elementDeleted);
+        listLayout->addWidget(leg);
     }
 
     removeSelectedButton = new QPushButton("Remove selected", mainWidget);
@@ -135,19 +137,29 @@ void ListWindow::addGUIElement(int i)
 
 void ListWindow::elementDeleted()
 {
-    selectedElements->removeOne((ListElement_GUI*)sender());
+    deletedElement = (ListElement_GUI*)sender();
+    selectedElements->removeOne(deletedElement);
 
-    int del_id = ((ListElement_GUI*)sender())->getSource().getId();
+    int del_id = (deletedElement)->getSource().getId();
     for(int i = 0; i < source->count(); i++)
     {
         if(source->at(i)->getId() == del_id)
         {
             source->remove(i);
+            return;
         }
     }
 }
 
-
+void ListWindow::removeGUIElement()
+{
+    /*listLayout->removeWidget(deletedElement);
+    if(deletedElement != )
+    {
+        delete deletedElement;
+        deletedElement = NULL;
+    }*/
+}
 
 
 

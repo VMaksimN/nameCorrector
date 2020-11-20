@@ -84,3 +84,35 @@ QString ListElement::getType()
 {
     return type;
 }
+
+
+void ListElement::addGUI(QWidget* gui)
+{
+    connectedGUI.insert(gui);
+}
+void ListElement::removeGUI()
+{
+    QWidget* deleted;
+    for(int i = connectedGUI.count() - 1; i > -1; i--)
+    {
+        deleted = *connectedGUI.begin();
+        connectedGUI.remove(deleted);
+        ((QWidget*)deleted->parent())->layout()->removeWidget(deleted);
+        delete deleted;
+    }
+    delete this;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
