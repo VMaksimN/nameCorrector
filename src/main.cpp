@@ -1,7 +1,9 @@
+#include <QApplication>
+
+
 #include "mainwindow.h"
 #include "listwindow.h"
 #include "newelementwindow.h"
-#include <QApplication>
 
 int main(int argc, char *argv[])
 {

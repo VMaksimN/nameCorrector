@@ -56,7 +56,7 @@ NewElementWindow::NewElementWindow(QString type, QWidget *parent) : QMainWindow(
     mainLayout->addLayout(buttonsLayout);
 
     cancelButton = new QPushButton("Cancel", mainWidget);
-    connect(cancelButton, &QPushButton::clicked, this, &NewElementWindow::cancelButtonClicked);
+    connect(cancelButton, &QPushButton::clicked, this, &NewElementWindow::cancelButton_Clicked);
     buttonsLayout->addWidget(cancelButton);
 
     clearButton = new QPushButton("Clear", mainWidget);
@@ -64,7 +64,7 @@ NewElementWindow::NewElementWindow(QString type, QWidget *parent) : QMainWindow(
 
     createButton = new QPushButton("Create", mainWidget);
     createButton->setEnabled(false);
-    connect(createButton, &QPushButton::clicked, this, &NewElementWindow::createButtonClicked);
+    connect(createButton, &QPushButton::clicked, this, &NewElementWindow::createButton_Clicked);
     buttonsLayout->addWidget(createButton);
 
 
@@ -91,14 +91,35 @@ NewElementWindow::NewElementWindow(QString type, QWidget *parent) : QMainWindow(
 }
 
 
-void NewElementWindow::createButtonClicked()
+
+
+/////Get methods
+
+ListElement* NewElementWindow::getResult()
 {
-    elementWasCreated();
+    return result;
+}
+
+//////////////
+//////////////
+//////////////
+
+
+
+
+
+
+
+/////Signals handlers
+
+void NewElementWindow::cancelButton_Clicked()
+{
     close();
 }
 
-void NewElementWindow::cancelButtonClicked()
+void NewElementWindow::createButton_Clicked()
 {
+    elementCreated();
     close();
 }
 
@@ -195,6 +216,18 @@ void NewElementWindow::typeComboBox_ItemChanged()
         return;
     }
 }
+
+//////////////
+//////////////
+//////////////
+
+
+
+
+
+
+
+/////Other methods
 
 void NewElementWindow::checkTextBox()
 {
@@ -395,13 +428,6 @@ void NewElementWindow::writeDataToResult()
         result->setInfo(pathTextBox->toPlainText());
     }
 }
-
-ListElement* NewElementWindow::getResult()
-{
-    return result;
-}
-
-
 
 
 

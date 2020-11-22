@@ -4,30 +4,39 @@
 #include <QMainWindow>
 #include <QScrollArea>
 #include <QGridLayout>
+
+
 #include "listelement_gui.h"
-#include <memory>
 #include "newelementwindow.h"
 #include "connectablelist.h"
+
+
 class ListWindow : public QMainWindow
 {
     Q_OBJECT
 public:
     ListWindow(ListWindow&){}
     explicit ListWindow(ConnectableList* source, QString title, QWidget *parent = nullptr);
+
 private:
 
-    void init();
-    void claerList_ButtonClicked();
-    void disableSelected_ButtonClicked();
-    void enableSelected_ButtonClicked();
-    void removeSelected_ButtonClicked();
-    void elementSelectedStateChanged(bool state);
-    void addButtonClicked();
-    void elementWasCreated();
-    void addGUIElement(int i);
-    void elementDeleted();
-    void removeGUIElement();
+    //Signals handlers
+    void addButton_Clicked();
+    void claerButton_Clicked();
+    void disableSelectedButton_Clicked();
+    void element_Deleted();
+    void element_SelectedStateChanged(bool state);
+    void enableSelectedButton_Clicked();
+    void newElWin_elementCreated();
+    void newElWin_elementDeleted();
+    void removeSelectedButton_Clicked();
+    void source_ElementAdded(int i);
+    void source_ElementRemoved();
 
+    //Other methods
+    void init();
+
+    //GUI fields
     QWidget* mainWidget;
     QGridLayout* mainGrid;
     QWidget* listWidget;
@@ -37,7 +46,7 @@ private:
     QPushButton* removeSelectedButton;
     QPushButton* disableSelectedButton;
     QPushButton* enableSelectedButton;
-    QPushButton* clearListButton;
+    QPushButton* clearButton;
     QPushButton* addButton;
 
     ConnectableList* source;

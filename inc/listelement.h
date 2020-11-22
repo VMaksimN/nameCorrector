@@ -16,36 +16,37 @@ public:
     ListElement(ListElement&);
     explicit ListElement(QString name, QString info = "", QString type = "rule", bool is_editable = false, bool is_closable = true);
 
-    bool operator==(ListElement a);
-
+    //Get-methods
     int getId();
-    QString getName();
-    bool isEnabled();
-    bool isEditable();
     QString getInfo();
-    bool isClosable();
+    QString getName();
     QString getType();
+    bool isClosable();
+    bool isEditable();
+    bool isEnabled();
 
-    void setName(QString name);
-    void setEnabled(bool val);
-    void setEditable(bool val);
-    void setInfo(QString info);
+    //Set-methods
     void setClosable(bool val);
+    void setEditable(bool val);
+    void setEnabled(bool val);
+    void setInfo(QString info);
+    void setName(QString name);
 
+    //Other
     void addGUI(QWidget* gui);
     void removeGUI();
 
 private:
+
+    QSet<QWidget*> connectedGUI;
     int id;
-    QString* name = new QString();
-    bool* is_enabled = new bool();
-    bool is_editable;
+    static int id_counter;
     QString* info = new QString();
     bool is_closable;
+    bool is_editable;
+    bool* is_enabled = new bool();
+    QString* name = new QString();
     QString type;
-
-    static int id_counter;
-    QSet<QWidget*> connectedGUI;
 
 signals:
 

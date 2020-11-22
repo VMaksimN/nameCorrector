@@ -5,42 +5,11 @@ ConnectableList::ConnectableList(QObject *parent) : QObject(parent)
     list = new QList<ListElement*>();
 }
 
+/////Get-methods
 
-
-void ConnectableList::insert(ListElement* el, int i)
+ListElement* ConnectableList::at(int i)
 {
-    list->insert(i, el);
-    elementWasAdded(i);
-}
-
-void ConnectableList::remove(int i)
-{
-    list->removeAt(i);
-    elementWasRemoved();
-}
-
-void ConnectableList::remove(ListElement* el)
-{
-    int i = list->indexOf(el);
-    list->removeAt(i);
-    elementWasRemoved();
-}
-
-void ConnectableList::push_back(ListElement* el)
-{
-    list->push_back(el);
-    elementWasAdded(list->count() - 1);
-}
-
-void ConnectableList::pop_back()
-{
-    list->pop_back();
-    elementWasAdded(list->count());
-}
-
-ListElement* ConnectableList::last()
-{
-    return list->last();
+    return list->at(i);
 }
 
 int ConnectableList::count()
@@ -48,16 +17,56 @@ int ConnectableList::count()
     return list->count();
 }
 
-ListElement* ConnectableList::at(int i)
+ListElement* ConnectableList::last()
 {
-    return list->at(i);
+    return list->last();
 }
+
+//////////////
+//////////////
+//////////////
+
+
+
+/////Other methods
 
 void ConnectableList::clear()
 {
     list->clear();
-    listWasCleared();
+    cleared();
 }
+
+void ConnectableList::insert(ListElement* el, int i)
+{
+    list->insert(i, el);
+    elementAdded(i);
+}
+
+void ConnectableList::pop_back()
+{
+    list->pop_back();
+    elementAdded(list->count());
+}
+
+void ConnectableList::push_back(ListElement* el)
+{
+    list->push_back(el);
+    elementAdded(list->count() - 1);
+}
+
+void ConnectableList::remove(int i)
+{
+    list->removeAt(i);
+    elementRemoved();
+}
+
+void ConnectableList::remove(ListElement* el)
+{
+    int i = list->indexOf(el);
+    list->removeAt(i);
+    elementRemoved();
+}
+
 
 
 

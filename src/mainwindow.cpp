@@ -11,17 +11,17 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     //INit directories fields
-    addDirectoryButton = new QPushButton("Add", mainWidget);
-    connect(addDirectoryButton, &QPushButton::clicked, this, &MainWindow::addDirectoryButton_Clicked);
-    mainGrid->addWidget(addDirectoryButton, 0, 0);
+    addDirButton = new QPushButton("Add", mainWidget);
+    connect(addDirButton, &QPushButton::clicked, this, &MainWindow::addDirButton_Clicked);
+    mainGrid->addWidget(addDirButton, 0, 0);
 
-    clearDirList_Button = new QPushButton("Clear", mainWidget);
-    connect(clearDirList_Button, &QPushButton::clicked, this, &MainWindow::clearDirListButton_Clicked);
-    mainGrid->addWidget(clearDirList_Button, 0, 1);
+    clearDirsButton = new QPushButton("Clear", mainWidget);
+    connect(clearDirsButton, &QPushButton::clicked, this, &MainWindow::clearDirsButton_Clicked);
+    mainGrid->addWidget(clearDirsButton, 0, 1);
 
-    showDirWindow_Button = new QPushButton("Win", mainWidget);
-    connect(showDirWindow_Button, &QPushButton::clicked, this, &MainWindow::winButtonClicked);
-    mainGrid->addWidget(showDirWindow_Button, 0, 2);
+    dirWindowButton = new QPushButton("Win", mainWidget);
+    connect(dirWindowButton, &QPushButton::clicked, this, &MainWindow::winButton_Clicked);
+    mainGrid->addWidget(dirWindowButton, 0, 2);
 
     dirBox = new QWidget(mainWidget);
 
@@ -36,8 +36,8 @@ MainWindow::MainWindow(QWidget *parent)
     dirLayout->setAlignment(Qt::AlignTop);
     dirLayout->addWidget(new QLabel("Directories"));
 
-    connect(&directoriesList, &ConnectableList::elementWasAdded, this, &MainWindow::addDir_GUI);
-    connect(&directoriesList, &ConnectableList::elementWasRemoved, this, &MainWindow::removeGUIElement);
+    connect(&dirList, &ConnectableList::elementAdded, this, &MainWindow::dirList_ElementAdded);
+    //connect(&dirList, &ConnectableList::elementRemoved, this, &MainWindow::ruleDirList_ElementRemoved);
     selectedDirs = new QList<ListElement_GUI*>();
 
 
@@ -46,13 +46,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(addRuleButton, &QPushButton::clicked, this, &MainWindow::addRuleButton_Clicked);
     mainGrid->addWidget(addRuleButton, 2, 0);
 
-    clearRuleList_Button = new QPushButton("Clear", mainWidget);
-    connect(clearRuleList_Button, &QPushButton::clicked, this, &MainWindow::clearRuleListButton_Clicked);
-    mainGrid->addWidget(clearRuleList_Button, 2, 1);
+    clearRulesButton = new QPushButton("Clear", mainWidget);
+    connect(clearRulesButton, &QPushButton::clicked, this, &MainWindow::clearRulesButton_Clicked);
+    mainGrid->addWidget(clearRulesButton, 2, 1);
 
-    showRuleWindow_Button = new QPushButton("Win", mainWidget);
-    connect(showRuleWindow_Button, &QPushButton::clicked, this, &MainWindow::winButtonClicked);
-    mainGrid->addWidget(showRuleWindow_Button, 2, 2);
+    ruleWindowButton = new QPushButton("Win", mainWidget);
+    connect(ruleWindowButton, &QPushButton::clicked, this, &MainWindow::winButton_Clicked);
+    mainGrid->addWidget(ruleWindowButton, 2, 2);
 
     ruleBox = new QWidget(mainWidget);
 
@@ -67,8 +67,8 @@ MainWindow::MainWindow(QWidget *parent)
     ruleLayout->setAlignment(Qt::AlignTop);
     ruleLayout->addWidget(new QLabel("Rules"));
 
-    connect(&rules, &ConnectableList::elementWasAdded, this, &MainWindow::addRule_GUI);
-    connect(&rules, &ConnectableList::elementWasRemoved, this, &MainWindow::removeGUIElement);
+    connect(&ruleList, &ConnectableList::elementAdded, this, &MainWindow::ruleList_ElementAdded);
+    //connect(&ruleList, &ConnectableList::elementRemoved, this, &MainWindow::ruleDirList_ElementRemoved);
     selectedRules = new QList<ListElement_GUI*>();
 
 
@@ -113,63 +113,13 @@ MainWindow::~MainWindow()
 }
 
 
-//////////           ////////
-//////////           ////////
-//////////GUI Methods////////
-//////////           ////////
 
+/////Signals handlers
 
-void MainWindow::logOut(QString log, LogStatus st)
-{
-    //Add a html tag to the log text according the log type
-    if(st == LogStatus::Info)
-    {
-        log.prepend("<p style=\"color:cyan\">");
-    }
-    else if(st == LogStatus::Success)
-    {
-        log.prepend("<p style=\"color:green;\">");
-    }
-    else if(st == LogStatus::Failed)
-    {
-        log.prepend("<p style=\"color: red; font-weight: bold;\">");
-    }
-    else if(st == LogStatus::Reset)
-    {
-        log.prepend("<p style=\"color: purple; font-weight: bold;\">");
-    }
-    //Log it out
-    log.push_back("</p>");
-    logBlock->append(log);
-}
-
-
-void MainWindow::clearLog()
-{
-    //No comments
-    logBlock->clear();
-}
-
-void MainWindow::winButtonClicked()
-{
-    ListWindow* lw;
-    if(sender() == showDirWindow_Button)
-    {
-        lw = new ListWindow(&directoriesList, "Directories");
-        QApplication::setActiveWindow(lw);
-        lw->show();
-        return;
-    }
-
-    lw = new ListWindow(&rules, "Rules");
-    QApplication::setActiveWindow(lw);
-    lw->show();
-}
-
-void MainWindow::addDirectoryButton_Clicked()
+void MainWindow::addDirButton_Clicked()
 {
     NewElementWindow* nelw = new NewElementWindow("Dirs");
-    connect(nelw, &NewElementWindow::elementWasCreated, this, &MainWindow::addDir);
+    connect(nelw, &NewElementWindow::elementCreated, this, &MainWindow::newElWin_DirCreated);
     QApplication::setActiveWindow(nelw);
     nelw->show();
 }
@@ -177,14 +127,14 @@ void MainWindow::addDirectoryButton_Clicked()
 void MainWindow::addRuleButton_Clicked()
 {
     NewElementWindow* nelw = new NewElementWindow("Rules");
-    connect(nelw, &NewElementWindow::elementWasCreated, this, &MainWindow::addRule);
+    connect(nelw, &NewElementWindow::elementCreated, this, &MainWindow::newElWin_RuleCreated);
     QApplication::setActiveWindow(nelw);
     nelw->show();
 }
 
-void MainWindow::clearDirListButton_Clicked()
+void MainWindow::clearDirsButton_Clicked()
 {
-    directoriesList.clear();
+    dirList.clear();
     for(int i = dirLayout->count(); i > -1; i--)
     {
         if(dirBox->children().at(i) != (QLayout*)dirLayout &&
@@ -197,9 +147,9 @@ void MainWindow::clearDirListButton_Clicked()
 
 }
 
-void MainWindow::clearRuleListButton_Clicked()
+void MainWindow::clearRulesButton_Clicked()
 {
-    rules.clear();
+    ruleList.clear();
     for(int i = ruleLayout->count(); i > -1; i--)
     {
         if(ruleBox->children().at(i) != (QLayout*)ruleLayout &&
@@ -211,36 +161,30 @@ void MainWindow::clearRuleListButton_Clicked()
     selectedRules = new QList<ListElement_GUI*>();
 }
 
-
-void MainWindow::addRule()
+void MainWindow::dirList_ElementAdded(int i)
 {
-    ListElement* a = ((NewElementWindow*)sender())->getResult();
-    rules.push_back(a);
-}
-
-void MainWindow::addDir()
-{
-    ListElement* a = ((NewElementWindow*)sender())->getResult();
-    directoriesList.push_back(a);
-}
-
-void MainWindow::addRule_GUI(int i)
-{
-    ListElement_GUI* leg = new ListElement_GUI(rules.at(i), ruleBox);
-    connect(leg, &ListElement_GUI::selectedStateChanged, this, &MainWindow::elementSelectedStateChanged);
-    connect(leg, &ListElement_GUI::deleted, this, &MainWindow::elementDeleted);
-    ruleLayout->addWidget(leg);
-}
-
-void MainWindow::addDir_GUI(int i)
-{
-    ListElement_GUI* leg = new ListElement_GUI(directoriesList.at(i), dirBox);
-    connect(leg, &ListElement_GUI::selectedStateChanged, this, &MainWindow::elementSelectedStateChanged);
-    connect(leg, &ListElement_GUI::deleted, this, &MainWindow::elementDeleted);
+    ListElement_GUI* leg = new ListElement_GUI(dirList.at(i), dirBox);
+    connect(leg, &ListElement_GUI::selectedStateChanged, this, &MainWindow::element_SelectedStateChanged);
+    connect(leg, &ListElement_GUI::deleted, this, &MainWindow::element_Deleted);
     dirLayout->addWidget(leg);
 }
 
-void MainWindow::elementSelectedStateChanged(bool state)
+void MainWindow::element_Deleted()
+{
+    ListElement_GUI* deleted = (ListElement_GUI*)sender();
+
+    if(deleted->getSource().getType() == "Rules")
+    {
+        selectedRules->removeOne(deleted);
+        ruleLayout->removeWidget(deleted);
+        return;
+    }
+
+    selectedDirs->removeOne(deleted);
+    dirLayout->removeWidget(deleted);
+}
+
+void MainWindow::element_SelectedStateChanged(bool state)
 {
     if(((ListElement_GUI*)sender())->getSource().getType() == "Rules")
     {
@@ -262,76 +206,72 @@ void MainWindow::elementSelectedStateChanged(bool state)
     return;
 }
 
-void MainWindow::elementDeleted()
+void MainWindow::newElWin_DirCreated()
 {
-    deletedElement = (ListElement_GUI*)sender();
+    ListElement* a = ((NewElementWindow*)sender())->getResult();
+    dirList.push_back(a);
+}
 
-    if(deletedElement->getSource().getType() == "Rules")
+void MainWindow::newElWin_RuleCreated()
+{
+    ListElement* a = ((NewElementWindow*)sender())->getResult();
+    ruleList.push_back(a);
+}
+
+void MainWindow::ruleList_ElementAdded(int i)
+{
+    ListElement_GUI* leg = new ListElement_GUI(ruleList.at(i), ruleBox);
+    connect(leg, &ListElement_GUI::selectedStateChanged, this, &MainWindow::element_SelectedStateChanged);
+    connect(leg, &ListElement_GUI::deleted, this, &MainWindow::element_Deleted);
+    ruleLayout->addWidget(leg);
+}
+
+void MainWindow::winButton_Clicked()
+{
+    ListWindow* lw;
+    if(sender() == dirWindowButton)
     {
-        selectedRules->removeOne(deletedElement);
-
-        int del_id = (deletedElement)->getSource().getId();
-        for(int i = 0; i < rules.count(); i++)
-        {
-            if(rules.at(i)->getId() == del_id)
-            {
-                rules.remove(i);
-                return;
-            }
-        }
+        lw = new ListWindow(&dirList, "Directories");
+        QApplication::setActiveWindow(lw);
+        lw->show();
         return;
     }
 
-    selectedDirs->removeOne(deletedElement);
-
-    int del_id = deletedElement->getSource().getId();
-    for(int i = 0; i < directoriesList.count(); i++)
-    {
-        if(directoriesList.at(i)->getId() == del_id)
-        {
-            directoriesList.remove(i);
-            return;
-        }
-    }
+    lw = new ListWindow(&ruleList, "Rules");
+    QApplication::setActiveWindow(lw);
+    lw->show();
 }
 
-void MainWindow::removeGUIElement()
+
+////////////////////////
+////////////////////////
+////////////////////////
+////////////////////////
+
+
+
+
+
+/////Other methods
+
+QString MainWindow::addStringTo(QString old, QString* args)
 {
-    /*ruleLayout->removeWidget(deletedElement);
-    dirLayout->removeWidget(deletedElement);
-    if(deletedElement != NULL)
+    if(args[1].toInt() < 0)
     {
-        delete deletedElement;
-
-    }*/
+        return old;
+    }
+    return old.insert(args[1].toInt(), args[0]);
 }
-////////////////////////
-////////////////////////
-////////////////////////
-////////////////////////
 
-
-
-
-
-
-
-
-
-
-
-
-
-//////////           ///////////////
-//////////           ///////////////
-//////////Functional Methods////////
-//////////           ///////////////
-
+void MainWindow::clearLog()
+{
+    logBlock->clear();
+}
 
 QString MainWindow::correctName(QString old_name)
 {
     //correct all names according the rule list
-    for(int i = 0; i < rules.count(); i++)
+    for(int i = 0; i < ruleList.count(); i++)
     {
         /*if(rules[i]->first == "Replace")
         {
@@ -357,13 +297,58 @@ QString MainWindow::correctName(QString old_name)
     return old_name;
 }
 
-////***/////
-///SEE README.md file for more INFORMATION
-QString MainWindow::replace(QString old, QString* args)
+void MainWindow::logOut(QString log, LogStatus st)
 {
-    if(old.length() >= args[0].length())
+    //Add a html tag to the log text according the log type
+    if(st == LogStatus::Info)
     {
-        return old.replace(args[0], args[1]);
+        log.prepend("<p style=\"color:cyan\">");
+    }
+    else if(st == LogStatus::Success)
+    {
+        log.prepend("<p style=\"color:green;\">");
+    }
+    else if(st == LogStatus::Failed)
+    {
+        log.prepend("<p style=\"color: red; font-weight: bold;\">");
+    }
+    else if(st == LogStatus::Reset)
+    {
+        log.prepend("<p style=\"color: purple; font-weight: bold;\">");
+    }
+    //Log it out
+    log.push_back("</p>");
+    logBlock->append(log);
+}
+
+QString MainWindow::makeList(QString old, QString* args)
+{
+    if(args[0] == "numeric")
+    {
+        if(args[1] == "prefix")
+        {
+            old = old.prepend(QString::fromStdString(std::to_string(last_num)) + args[2]);
+        }
+        else
+        {
+            old = old.append(args[2] + QString::fromStdString(std::to_string(last_num)));
+        }
+        last_num++;
+    }
+    else
+    {
+        if(args[1] == "prefix")
+        {
+            old = old.prepend(last_char + args[2]);
+        }
+        else
+        {
+            old = old.append(args[2] + last_char);
+        }
+        if(last_char < 'Z')
+        {
+            last_char++;
+        }
     }
     return old;
 }
@@ -395,43 +380,46 @@ QString MainWindow::removeFromTo(QString old, QString *args)
     return old;
 }
 
-QString MainWindow::addStringTo(QString old, QString* args)
+void MainWindow::renameDirs(QString path, QStringList* old_names, QStringList* new_names)
 {
-    if(args[1].toInt() < 0)
+    //Try to rename the directory and log out the result
+    for(int i = 0; i < old_names->count(); i++)
     {
-        return old;
+        QDir dir(path + "/" + (*old_names)[i]);
+        if(dir.rename(path + "/" + (*old_names)[i],
+                      path + "/" + (*new_names)[i]))
+        {
+            logOut("DIR " + old_names->at(i) +
+                   " has been renamed the " + new_names->at(i), LogStatus::Success);
+            continue;
+        }
+        logOut("DIR " + old_names->at(i) +
+               " has not been renamed the " + new_names->at(i), LogStatus::Failed);
     }
-    return old.insert(args[1].toInt(), args[0]);
 }
 
-QString MainWindow::makeList(QString old, QString* args)
+void MainWindow::renameFiles(QString path, QStringList* old_names, QStringList* new_names)
 {
-    if(args[0] == "numeric")
+    //Try to rename the file and log out the result
+    for(int i = 0; i < old_names->count(); i++)
     {
-        if(args[1] == "prefix")
+        if(QFile::rename(path + "/" + (*old_names)[i],
+                         path + "/" + (*new_names)[i]))
         {
-            old = old.prepend(QString::fromStdString(std::to_string(last_num)) + args[2]);
+            logOut("FILE " + old_names->at(i) +
+                   " has been renamed the " + new_names->at(i), LogStatus::Success);
+            continue;
         }
-        else
-        {
-            old = old.append(args[2] + QString::fromStdString(std::to_string(last_num)));
-        }
-        last_num++;
+        logOut("FILE " + old_names->at(i) +
+               " has not been renamed the " + new_names->at(i), LogStatus::Failed);
     }
-    else
+}
+
+QString MainWindow::replace(QString old, QString* args)
+{
+    if(old.length() >= args[0].length())
     {
-        if(args[1] == "prefix")
-        {
-            old = old.prepend(last_char + args[2]);
-        }
-        else
-        {
-            old = old.append(args[2] + last_char);
-        }
-        if(last_char < 'Z')
-        {
-            last_char++;
-        }
+        return old.replace(args[0], args[1]);
     }
     return old;
 }
@@ -534,44 +522,7 @@ void MainWindow::reset()
     logOut("///////////", LogStatus::Reset);
     logOut(" ", LogStatus::Reset);
 }
-////***/////
 
-
-
-void MainWindow::renameFiles(QString path, QStringList* old_names, QStringList* new_names)
-{
-    //Try to rename the file and log out the result
-    for(int i = 0; i < old_names->count(); i++)
-    {
-        if(QFile::rename(path + "/" + (*old_names)[i],
-                         path + "/" + (*new_names)[i]))
-        {
-            logOut("FILE " + old_names->at(i) +
-                   " has been renamed the " + new_names->at(i), LogStatus::Success);
-            continue;
-        }
-        logOut("FILE " + old_names->at(i) +
-               " has not been renamed the " + new_names->at(i), LogStatus::Failed);
-    }
-}
-
-void MainWindow::renameDirs(QString path, QStringList* old_names, QStringList* new_names)
-{
-    //Try to rename the directory and log out the result
-    for(int i = 0; i < old_names->count(); i++)
-    {
-        QDir dir(path + "/" + (*old_names)[i]);
-        if(dir.rename(path + "/" + (*old_names)[i],
-                      path + "/" + (*new_names)[i]))
-        {
-            logOut("DIR " + old_names->at(i) +
-                   " has been renamed the " + new_names->at(i), LogStatus::Success);
-            continue;
-        }
-        logOut("DIR " + old_names->at(i) +
-               " has not been renamed the " + new_names->at(i), LogStatus::Failed);
-    }
-}
 
 
 

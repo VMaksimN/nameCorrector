@@ -13,7 +13,7 @@ ListElement_GUI::ListElement_GUI(ListElement* source, QWidget *parent) : QPushBu
     mainStack->setMargin(0);
     setLayout(mainStack);
 
-    //INit lables and other gui's
+    //INit lables
     title = new QLabel(source->getName(), this);
     title->setMargin(5);
     mainStack->addWidget(title);
@@ -21,6 +21,7 @@ ListElement_GUI::ListElement_GUI(ListElement* source, QWidget *parent) : QPushBu
     info = new QLabel(source->getInfo(), this);
     mainStack->addWidget(info);
 
+    //INit enableCheckBox
     enableCheckBox = new QCheckBox("Enabled", this);
     if(source->isEnabled())
     {
@@ -33,6 +34,7 @@ ListElement_GUI::ListElement_GUI(ListElement* source, QWidget *parent) : QPushBu
     connect(enableCheckBox, &QCheckBox::stateChanged, this, &ListElement_GUI::enableCheckBox_StateChanged);
     mainStack->addWidget(enableCheckBox);
 
+    //INit buttons
     if(source->isEditable())
     {
         editButton = new QPushButton("Edit", this);
@@ -46,18 +48,26 @@ ListElement_GUI::ListElement_GUI(ListElement* source, QWidget *parent) : QPushBu
         mainStack->addWidget(removeButton);
         connect(removeButton, &QPushButton::clicked, this, &ListElement_GUI::removeButton_Clicked);
     }
+
     is_selected = false;
 
 }
 
-ListElement_GUI::ListElement_GUI(ListElement_GUI&)
-{
+ListElement_GUI::ListElement_GUI(ListElement_GUI&){}
 
+ListElement_GUI::~ListElement_GUI()
+{
+    deleted();
 }
 
-QString ListElement_GUI::getTitle()
+
+
+
+/////Get-methods
+
+QString ListElement_GUI::getInfo()
 {
-    return title->text();
+    return info->text();
 }
 
 ListElement ListElement_GUI::getSource()
@@ -65,24 +75,45 @@ ListElement ListElement_GUI::getSource()
     return *source;
 }
 
-void ListElement_GUI::setTitle(QString text)
+QString ListElement_GUI::getTitle()
 {
-    title->setText(text);
+    return title->text();
 }
 
-void ListElement_GUI::setInfo(QString text)
+bool ListElement_GUI::isEnabled()
 {
-    info->setText(text);
-}
-
-QString ListElement_GUI::getInfo()
-{
-    return info->text();
+    return source->isEnabled();
 }
 
 bool ListElement_GUI::isSelected()
 {
     return is_selected;
+}
+
+//////////////
+//////////////
+//////////////
+
+
+
+
+/////Set-methods
+
+void ListElement_GUI::setEnabled(bool value)
+{
+    source->setEnabled(value);
+
+    if(value)
+    {
+        enableCheckBox->setCheckState(Qt::Checked);
+        return;
+    }
+    enableCheckBox->setCheckState(Qt::Unchecked);
+}
+
+void ListElement_GUI::setInfo(QString text)
+{
+    info->setText(text);
 }
 
 void ListElement_GUI::setSelected(bool value)
@@ -97,11 +128,19 @@ void ListElement_GUI::setSelected(bool value)
     title->setStyleSheet(defaultStyleSheet);
 }
 
-void ListElement_GUI::removeButton_Clicked()
+void ListElement_GUI::setTitle(QString text)
 {
-    deleted();
-    source->removeGUI();
+    title->setText(text);
 }
+
+//////////////
+//////////////
+//////////////
+
+
+
+
+/////Signals handlers
 
 void ListElement_GUI::editButton_Clicked()
 {
@@ -113,21 +152,9 @@ void ListElement_GUI::enableCheckBox_StateChanged()
     source->setEnabled(enableCheckBox->isChecked());
 }
 
-bool ListElement_GUI::isEnabled()
+void ListElement_GUI::removeButton_Clicked()
 {
-    return source->isEnabled();
-}
-
-void ListElement_GUI::setEnabled(bool value)
-{
-    source->setEnabled(value);
-
-    if(value)
-    {
-        enableCheckBox->setCheckState(Qt::Checked);
-        return;
-    }
-    enableCheckBox->setCheckState(Qt::Unchecked);
+    source->removeGUI();
 }
 
 void ListElement_GUI::this_clicked()
@@ -141,3 +168,12 @@ void ListElement_GUI::this_clicked()
     }
     title->setStyleSheet(defaultStyleSheet);
 }
+
+
+
+
+
+
+
+
+

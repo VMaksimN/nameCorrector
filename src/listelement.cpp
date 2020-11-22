@@ -7,39 +7,22 @@ ListElement::ListElement(ListElement&){}
 
 ListElement::ListElement(QString name, QString info, QString type, bool is_editable, bool is_closable) : QObject()
 {
-    id = id_counter;
-    id_counter++;
     *this->name = name;
     *this->info = info;
     this->type = type;
     this->is_editable = is_editable;
     this->is_closable = is_closable;
+
+    id = id_counter;
+    id_counter++;
 }
 
-bool ListElement::operator==(ListElement a)
-{
-    return id == a.getId();
-}
 
+/////Get-methods
 
 int ListElement::getId()
 {
     return id;
-}
-
-QString ListElement::getName()
-{
-    return *name;
-}
-
-bool ListElement::isEnabled()
-{
-    return is_enabled;
-}
-
-bool ListElement::isEditable()
-{
-    return is_editable;
 }
 
 QString ListElement::getInfo()
@@ -47,37 +30,9 @@ QString ListElement::getInfo()
     return *info;
 }
 
-bool ListElement::isClosable()
+QString ListElement::getName()
 {
-    return is_closable;
-}
-
-
-
-
-void ListElement::setName(QString name)
-{
-    *(this->name) = name;
-}
-
-void ListElement::setEnabled(bool val)
-{
-    *is_enabled = val;
-}
-
-void ListElement::setEditable(bool val)
-{
-    is_editable = val;
-}
-
-void ListElement::setInfo(QString info)
-{
-    *this->info = info;
-}
-
-void ListElement::setClosable(bool val)
-{
-    is_closable = val;
+    return *name;
 }
 
 QString ListElement::getType()
@@ -85,19 +40,75 @@ QString ListElement::getType()
     return type;
 }
 
+bool ListElement::isClosable()
+{
+    return is_closable;
+}
 
+bool ListElement::isEditable()
+{
+    return is_editable;
+}
+
+bool ListElement::isEnabled()
+{
+    return is_enabled;
+}
+
+//////////////
+//////////////
+//////////////
+
+
+
+/////Set-methods
+
+void ListElement::setClosable(bool val)
+{
+    is_closable = val;
+}
+
+void ListElement::setEditable(bool val)
+{
+    is_editable = val;
+}
+
+void ListElement::setEnabled(bool val)
+{
+    *is_enabled = val;
+}
+
+void ListElement::setInfo(QString info)
+{
+    *this->info = info;
+}
+
+void ListElement::setName(QString name)
+{
+    *(this->name) = name;
+}
+
+//////////////
+//////////////
+//////////////
+
+
+/////Set-methods
 void ListElement::addGUI(QWidget* gui)
 {
     connectedGUI.insert(gui);
 }
+
 void ListElement::removeGUI()
 {
+    //One of the connected GUI_Elements will be deleted
+    //So, this ListElement must be deleted too
+    //All connected GUI_Elements to this ListElement will be deleted too
     QWidget* deleted;
     for(int i = connectedGUI.count() - 1; i > -1; i--)
     {
         deleted = *connectedGUI.begin();
         connectedGUI.remove(deleted);
-        ((QWidget*)deleted->parent())->layout()->removeWidget(deleted);
         delete deleted;
     }
     delete this;

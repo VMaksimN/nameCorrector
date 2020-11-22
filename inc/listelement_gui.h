@@ -6,50 +6,59 @@
 #include <QLabel>
 #include <QCheckBox>
 #include <QPushButton>
+
+
 #include "listelement.h"
+
+
 class ListElement_GUI : public QPushButton
 {
     Q_OBJECT
 public:
+
     ListElement_GUI(ListElement_GUI&);
     ListElement_GUI(ListElement* source, QWidget *parent);
+    ~ListElement_GUI();
 
-    void removeButton_Clicked();
-    void editButton_Clicked();
-    void enableCheckBox_StateChanged();
-    void this_clicked();
-
-    QString getTitle();
+    //Get-methods
     QString getInfo();
     ListElement getSource();
-    bool isSelected();
+    QString getTitle();
     bool isEnabled();
+    bool isSelected();
 
-    void setTitle(QString text);
+    //Set-methods
+    void setEnabled(bool value);
     void setInfo(QString text);
     void setSelected(bool value);
-    void setEnabled(bool value);
+    void setTitle(QString text);
 
 private:
+
+    //Signals handlers
+    void editButton_Clicked();
+    void enableCheckBox_StateChanged();
+    void removeButton_Clicked();
+    void this_clicked();
+
     //GUI fields
     QHBoxLayout* mainStack;
     QLabel* title;
     QLabel* info;
     QCheckBox* enableCheckBox;
-    QPushButton* removeButton;
     QPushButton* editButton;
-    bool is_selected;
+    QPushButton* removeButton;
+
     const QString defaultStyleSheet = "QLabel {color : white}";
     const QString selectedStyleSheet = "QLabel {color : red}";
 
-    //Other
+    //Other fields
     ListElement* source;
+    bool is_selected;
 
 signals:
     void selectedStateChanged(bool);
     void deleted();
 };
-
-ListElement_GUI empty();
 
 #endif // LISTELEMENT_GUI_H

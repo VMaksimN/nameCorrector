@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QList>
+
 #include "listelement.h"
 
 
@@ -13,23 +14,27 @@ class ConnectableList : public QObject
 public:
     explicit ConnectableList(QObject *parent = nullptr);
 
+    //Get-methods
+    ListElement* at(int i);
+    int count();
+    ListElement* last();
+
+    //Other
+    void clear();
     void insert(ListElement* el, int i);
+    void pop_back();
+    void push_back(ListElement* el);
     void remove(int i);
     void remove(ListElement* el);
-    void push_back(ListElement* el);
-    void pop_back();
-    ListElement* last();
-    int count();
-    ListElement* at(int i);
-    void clear();
 private:
 
+    //Source list
     QList<ListElement*>* list;
 
 signals:
-    void elementWasAdded(int i);
-    void elementWasRemoved();
-    void listWasCleared();
+    void elementAdded(int i);
+    void elementRemoved();
+    void cleared();
 };
 
 #endif // CONNECTABLELIST_H

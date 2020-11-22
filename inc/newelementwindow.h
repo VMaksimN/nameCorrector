@@ -14,6 +14,8 @@
 #include <QToolTip>
 #include <QFile>
 #include <QFileInfo>
+
+
 #include "listelement.h"
 
 class NewElementWindow : public QMainWindow
@@ -23,15 +25,21 @@ public:
     explicit NewElementWindow(QString type, QWidget *parent = nullptr);
     ~NewElementWindow(){}
 
+    //Get method
     ListElement* getResult();
+
 private:
+
+    //Signals handlers
+    void cancelButton_Clicked();
+    void createButton_Clicked();
     void typeComboBox_ItemChanged();
+
+    //Other methods
     void checkTextBox();
-    void createButtonClicked();
-    void cancelButtonClicked();
     void writeDataToResult();
 
-
+    //GUI fields
     QWidget* mainWidget;
     QVBoxLayout* mainLayout;
 
@@ -64,7 +72,6 @@ private:
 
 
     //Other fields
-
     ListElement* result;
     bool was_created = false;
 
@@ -73,7 +80,7 @@ private:
     QPalette red_pal;
 
 signals:
-    void elementWasCreated();
+    void elementCreated();
 };
 
 #endif // NEWELEMENTWINDOW_H

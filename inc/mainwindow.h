@@ -27,8 +27,12 @@
 #include <QVBoxLayout>
 #include <QQueue>
 #include <QScrollArea>
+
+
 #include "listwindow.h"
 #include "connectablelist.h"
+
+
 enum LogStatus
 {
     Info,
@@ -45,59 +49,61 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    //GUI methods
-    void logOut(QString log, LogStatus st);
-    void clearLog();
-    void winButtonClicked();
-    void addDirectoryButton_Clicked();
+private:
+
+    //Signals handlers
+    void addDirButton_Clicked();
     void addRuleButton_Clicked();
-    void clearDirListButton_Clicked();
-    void clearRuleListButton_Clicked();
+    void clearDirsButton_Clicked();
+    void clearRulesButton_Clicked();
+    void dirList_ElementAdded(int i);
+    void element_Deleted();
+    void element_SelectedStateChanged(bool state);
+    void newElWin_DirCreated();
+    void newElWin_RuleCreated();
+    void ruleList_ElementAdded(int i);
+    void winButton_Clicked();
+    //void ruleDirList_ElementRemoved();
 
 
-    void addRule();
-    void addDir();
-    void addRule_GUI(int i);
-    void addDir_GUI(int i);
-    void elementSelectedStateChanged(bool state);
-    void elementDeleted();
-    void removeGUIElement();
-
-    //Functional methods
+    //Other methods
+    QString addStringTo(QString old, QString* args);
+    void clearLog();
     QString correctName(QString old_name);
-    QString replace(QString old, QString* args);
+    void logOut(QString log, LogStatus st);
+    QString makeList(QString old, QString* args);
     QString remove(QString old, QString* args);
     QString removeFromTo(QString old, QString* args);
-    QString addStringTo(QString old, QString* args);
-    QString makeList(QString old, QString* args);
-    void renameFiles(QString path, QStringList* old_names, QStringList* new_names);
     void renameDirs(QString path, QStringList* old_names, QStringList* new_names);
+    void renameFiles(QString path, QStringList* old_names, QStringList* new_names);
+    QString replace(QString old, QString* args);
     void reset();
 
-private:
+
+
 
     //GUI fields
     QWidget* mainWidget;
     QGridLayout* mainGrid;
 
     QMenu* fileMenu;
-    QAction* saveRuleListAction;
-    QAction* loadRuleListAction;
+    QAction* saveRulesAction;
+    QAction* loadRulesAction;
     QAction* quitAction;
 
     QMenu* aboutMenu;
     QAction* aboutAction;
 
-    QPushButton* addDirectoryButton;
-    QPushButton* clearDirList_Button;
-    QPushButton* showDirWindow_Button;
+    QPushButton* addDirButton;
+    QPushButton* clearDirsButton;
+    QPushButton* dirWindowButton;
     QWidget* dirBox;
     QVBoxLayout* dirLayout;
     QScrollArea* dirScrollArea;
 
     QPushButton* addRuleButton;
-    QPushButton* clearRuleList_Button;
-    QPushButton* showRuleWindow_Button;
+    QPushButton* clearRulesButton;
+    QPushButton* ruleWindowButton;
     QWidget* ruleBox;
     QVBoxLayout* ruleLayout;
     QScrollArea* ruleScrollArea;
@@ -125,20 +131,16 @@ private:
 
 
     //Other fields
-    int rulesNumber = 0;
-    ConnectableList rules;
+    ConnectableList ruleList;
     QList<ListElement_GUI*>* selectedRules;
 
     QList<QPair<QString, QStringList>*> oldFileNames;
     QList<QPair<QString, QStringList>*> oldDirNames;
-
     QList<QPair<QString, QStringList>*> newFileNames;
     QList<QPair<QString, QStringList>*> newDirNames;
 
-    ConnectableList directoriesList;
+    ConnectableList dirList;
     QList<ListElement_GUI*>* selectedDirs;
-
-    ListElement_GUI* deletedElement;
 
     QString currentPath;
     char last_char = 'A';
