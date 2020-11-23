@@ -101,9 +101,6 @@ void ListElement::addGUI(QWidget* gui)
 
 void ListElement::removeGUI()
 {
-    //One of the connected GUI_Elements will be deleted
-    //So, this ListElement must be deleted too
-    //All connected GUI_Elements to this ListElement will be deleted too
     QWidget* deleted;
     for(int i = connectedGUI.count() - 1; i > -1; i--)
     {

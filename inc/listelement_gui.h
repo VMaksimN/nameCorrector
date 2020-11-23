@@ -33,12 +33,13 @@ public:
     void setSelected(bool value);
     void setTitle(QString text);
 
+    void removeButton_Clicked();
+
 private:
 
     //Signals handlers
     void editButton_Clicked();
     void enableCheckBox_StateChanged();
-    void removeButton_Clicked();
     void this_clicked();
 
     //GUI fields

@@ -8,6 +8,8 @@ ListWindow::ListWindow(ConnectableList* source, QString title, QWidget* parent) 
             this, &ListWindow::source_ElementAdded);
     /*connect(this->source, &ConnectableList::elementRemoved,
             this, &ListWindow::source_ElementRemoved);*/
+    connect(this->source, &ConnectableList::cleared,
+            this, &ListWindow::claerButton_Clicked);
     init();
 }
 
@@ -84,15 +86,19 @@ void ListWindow::source_ElementAdded(int i)
 
 void ListWindow::claerButton_Clicked()
 {
+    if(source->count() > 0)
+    {
+        source->clear();
+    }
     for(int i = listLayout->count(); i > -1; i--)
     {
         if(listWidget->children().at(i) != (QLayout*)listLayout &&
            listWidget->children().at(i) != (QLayout*)scrollArea)
         {
-            ((ListElement_GUI*)listWidget->children().at(i))->getSource().removeGUI();
+            delete ((ListElement_GUI*)listWidget->children().at(i));
         }
     }
-    selectedElements = new QList<ListElement_GUI*>();
+    selectedElements->clear();
 }
 
 void ListWindow::disableSelectedButton_Clicked()
@@ -121,8 +127,11 @@ void ListWindow::newElWin_elementCreated()
 
 void ListWindow::element_Deleted()
 {
-    selectedElements->removeOne((ListElement_GUI*)sender());
-    listLayout->removeWidget((ListElement_GUI*)sender());
+    ListElement_GUI* deleted = (ListElement_GUI*)sender();
+
+    selectedElements->removeOne(deleted);
+    listLayout->removeWidget(deleted);
+    source->removeById(deleted->getSource().getId());
 }
 
 void ListWindow::enableSelectedButton_Clicked()

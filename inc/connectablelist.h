@@ -24,8 +24,10 @@ public:
     void insert(ListElement* el, int i);
     void pop_back();
     void push_back(ListElement* el);
-    void remove(int i);
     void remove(ListElement* el);
+    void removeAt(int i);
+    void removeById(int id);
+
 private:
 
     //Source list

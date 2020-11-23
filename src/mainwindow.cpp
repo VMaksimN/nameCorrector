@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&dirList, &ConnectableList::elementAdded, this, &MainWindow::dirList_ElementAdded);
     //connect(&dirList, &ConnectableList::elementRemoved, this, &MainWindow::ruleDirList_ElementRemoved);
+    connect(&dirList, &ConnectableList::cleared, this, &MainWindow::clearDirsButton_Clicked);
     selectedDirs = new QList<ListElement_GUI*>();
 
 
@@ -69,6 +70,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&ruleList, &ConnectableList::elementAdded, this, &MainWindow::ruleList_ElementAdded);
     //connect(&ruleList, &ConnectableList::elementRemoved, this, &MainWindow::ruleDirList_ElementRemoved);
+    connect(&ruleList, &ConnectableList::cleared, this, &MainWindow::clearRulesButton_Clicked);
     selectedRules = new QList<ListElement_GUI*>();
 
 
@@ -134,7 +136,10 @@ void MainWindow::addRuleButton_Clicked()
 
 void MainWindow::clearDirsButton_Clicked()
 {
-    dirList.clear();
+    if(dirList.count())
+    {
+        dirList.clear();
+    }
     for(int i = dirLayout->count(); i > -1; i--)
     {
         if(dirBox->children().at(i) != (QLayout*)dirLayout &&
@@ -143,13 +148,15 @@ void MainWindow::clearDirsButton_Clicked()
             delete dirBox->children().at(i);
         }
     }
-    selectedDirs = new QList<ListElement_GUI*>();
-
+    selectedDirs->clear();
 }
 
 void MainWindow::clearRulesButton_Clicked()
 {
-    ruleList.clear();
+    if(ruleList.count() > 0)
+    {
+        ruleList.clear();
+    }
     for(int i = ruleLayout->count(); i > -1; i--)
     {
         if(ruleBox->children().at(i) != (QLayout*)ruleLayout &&
@@ -158,7 +165,7 @@ void MainWindow::clearRulesButton_Clicked()
             delete ruleBox->children().at(i);
         }
     }
-    selectedRules = new QList<ListElement_GUI*>();
+    selectedRules->clear();
 }
 
 void MainWindow::dirList_ElementAdded(int i)
@@ -173,15 +180,19 @@ void MainWindow::element_Deleted()
 {
     ListElement_GUI* deleted = (ListElement_GUI*)sender();
 
-    if(deleted->getSource().getType() == "Rules")
+    QString t = deleted->getSource().getType();
+
+    if(t == "Rules")
     {
         selectedRules->removeOne(deleted);
         ruleLayout->removeWidget(deleted);
+        ruleList.removeById(deleted->getSource().getId());
         return;
     }
 
     selectedDirs->removeOne(deleted);
     dirLayout->removeWidget(deleted);
+    dirList.removeById(deleted->getSource().getId());
 }
 
 void MainWindow::element_SelectedStateChanged(bool state)

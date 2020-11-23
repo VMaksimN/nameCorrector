@@ -54,12 +54,6 @@ void ConnectableList::push_back(ListElement* el)
     elementAdded(list->count() - 1);
 }
 
-void ConnectableList::remove(int i)
-{
-    list->removeAt(i);
-    elementRemoved();
-}
-
 void ConnectableList::remove(ListElement* el)
 {
     int i = list->indexOf(el);
@@ -67,7 +61,24 @@ void ConnectableList::remove(ListElement* el)
     elementRemoved();
 }
 
+void ConnectableList::removeAt(int i)
+{
+    list->removeAt(i);
+    elementRemoved();
+}
 
+void ConnectableList::removeById(int id)
+{
+    for(int i = 0; i < list->count(); i++)
+    {
+        if(list->at(i)->getId() == id)
+        {
+            list->removeAt(i);
+            break;
+        }
+    }
+    elementRemoved();
+}
 
 
 
