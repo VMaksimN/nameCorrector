@@ -8,7 +8,7 @@
 #include<QLayout>
 #include<QPair>
 
-class ListElement : QObject
+class ListElement : public QObject
 {
     Q_OBJECT
 public:
@@ -49,7 +49,7 @@ private:
     QString type;
 
 signals:
-
+    void deleted(int id);
 };
 
 #endif // LISTELEMENT_H

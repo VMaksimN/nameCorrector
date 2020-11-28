@@ -46,7 +46,7 @@ ListElement_GUI::ListElement_GUI(ListElement* source, QWidget *parent) : QPushBu
     {
         removeButton = new QPushButton("Remove", this);
         mainStack->addWidget(removeButton);
-        connect(removeButton, &QPushButton::clicked, this, &ListElement_GUI::removeButton_Clicked);
+        connect(removeButton, &QPushButton::clicked, this, &ListElement_GUI::removeThis);
     }
 
     is_selected = false;
@@ -57,7 +57,11 @@ ListElement_GUI::ListElement_GUI(ListElement_GUI&){}
 
 ListElement_GUI::~ListElement_GUI()
 {
-    deleted();
+    parentLayout->removeWidget(this);
+    for(int i = 0; i < linkedCollections.count(); i++)
+    {
+        linkedCollections.at(i)->removeOne(this);
+    }
 }
 
 
@@ -68,6 +72,11 @@ ListElement_GUI::~ListElement_GUI()
 QString ListElement_GUI::getInfo()
 {
     return info->text();
+}
+
+QLayout* ListElement_GUI::getParentLayout()
+{
+    return parentLayout;
 }
 
 ListElement ListElement_GUI::getSource()
@@ -116,6 +125,11 @@ void ListElement_GUI::setInfo(QString text)
     info->setText(text);
 }
 
+void ListElement_GUI::setParentLayout(QLayout *pl)
+{
+    parentLayout = pl;
+}
+
 void ListElement_GUI::setSelected(bool value)
 {
     is_selected = value;
@@ -138,6 +152,32 @@ void ListElement_GUI::setTitle(QString text)
 //////////////
 
 
+/////Other methdos
+
+void ListElement_GUI::linkCollection(QList<ListElement_GUI*>* col)
+{
+    linkedCollections.push_back(col);
+}
+
+void ListElement_GUI::unlinkAllCollections()
+{
+    linkedCollections.clear();
+}
+
+void ListElement_GUI::unlinkCollection(QList<ListElement_GUI*>* col)
+{
+    linkedCollections.removeOne(col);
+}
+
+void ListElement_GUI::removeThis()
+{
+    source->removeGUI();
+}
+
+//////////////
+//////////////
+//////////////
+
 
 
 /////Signals handlers
@@ -150,11 +190,6 @@ void ListElement_GUI::editButton_Clicked()
 void ListElement_GUI::enableCheckBox_StateChanged()
 {
     source->setEnabled(enableCheckBox->isChecked());
-}
-
-void ListElement_GUI::removeButton_Clicked()
-{
-    source->removeGUI();
 }
 
 void ListElement_GUI::this_clicked()

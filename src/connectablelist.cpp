@@ -40,6 +40,7 @@ void ConnectableList::insert(ListElement* el, int i)
 {
     list->insert(i, el);
     elementAdded(i);
+    connect(el, &ListElement::deleted, this, &ConnectableList::removeById);
 }
 
 void ConnectableList::pop_back()
@@ -52,6 +53,7 @@ void ConnectableList::push_back(ListElement* el)
 {
     list->push_back(el);
     elementAdded(list->count() - 1);
+    connect(el, &ListElement::deleted, this, &ConnectableList::removeById);
 }
 
 void ConnectableList::remove(ListElement* el)

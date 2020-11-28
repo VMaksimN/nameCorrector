@@ -4,11 +4,13 @@
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QLayout>
 #include <QCheckBox>
+#include <QList>
 #include <QPushButton>
 
 
-#include "listelement.h"
+#include "connectablelist.h"
 
 
 class ListElement_GUI : public QPushButton
@@ -22,6 +24,7 @@ public:
 
     //Get-methods
     QString getInfo();
+    QLayout* getParentLayout();
     ListElement getSource();
     QString getTitle();
     bool isEnabled();
@@ -30,11 +33,15 @@ public:
     //Set-methods
     void setEnabled(bool value);
     void setInfo(QString text);
+    void setParentLayout(QLayout* pl);
     void setSelected(bool value);
     void setTitle(QString text);
 
-    void removeButton_Clicked();
-
+    //Other methods
+    void linkCollection(QList<ListElement_GUI*>* col);
+    void unlinkAllCollections();
+    void unlinkCollection(QList<ListElement_GUI*>* col);
+    void removeThis();
 private:
 
     //Signals handlers
@@ -54,6 +61,8 @@ private:
     const QString selectedStyleSheet = "QLabel {color : red}";
 
     //Other fields
+    QList<QList<ListElement_GUI*>*> linkedCollections;
+    QLayout* parentLayout;
     ListElement* source;
     bool is_selected;
 

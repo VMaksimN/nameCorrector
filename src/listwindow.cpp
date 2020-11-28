@@ -38,7 +38,9 @@ void ListWindow::init()
         ListElement_GUI* leg = new ListElement_GUI(source->at(i), listWidget);
         connect(leg, &ListElement_GUI::selectedStateChanged, this, &ListWindow::element_SelectedStateChanged);
         //connect(leg, &ListElement_GUI::deleted, this, &ListWindow::elementDeleted);
+
         listLayout->addWidget(leg);
+        leg->setParentLayout(listLayout);
     }
 
     removeSelectedButton = new QPushButton("Remove selected", mainWidget);
@@ -80,25 +82,27 @@ void ListWindow::source_ElementAdded(int i)
 {
     ListElement_GUI* leg = new ListElement_GUI(source->at(i), listWidget);
     connect(leg, &ListElement_GUI::selectedStateChanged, this, &ListWindow::element_SelectedStateChanged);
-    //connect(leg, &ListElement_GUI::deleted, this, &ListWindow::elementDeleted);
+
     listLayout->addWidget(leg);
+    leg->setParentLayout(listLayout);
 }
 
 void ListWindow::claerButton_Clicked()
 {
-    if(source->count() > 0)
+    /*if(source->count() > 0)
     {
         source->clear();
-    }
+    }*/
     for(int i = listLayout->count(); i > -1; i--)
     {
         if(listWidget->children().at(i) != (QLayout*)listLayout &&
            listWidget->children().at(i) != (QLayout*)scrollArea)
         {
-            delete ((ListElement_GUI*)listWidget->children().at(i));
+            ((ListElement_GUI*)listWidget->children().at(i))->removeThis();
+            //delete ((ListElement_GUI*)listWidget->children().at(i));
         }
     }
-    selectedElements->clear();
+    //selectedElements->clear();
 }
 
 void ListWindow::disableSelectedButton_Clicked()
@@ -111,12 +115,16 @@ void ListWindow::disableSelectedButton_Clicked()
 
 void ListWindow::element_SelectedStateChanged(bool state)
 {
+    ListElement_GUI* leg = (ListElement_GUI*)sender();
     if(state)
     {
-        selectedElements->push_back((ListElement_GUI*)sender());
+        selectedElements->push_back(leg);
+        leg->linkCollection(selectedElements);
         return;
     }
-    selectedElements->removeOne((ListElement_GUI*)sender());
+
+    selectedElements->removeOne(leg);
+    leg->unlinkCollection(selectedElements);
 }
 
 void ListWindow::newElWin_elementCreated()
@@ -127,11 +135,11 @@ void ListWindow::newElWin_elementCreated()
 
 void ListWindow::element_Deleted()
 {
-    ListElement_GUI* deleted = (ListElement_GUI*)sender();
+    /*ListElement_GUI* deleted = (ListElement_GUI*)sender();
 
     selectedElements->removeOne(deleted);
     listLayout->removeWidget(deleted);
-    source->removeById(deleted->getSource().getId());
+    source->removeById(deleted->getSource().getId());*/
 }
 
 void ListWindow::enableSelectedButton_Clicked()
@@ -147,8 +155,9 @@ void ListWindow::removeSelectedButton_Clicked()
     for(int i = selectedElements->count() - 1; i > -1; i--)
     {
         ListElement_GUI* deleted = selectedElements->at(i);
-        selectedElements->removeOne(deleted);
-        delete deleted;
+        deleted->removeThis();
+        /*selectedElements->removeOne(deleted);
+        delete deleted;*/
     }
 }
 

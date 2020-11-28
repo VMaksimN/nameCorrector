@@ -136,36 +136,40 @@ void MainWindow::addRuleButton_Clicked()
 
 void MainWindow::clearDirsButton_Clicked()
 {
-    if(dirList.count())
+    /*if(dirList.count())
     {
         dirList.clear();
-    }
+    }*/
     for(int i = dirLayout->count(); i > -1; i--)
     {
         if(dirBox->children().at(i) != (QLayout*)dirLayout &&
-           dirBox->children().at(i) != (QLayout*)dirScrollArea)
+           dirBox->children().at(i) != (QLayout*)dirScrollArea &&
+           ((QLabel*)dirBox->children().at(i))->text() != "Directories")
         {
-            delete dirBox->children().at(i);
+            ((ListElement_GUI*)dirBox->children().at(i))->removeThis();
+            //delete dirBox->children().at(i);
         }
     }
-    selectedDirs->clear();
+    //selectedDirs->clear();
 }
 
 void MainWindow::clearRulesButton_Clicked()
 {
-    if(ruleList.count() > 0)
+    /*if(ruleList.count() > 0)
     {
         ruleList.clear();
-    }
+    }*/
     for(int i = ruleLayout->count(); i > -1; i--)
     {
         if(ruleBox->children().at(i) != (QLayout*)ruleLayout &&
-           ruleBox->children().at(i) != (QLayout*)ruleScrollArea)
+           ruleBox->children().at(i) != (QLayout*)ruleScrollArea &&
+           ((QLabel*)ruleBox->children().at(i))->text() != "Rules")
         {
-            delete ruleBox->children().at(i);
+            ((ListElement_GUI*)ruleBox->children().at(i))->removeThis();
+            //delete ruleBox->children().at(i);
         }
     }
-    selectedRules->clear();
+    //selectedRules->clear();
 }
 
 void MainWindow::dirList_ElementAdded(int i)
@@ -173,12 +177,14 @@ void MainWindow::dirList_ElementAdded(int i)
     ListElement_GUI* leg = new ListElement_GUI(dirList.at(i), dirBox);
     connect(leg, &ListElement_GUI::selectedStateChanged, this, &MainWindow::element_SelectedStateChanged);
     connect(leg, &ListElement_GUI::deleted, this, &MainWindow::element_Deleted);
+
     dirLayout->addWidget(leg);
+    leg->setParentLayout(dirLayout);
 }
 
 void MainWindow::element_Deleted()
 {
-    ListElement_GUI* deleted = (ListElement_GUI*)sender();
+    /*ListElement_GUI* deleted = (ListElement_GUI*)sender();
 
     QString t = deleted->getSource().getType();
 
@@ -192,28 +198,33 @@ void MainWindow::element_Deleted()
 
     selectedDirs->removeOne(deleted);
     dirLayout->removeWidget(deleted);
-    dirList.removeById(deleted->getSource().getId());
+    dirList.removeById(deleted->getSource().getId());*/
 }
 
 void MainWindow::element_SelectedStateChanged(bool state)
 {
-    if(((ListElement_GUI*)sender())->getSource().getType() == "Rules")
+    ListElement_GUI* leg = (ListElement_GUI*)sender();
+    if(leg->getSource().getType() == "Rules")
     {
         if(state)
         {
-            selectedRules->push_back((ListElement_GUI*)sender());
+            selectedRules->push_back(leg);
+            leg->linkCollection(selectedRules);
             return;
         }
-        selectedRules->removeOne((ListElement_GUI*)sender());
+        selectedRules->removeOne(leg);
+        leg->unlinkCollection(selectedRules);
         return;
     }
 
     if(state)
     {
-        selectedDirs->push_back((ListElement_GUI*)sender());
+        selectedDirs->push_back(leg);
+        leg->linkCollection(selectedDirs);
         return;
     }
-    selectedDirs->removeOne((ListElement_GUI*)sender());
+    selectedDirs->removeOne(leg);
+    leg->unlinkCollection(selectedDirs);
     return;
 }
 
@@ -234,7 +245,9 @@ void MainWindow::ruleList_ElementAdded(int i)
     ListElement_GUI* leg = new ListElement_GUI(ruleList.at(i), ruleBox);
     connect(leg, &ListElement_GUI::selectedStateChanged, this, &MainWindow::element_SelectedStateChanged);
     connect(leg, &ListElement_GUI::deleted, this, &MainWindow::element_Deleted);
+
     ruleLayout->addWidget(leg);
+    leg->setParentLayout(ruleLayout);
 }
 
 void MainWindow::winButton_Clicked()

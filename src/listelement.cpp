@@ -108,6 +108,8 @@ void ListElement::removeGUI()
         connectedGUI.remove(deleted);
         delete deleted;
     }
+
+    this->deleted(id);
     delete this;
 }
 
