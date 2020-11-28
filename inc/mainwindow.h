@@ -56,6 +56,7 @@ private:
     void addRuleButton_Clicked();
     void clearDirsButton_Clicked();
     void clearRulesButton_Clicked();
+    void correctButton_Clicked();
     void dirList_ElementAdded(int i);
     void element_Deleted();
     void element_SelectedStateChanged(bool state);
@@ -67,16 +68,16 @@ private:
 
 
     //Other methods
-    QString addStringTo(QString old, QString* args);
+    QString addStringTo(QString old, QStringList args);
     void clearLog();
     QString correctName(QString old_name);
     void logOut(QString log, LogStatus st);
-    QString makeList(QString old, QString* args);
-    QString remove(QString old, QString* args);
-    QString removeFromTo(QString old, QString* args);
+    QString makeList(QString old, QStringList args);
+    QString remove(QString old, QStringList args);
+    QString removeFromTo(QString old, QStringList args);
     void renameDirs(QString path, QStringList* old_names, QStringList* new_names);
     void renameFiles(QString path, QStringList* old_names, QStringList* new_names);
-    QString replace(QString old, QString* args);
+    QString replace(QString old, QStringList args);
     void reset();
 
 

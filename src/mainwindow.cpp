@@ -99,12 +99,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     //INit correct, reset and full reset
     resetButton = new QPushButton("Reset", mainWidget);
+    connect(resetButton, &QPushButton::clicked, this, &MainWindow::reset);
     mainGrid->addWidget(resetButton, 5, 3);
 
     fullResetButton = new QPushButton("Full reset", mainWidget);
+    connect(fullResetButton, &QPushButton::clicked, this, &MainWindow::reset);
     mainGrid->addWidget(fullResetButton, 5, 4);
 
     correctButton = new QPushButton("Correct names", mainWidget);
+    connect(correctButton, &QPushButton::clicked, this, &MainWindow::correctButton_Clicked);
     mainGrid->addWidget(correctButton, 5, 5);
 }
 
@@ -170,6 +173,49 @@ void MainWindow::clearRulesButton_Clicked()
         }
     }
     //selectedRules->clear();
+}
+
+void MainWindow::correctButton_Clicked()
+{
+    for(int i = 0; i < dirList.count(); i++)
+    {
+        if(dirList.at(i)->isEnabled())
+        {
+            currentPath = dirList.at(i)->getInfo();
+            QDir directory(currentPath);
+
+            //Load files and directories names
+            QStringList file_list = directory.entryList(QDir::Files);
+            QStringList dir_list = directory.entryList(QDir::Dirs);
+
+            //Correct files names
+            if(correctFiles_CheckBox->checkState() == Qt::Checked)
+            {
+                oldFileNames.push_back(new QPair<QString, QStringList>(currentPath, file_list));
+                QStringList corrected_names;
+                for(int i = 0; i < file_list.count(); i++)
+                {
+                    corrected_names.push_back(correctName(file_list.at(i)));
+                }
+                renameFiles(currentPath, &file_list, &corrected_names);
+                newFileNames.push_back(new QPair<QString, QStringList>(currentPath, corrected_names));
+            }
+            //Correct directories if the directory-checkbox was checked
+            if(correctDirs_CheckBox->checkState() == Qt::Checked)
+            {
+                oldDirNames.push_back(new QPair<QString, QStringList>(currentPath, dir_list));
+                QStringList corrected_names;
+                for(int i = 0; i < dir_list.count(); i++)
+                {
+                    corrected_names.push_back(correctName(dir_list.at(i)));
+                }
+                renameDirs(currentPath, &dir_list, &corrected_names);
+                newDirNames.push_back(new QPair<QString, QStringList>(currentPath, corrected_names));
+            }
+        }
+    }
+    resetButton->setEnabled(true);
+    fullResetButton->setEnabled(true);
 }
 
 void MainWindow::dirList_ElementAdded(int i)
@@ -278,7 +324,7 @@ void MainWindow::winButton_Clicked()
 
 /////Other methods
 
-QString MainWindow::addStringTo(QString old, QString* args)
+QString MainWindow::addStringTo(QString old, QStringList args)
 {
     if(args[1].toInt() < 0)
     {
@@ -294,29 +340,38 @@ void MainWindow::clearLog()
 
 QString MainWindow::correctName(QString old_name)
 {
+    QString rule;
+    QStringList options;
     //correct all names according the rule list
     for(int i = 0; i < ruleList.count(); i++)
     {
-        /*if(rules[i]->first == "Replace")
+        if(ruleList.at(i)->isEnabled())
         {
-            old_name = replace(old_name, rules[i]->second);
+            rule = ruleList.at(i)->getInfo().split(" ")[0];
+            options = ruleList.at(i)->getInfo().split(" ");
+            options.removeAt(0);
+
+            if(rule == "Replace")
+            {
+                old_name = replace(old_name, options);
+            }
+            else if(rule == "Remove")
+            {
+                old_name = remove(old_name, options);
+            }
+            else if(rule == "RemoveFromTo")
+            {
+                old_name = removeFromTo(old_name, options);
+            }
+            else if(rule == "AddTo")
+            {
+                old_name = addStringTo(old_name, options);
+            }
+            else if(rule == "MakeList")
+            {
+                old_name = makeList(old_name, options);
+            }
         }
-        else if(rules[i]->first == "Remove")
-        {
-            old_name = remove(old_name, rules[i]->second);
-        }
-        else if(rules[i]->first == "RemoveFromTo")
-        {
-            old_name = removeFromTo(old_name, rules[i]->second);
-        }
-        else if(rules[i]->first == "AddTo")
-        {
-            old_name = addStringTo(old_name, rules[i]->second);
-        }
-        else if(rules[i]->first == "MakeList")
-        {
-            old_name = makeList(old_name, rules[i]->second);
-        }*/
     }
     return old_name;
 }
@@ -345,7 +400,7 @@ void MainWindow::logOut(QString log, LogStatus st)
     logBlock->append(log);
 }
 
-QString MainWindow::makeList(QString old, QString* args)
+QString MainWindow::makeList(QString old, QStringList args)
 {
     if(args[0] == "numeric")
     {
@@ -377,12 +432,12 @@ QString MainWindow::makeList(QString old, QString* args)
     return old;
 }
 
-QString MainWindow::remove(QString old, QString* args)
+QString MainWindow::remove(QString old, QStringList args)
 {
     return old.replace(args[0], "");
 }
 
-QString MainWindow::removeFromTo(QString old, QString *args)
+QString MainWindow::removeFromTo(QString old, QStringList args)
 {
     int first = args[1].toInt();
     int second = args[2].toInt();
@@ -439,7 +494,7 @@ void MainWindow::renameFiles(QString path, QStringList* old_names, QStringList* 
     }
 }
 
-QString MainWindow::replace(QString old, QString* args)
+QString MainWindow::replace(QString old, QStringList args)
 {
     if(old.length() >= args[0].length())
     {
