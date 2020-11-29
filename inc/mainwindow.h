@@ -57,14 +57,16 @@ private:
     void clearDirsButton_Clicked();
     void clearRulesButton_Clicked();
     void correctButton_Clicked();
+    void correctCheckBox_StateChanged();
     void dirList_ElementAdded(int i);
     void element_Deleted();
     void element_SelectedStateChanged(bool state);
     void newElWin_DirCreated();
     void newElWin_RuleCreated();
+    void ruleDir_ElementRemoved();
     void ruleList_ElementAdded(int i);
     void winButton_Clicked();
-    //void ruleDirList_ElementRemoved();
+
 
 
     //Other methods

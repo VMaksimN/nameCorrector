@@ -37,8 +37,8 @@ MainWindow::MainWindow(QWidget *parent)
     dirLayout->addWidget(new QLabel("Directories"));
 
     connect(&dirList, &ConnectableList::elementAdded, this, &MainWindow::dirList_ElementAdded);
-    //connect(&dirList, &ConnectableList::elementRemoved, this, &MainWindow::ruleDirList_ElementRemoved);
-    connect(&dirList, &ConnectableList::cleared, this, &MainWindow::clearDirsButton_Clicked);
+    connect(&dirList, &ConnectableList::elementRemoved, this, &MainWindow::ruleDir_ElementRemoved);
+    connect(&dirList, &ConnectableList::cleared, this, &MainWindow::ruleDir_ElementRemoved);
     selectedDirs = new QList<ListElement_GUI*>();
 
 
@@ -69,8 +69,8 @@ MainWindow::MainWindow(QWidget *parent)
     ruleLayout->addWidget(new QLabel("Rules"));
 
     connect(&ruleList, &ConnectableList::elementAdded, this, &MainWindow::ruleList_ElementAdded);
-    //connect(&ruleList, &ConnectableList::elementRemoved, this, &MainWindow::ruleDirList_ElementRemoved);
-    connect(&ruleList, &ConnectableList::cleared, this, &MainWindow::clearRulesButton_Clicked);
+    connect(&ruleList, &ConnectableList::elementRemoved, this, &MainWindow::ruleDir_ElementRemoved);
+    connect(&ruleList, &ConnectableList::cleared, this, &MainWindow::ruleDir_ElementRemoved);
     selectedRules = new QList<ListElement_GUI*>();
 
 
@@ -99,14 +99,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     //INit correct, reset and full reset
     resetButton = new QPushButton("Reset", mainWidget);
+    resetButton->setEnabled(false);
     connect(resetButton, &QPushButton::clicked, this, &MainWindow::reset);
     mainGrid->addWidget(resetButton, 5, 3);
 
     fullResetButton = new QPushButton("Full reset", mainWidget);
+    fullResetButton->setEnabled(false);
     connect(fullResetButton, &QPushButton::clicked, this, &MainWindow::reset);
     mainGrid->addWidget(fullResetButton, 5, 4);
 
     correctButton = new QPushButton("Correct names", mainWidget);
+    correctButton->setEnabled(false);
     connect(correctButton, &QPushButton::clicked, this, &MainWindow::correctButton_Clicked);
     mainGrid->addWidget(correctButton, 5, 5);
 }
@@ -177,6 +180,15 @@ void MainWindow::clearRulesButton_Clicked()
 
 void MainWindow::correctButton_Clicked()
 {
+    if(correctDirs_CheckBox->checkState() == Qt::Unchecked &&
+       correctFiles_CheckBox->checkState() == Qt::Unchecked)
+    {
+        QMessageBox box(this);
+            box.setText("Both correct-checkboxes are unchecked.");
+            box.exec();
+        return;
+    }
+
     for(int i = 0; i < dirList.count(); i++)
     {
         if(dirList.at(i)->isEnabled())
@@ -278,12 +290,28 @@ void MainWindow::newElWin_DirCreated()
 {
     ListElement* a = ((NewElementWindow*)sender())->getResult();
     dirList.push_back(a);
+    if(ruleList.count() > 0)
+    {
+        correctButton->setEnabled(true);
+    }
 }
 
 void MainWindow::newElWin_RuleCreated()
 {
     ListElement* a = ((NewElementWindow*)sender())->getResult();
     ruleList.push_back(a);
+    if(dirList.count() > 0)
+    {
+        correctButton->setEnabled(true);
+    }
+}
+
+void MainWindow::ruleDir_ElementRemoved()
+{
+    if(dirList.count() <= 0 || ruleList.count() <= 0)
+    {
+        correctButton->setEnabled(false);
+    }
 }
 
 void MainWindow::ruleList_ElementAdded(int i)
