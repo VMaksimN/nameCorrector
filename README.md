@@ -104,7 +104,13 @@ You can use the code below:
 
 ## How to run
 Find the **_name_corrector_** file in your build directory and run it, in the terminal type:
-		
+				
 	./name_corrector
 		
 and press Enter or use your file manager
+See docs/How_to_use for more information
+
+
+
+
+
