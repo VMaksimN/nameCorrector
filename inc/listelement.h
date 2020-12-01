@@ -14,7 +14,8 @@ class ListElement : public QObject
 public:
     explicit ListElement();
     ListElement(ListElement&);
-    explicit ListElement(QString name, QString info = "", QString type = "rule", bool is_editable = false, bool is_closable = true);
+    explicit ListElement(QString name, QString info = "", QString type = "rule",
+                         bool is_editable = false, bool is_closable = true);
 
     //Get-methods
     int getId();

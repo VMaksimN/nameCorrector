@@ -59,7 +59,6 @@ private:
     void correctButton_Clicked();
     void correctCheckBox_StateChanged();
     void dirList_ElementAdded(int i);
-    void element_Deleted();
     void element_SelectedStateChanged(bool state);
     void newElWin_DirCreated();
     void newElWin_RuleCreated();

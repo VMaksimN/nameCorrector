@@ -10,6 +10,7 @@
 #include <QPushButton>
 #include <QString>
 #include <QTextEdit>
+#include <QFileDialog>
 #include <QVBoxLayout>
 #include <QToolTip>
 #include <QFile>
@@ -31,6 +32,7 @@ public:
 private:
 
     //Signals handlers
+    void browseButton_Clicked();
     void cancelButton_Clicked();
     void createButton_Clicked();
     void typeComboBox_ItemChanged();
@@ -50,6 +52,7 @@ private:
     QLabel* typeLabel;
     QComboBox* typeComboBox;
     QPushButton* helpButton;
+    QPushButton* browseButton;
 
 
     QLabel* ruleLabel;

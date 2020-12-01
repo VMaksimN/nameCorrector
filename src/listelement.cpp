@@ -104,11 +104,12 @@ void ListElement::removeGUI()
     QWidget* deleted;
     for(int i = connectedGUI.count() - 1; i > -1; i--)
     {
+        //Delete all of the GUI-elements connected to this
         deleted = *connectedGUI.begin();
         connectedGUI.remove(deleted);
         delete deleted;
     }
-
+    //Sign for all collections containing this element to delete it
     this->deleted(id);
     delete this;
 }

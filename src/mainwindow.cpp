@@ -126,6 +126,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::addDirButton_Clicked()
 {
+    //Create a new directory NewElementWindow
     NewElementWindow* nelw = new NewElementWindow("Dirs");
     connect(nelw, &NewElementWindow::elementCreated, this, &MainWindow::newElWin_DirCreated);
     QApplication::setActiveWindow(nelw);
@@ -134,6 +135,7 @@ void MainWindow::addDirButton_Clicked()
 
 void MainWindow::addRuleButton_Clicked()
 {
+    //Create a new rule NewElementWindow
     NewElementWindow* nelw = new NewElementWindow("Rules");
     connect(nelw, &NewElementWindow::elementCreated, this, &MainWindow::newElWin_RuleCreated);
     QApplication::setActiveWindow(nelw);
@@ -142,10 +144,9 @@ void MainWindow::addRuleButton_Clicked()
 
 void MainWindow::clearDirsButton_Clicked()
 {
-    /*if(dirList.count())
-    {
-        dirList.clear();
-    }*/
+    //All GUI-elements in the dirBox
+    //will be removed
+    //except for the scroll and the layout
     for(int i = dirLayout->count(); i > -1; i--)
     {
         if(dirBox->children().at(i) != (QLayout*)dirLayout &&
@@ -153,18 +154,15 @@ void MainWindow::clearDirsButton_Clicked()
            ((QLabel*)dirBox->children().at(i))->text() != "Directories")
         {
             ((ListElement_GUI*)dirBox->children().at(i))->removeThis();
-            //delete dirBox->children().at(i);
         }
     }
-    //selectedDirs->clear();
 }
 
 void MainWindow::clearRulesButton_Clicked()
 {
-    /*if(ruleList.count() > 0)
-    {
-        ruleList.clear();
-    }*/
+    //All GUI-elements in the ruleBox
+    //will be removed
+    //except for the scroll and the layout
     for(int i = ruleLayout->count(); i > -1; i--)
     {
         if(ruleBox->children().at(i) != (QLayout*)ruleLayout &&
@@ -172,10 +170,8 @@ void MainWindow::clearRulesButton_Clicked()
            ((QLabel*)ruleBox->children().at(i))->text() != "Rules")
         {
             ((ListElement_GUI*)ruleBox->children().at(i))->removeThis();
-            //delete ruleBox->children().at(i);
         }
     }
-    //selectedRules->clear();
 }
 
 void MainWindow::correctButton_Clicked()
@@ -207,20 +203,24 @@ void MainWindow::correctButton_Clicked()
                 QStringList corrected_names;
                 for(int i = 0; i < file_list.count(); i++)
                 {
+                    //Correct names (w/o renaming in the file-system)
                     corrected_names.push_back(correctName(file_list.at(i)));
                 }
+                //Rename files in the file-system
                 renameFiles(currentPath, &file_list, &corrected_names);
                 newFileNames.push_back(new QPair<QString, QStringList>(currentPath, corrected_names));
             }
-            //Correct directories if the directory-checkbox was checked
+            //Correct directories
             if(correctDirs_CheckBox->checkState() == Qt::Checked)
             {
                 oldDirNames.push_back(new QPair<QString, QStringList>(currentPath, dir_list));
                 QStringList corrected_names;
                 for(int i = 0; i < dir_list.count(); i++)
                 {
+                    //Correct names (w/o renaming in the file-system)
                     corrected_names.push_back(correctName(dir_list.at(i)));
                 }
+                //Rename directories in the file-system
                 renameDirs(currentPath, &dir_list, &corrected_names);
                 newDirNames.push_back(new QPair<QString, QStringList>(currentPath, corrected_names));
             }
@@ -232,35 +232,17 @@ void MainWindow::correctButton_Clicked()
 
 void MainWindow::dirList_ElementAdded(int i)
 {
+    //INit a new ListElement_GUI and add it to the parent layout
     ListElement_GUI* leg = new ListElement_GUI(dirList.at(i), dirBox);
     connect(leg, &ListElement_GUI::selectedStateChanged, this, &MainWindow::element_SelectedStateChanged);
-    connect(leg, &ListElement_GUI::deleted, this, &MainWindow::element_Deleted);
 
     dirLayout->addWidget(leg);
     leg->setParentLayout(dirLayout);
 }
 
-void MainWindow::element_Deleted()
-{
-    /*ListElement_GUI* deleted = (ListElement_GUI*)sender();
-
-    QString t = deleted->getSource().getType();
-
-    if(t == "Rules")
-    {
-        selectedRules->removeOne(deleted);
-        ruleLayout->removeWidget(deleted);
-        ruleList.removeById(deleted->getSource().getId());
-        return;
-    }
-
-    selectedDirs->removeOne(deleted);
-    dirLayout->removeWidget(deleted);
-    dirList.removeById(deleted->getSource().getId());*/
-}
-
 void MainWindow::element_SelectedStateChanged(bool state)
 {
+    //Change the selected-state of the GUI-element
     ListElement_GUI* leg = (ListElement_GUI*)sender();
     if(leg->getSource().getType() == "Rules")
     {
@@ -316,9 +298,9 @@ void MainWindow::ruleDir_ElementRemoved()
 
 void MainWindow::ruleList_ElementAdded(int i)
 {
+    //INit a new ListElement_GUI and add it to the parent layout
     ListElement_GUI* leg = new ListElement_GUI(ruleList.at(i), ruleBox);
     connect(leg, &ListElement_GUI::selectedStateChanged, this, &MainWindow::element_SelectedStateChanged);
-    connect(leg, &ListElement_GUI::deleted, this, &MainWindow::element_Deleted);
 
     ruleLayout->addWidget(leg);
     leg->setParentLayout(ruleLayout);
@@ -326,6 +308,7 @@ void MainWindow::ruleList_ElementAdded(int i)
 
 void MainWindow::winButton_Clicked()
 {
+    //Create a new ListWindow showing the source-list (dirList or ruleList)
     ListWindow* lw;
     if(sender() == dirWindowButton)
     {
@@ -370,7 +353,7 @@ QString MainWindow::correctName(QString old_name)
 {
     QString rule;
     QStringList options;
-    //correct all names according the rule list
+    //Correct all names according the rule list
     for(int i = 0; i < ruleList.count(); i++)
     {
         if(ruleList.at(i)->isEnabled())
@@ -423,13 +406,22 @@ void MainWindow::logOut(QString log, LogStatus st)
     {
         log.prepend("<p style=\"color: purple; font-weight: bold;\">");
     }
-    //Log it out
+    //Print it
     log.push_back("</p>");
     logBlock->append(log);
 }
 
 QString MainWindow::makeList(QString old, QStringList args)
 {
+    //Example
+    //0_myPhoto.png
+    //1_myPhoto.png
+    //2_myPhoto.png - numeric prefix list with _ as the separator
+
+    //myPhoto-A.png
+    //myPhoto-B.png
+    //myPhoto-C.png - alphabetic postfix list with - as the separator
+
     if(args[0] == "numeric")
     {
         if(args[1] == "prefix")
@@ -476,12 +468,13 @@ QString MainWindow::removeFromTo(QString old, QStringList args)
 
     if(args[0] != "")
     {
-        QString modified = old.mid(first, second);
-        QString new_str = old.mid(first, second).replace(args[0], "");
-        old = old.replace(modified, new_str);
+        QString modified = old.mid(first, second); //Search for the target
+        QString new_str = old.mid(first, second).replace(args[0], ""); //Modify it
+        old = old.replace(modified, new_str); //Replace the old part with the new one
     }
     else
     {
+        //Just remove all symbols from the first position to the second position
         old = old.remove(first, second - first + 1);
     }
     return old;
@@ -533,19 +526,6 @@ QString MainWindow::replace(QString old, QStringList args)
 
 void MainWindow::reset()
 {
-    /*QMessageBox box("Warning", "", QMessageBox::NoIcon,
-                    QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel, this);
-    box.setText("Please, do not add new files and directories or remove existing ones before reset. "
-                " It may cause errors and damage your files. "
-                " Do you want to continue?");
-    box.exec();
-
-    if(box.result() == QMessageBox::No || box.result() == QMessageBox::Cancel)
-    {
-        logOut("Reset aborted", LogStatus::Info);
-        return;
-    }*/
-
     //This operation is similar to the correct one
     QPushButton* but = (QPushButton*)sender();
 

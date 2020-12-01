@@ -77,7 +77,7 @@ NewElementWindow::NewElementWindow(QString type, QWidget *parent) : QMainWindow(
     def_pal.setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
 
 
-    //Init dangerous symbols array
+    //INit dangerous symbols array
     dangerous_symbols = new char[10];
     dangerous_symbols[0] = '<';
     dangerous_symbols[1] = '>';
@@ -112,6 +112,18 @@ ListElement* NewElementWindow::getResult()
 
 /////Signals handlers
 
+void NewElementWindow::browseButton_Clicked()
+{
+    //User open a directory
+    QFileDialog dialog(this);
+    QString currentPath = dialog.getExistingDirectory();
+    if(currentPath == "")
+    {
+        return;
+    }
+    pathTextBox->setText(currentPath);
+}
+
 void NewElementWindow::cancelButton_Clicked()
 {
     close();
@@ -138,12 +150,16 @@ void NewElementWindow::typeComboBox_ItemChanged()
     createButton->setEnabled(false);
     ruleLabel->setText(typeComboBox->currentText());
 
-    //Create new GUI
+    //Create new GUI according the selected rule
     if(typeComboBox->currentText() == "Directory")
     {
         pathTextBox = new QTextEdit();
         connect(pathTextBox, &QTextEdit::textChanged, this, &NewElementWindow::checkTextBox);
         ruleLayout->addWidget(pathTextBox);
+
+        browseButton = new QPushButton("Browse");
+        connect(browseButton, &QPushButton::clicked, this, &NewElementWindow::browseButton_Clicked);
+        ruleLayout->addWidget(browseButton);
         return;
     }
     else if(typeComboBox->currentText() == "Replace")
@@ -400,6 +416,7 @@ void NewElementWindow::checkTextBox()
 
 void NewElementWindow::writeDataToResult()
 {
+    //Rule_name arg arg0 arg1
     result->setName(typeComboBox->currentText());
     if(typeComboBox->currentText() == "Replace")
     {

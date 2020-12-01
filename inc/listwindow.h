@@ -24,7 +24,6 @@ private:
     void addButton_Clicked();
     void claerButton_Clicked();
     void disableSelectedButton_Clicked();
-    void element_Deleted();
     void element_SelectedStateChanged(bool state);
     void enableSelectedButton_Clicked();
     void newElWin_elementCreated();

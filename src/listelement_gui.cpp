@@ -57,6 +57,7 @@ ListElement_GUI::ListElement_GUI(ListElement_GUI&){}
 
 ListElement_GUI::~ListElement_GUI()
 {
+    //Remove useless pointer from everywhere
     parentLayout->removeWidget(this);
     for(int i = 0; i < linkedCollections.count(); i++)
     {
@@ -108,6 +109,7 @@ bool ListElement_GUI::isSelected()
 
 /////Set-methods
 
+//It is necessary to set check-state from outside (w/o click)
 void ListElement_GUI::setEnabled(bool value)
 {
     source->setEnabled(value);
@@ -130,6 +132,7 @@ void ListElement_GUI::setParentLayout(QLayout *pl)
     parentLayout = pl;
 }
 
+//It is necessary to set selected-state from outside (w/o click)
 void ListElement_GUI::setSelected(bool value)
 {
     is_selected = value;
@@ -171,6 +174,8 @@ void ListElement_GUI::unlinkCollection(QList<ListElement_GUI*>* col)
 
 void ListElement_GUI::removeThis()
 {
+    //All GUI-elements connected to the source element
+    //including this will be deleted
     source->removeGUI();
 }
 
@@ -192,6 +197,7 @@ void ListElement_GUI::enableCheckBox_StateChanged()
     source->setEnabled(enableCheckBox->isChecked());
 }
 
+//Change the selected-state by default method (mouseLB click)
 void ListElement_GUI::this_clicked()
 {
     is_selected = !is_selected;

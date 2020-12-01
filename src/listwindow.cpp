@@ -3,6 +3,8 @@
 ListWindow::ListWindow(ConnectableList* source, QString title, QWidget* parent) : QMainWindow(parent)
 {
     setWindowTitle(title);
+
+    //INit source
     this->source = source;
     connect(this->source, &ConnectableList::elementAdded,
             this, &ListWindow::source_ElementAdded);
@@ -10,18 +12,19 @@ ListWindow::ListWindow(ConnectableList* source, QString title, QWidget* parent) 
             this, &ListWindow::source_ElementRemoved);*/
     connect(this->source, &ConnectableList::cleared,
             this, &ListWindow::claerButton_Clicked);
+
     init();
 }
 
 void ListWindow::init()
 {
-    //init main widget and layout
+    //INit main widget and layout
     mainWidget = new QWidget(this);
     setCentralWidget(mainWidget);
 
     mainGrid = new QGridLayout(mainWidget);
 
-    //Init list area
+    //INit list area
     listWidget = new QWidget(mainWidget);
 
     scrollArea = new QScrollArea(mainWidget);
@@ -33,6 +36,7 @@ void ListWindow::init()
     listLayout = new QVBoxLayout(listWidget);
     listLayout->setAlignment(Qt::AlignTop);
 
+    //Add already existing elements from the source to the GUI
     for(int i = 0; i < source->count(); i++)
     {
         ListElement_GUI* leg = new ListElement_GUI(source->at(i), listWidget);
@@ -43,6 +47,7 @@ void ListWindow::init()
         leg->setParentLayout(listLayout);
     }
 
+    //INit bottom buttons
     removeSelectedButton = new QPushButton("Remove selected", mainWidget);
     connect(removeSelectedButton, &QPushButton::clicked, this, &ListWindow::removeSelectedButton_Clicked);
     mainGrid->addWidget(removeSelectedButton, 1, 0, 1, 1);
@@ -72,6 +77,7 @@ void ListWindow::init()
 
 void ListWindow::addButton_Clicked()
 {
+    //Create a new appropriate NewElementWindow(rule or directory)
     NewElementWindow* nelw = new NewElementWindow(windowTitle());
     connect(nelw, &NewElementWindow::elementCreated, this, &ListWindow::newElWin_elementCreated);
     QApplication::setActiveWindow(nelw);
@@ -80,6 +86,7 @@ void ListWindow::addButton_Clicked()
 
 void ListWindow::source_ElementAdded(int i)
 {
+    //INit a new ListElement_GUI and add it to the parent layout
     ListElement_GUI* leg = new ListElement_GUI(source->at(i), listWidget);
     connect(leg, &ListElement_GUI::selectedStateChanged, this, &ListWindow::element_SelectedStateChanged);
 
@@ -89,20 +96,17 @@ void ListWindow::source_ElementAdded(int i)
 
 void ListWindow::claerButton_Clicked()
 {
-    /*if(source->count() > 0)
-    {
-        source->clear();
-    }*/
+    //All GUI-elements in the listWidget
+    //will be removed
+    //except for the scroll and the layout
     for(int i = listLayout->count(); i > -1; i--)
     {
         if(listWidget->children().at(i) != (QLayout*)listLayout &&
            listWidget->children().at(i) != (QLayout*)scrollArea)
         {
             ((ListElement_GUI*)listWidget->children().at(i))->removeThis();
-            //delete ((ListElement_GUI*)listWidget->children().at(i));
         }
     }
-    //selectedElements->clear();
 }
 
 void ListWindow::disableSelectedButton_Clicked()
@@ -115,6 +119,7 @@ void ListWindow::disableSelectedButton_Clicked()
 
 void ListWindow::element_SelectedStateChanged(bool state)
 {
+    //Change the selected-state
     ListElement_GUI* leg = (ListElement_GUI*)sender();
     if(state)
     {
@@ -131,15 +136,6 @@ void ListWindow::newElWin_elementCreated()
 {
     ListElement* a = ((NewElementWindow*)sender())->getResult();
     source->push_back(a);
-}
-
-void ListWindow::element_Deleted()
-{
-    /*ListElement_GUI* deleted = (ListElement_GUI*)sender();
-
-    selectedElements->removeOne(deleted);
-    listLayout->removeWidget(deleted);
-    source->removeById(deleted->getSource().getId());*/
 }
 
 void ListWindow::enableSelectedButton_Clicked()
