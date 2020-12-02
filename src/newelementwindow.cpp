@@ -131,6 +131,17 @@ void NewElementWindow::cancelButton_Clicked()
 
 void NewElementWindow::createButton_Clicked()
 {
+    if(typeComboBox->currentText() == "Directory")
+    {
+        QDir dir(pathTextBox->toPlainText());
+        if(!dir.exists())
+        {
+            QMessageBox box(this);
+                box.setText("This directory does not exist");
+                box.exec();
+                return;
+        }
+    }
     elementCreated();
     close();
 }

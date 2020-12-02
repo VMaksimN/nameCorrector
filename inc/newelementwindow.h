@@ -13,6 +13,7 @@
 #include <QFileDialog>
 #include <QVBoxLayout>
 #include <QToolTip>
+#include <QMessageBox>
 #include <QFile>
 #include <QFileInfo>
 
