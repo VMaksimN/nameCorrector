@@ -240,6 +240,7 @@ void NewElementWindow::typeComboBox_ItemChanged()
         ruleLayout->addWidget(addTextBox);
         connect(addTextBox, &QTextEdit::textChanged, this, &NewElementWindow::checkTextBox);
 
+        createButton->setEnabled(true);
         return;
     }
 }
@@ -427,7 +428,7 @@ void NewElementWindow::checkTextBox()
 
 void NewElementWindow::writeDataToResult()
 {
-    //Rule_name arg arg0 arg1
+    //Rule_name arg arg0 arg1 ... argN
     result->setName(typeComboBox->currentText());
     if(typeComboBox->currentText() == "Replace")
     {
