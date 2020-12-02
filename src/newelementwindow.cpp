@@ -408,7 +408,7 @@ void NewElementWindow::checkTextBox()
     else if(typeComboBox->currentText() == "Directory")
     {
         QDir dir(pathTextBox->toPlainText());
-        if(!dir.exists())
+        if(!dir.exists() || pathTextBox->toPlainText() == "")
         {
             createButton->setEnabled(false);
             pathTextBox->setPalette(red_pal);
