@@ -111,6 +111,13 @@ and press Enter or use your file manager
 See docs/How_to_use for more information
 
 
+## License
+name_corrector is free software, and may be redistributed under the terms specified in the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)
+
+Also see:
+Cmake - [New BSD License](https://cmake.org/licensing/)
+gcc - [GPLv3+](https://www.gnu.org/licenses/gpl-3.0.html)
+Qt - [GPL 3.0 or LGPL 3.0](https://www.qt.io/licensing/)
 
 
 
