@@ -387,11 +387,7 @@ QString MainWindow::correctName(QString old_name)
             {
                 old_name = remove(old_name, options);
             }
-            else if(rule == "RemoveFromTo")
-            {
-                old_name = removeFromTo(old_name, options);
-            }
-            else if(rule == "AddTo")
+            else if(rule == "Add")
             {
                 old_name = addStringTo(old_name, options);
             }
@@ -439,42 +435,45 @@ QString MainWindow::makeList(QString old, QStringList args)
     //myPhoto-B.png
     //myPhoto-C.png - alphabetic postfix list with - as the separator
 
-    if(args[0] == "numeric")
+    if(args[0] == "prefix")
     {
-        if(args[1] == "prefix")
+        if(args[1] == "numeric")
         {
             old = old.prepend(QString::fromStdString(std::to_string(last_num)) + args[2]);
+            last_num++;
         }
         else
         {
-            old = old.append(args[2] + QString::fromStdString(std::to_string(last_num)));
-        }
-        last_num++;
-    }
-    else
-    {
-        if(args[1] == "prefix")
-        {
+            if(last_char > 'Z')
+            {
+                return old;
+            }
             old = old.prepend(last_char + args[2]);
-        }
-        else
-        {
-            old = old.append(args[2] + last_char);
-        }
-        if(last_char < 'Z')
-        {
             last_char++;
         }
     }
+    else
+    {
+        if(args[1] == "numeric")
+        {
+            old = old.append(args[2] + QString::fromStdString(std::to_string(last_num)));
+            last_num++;
+        }
+        else
+        {
+            if(last_char > 'Z')
+            {
+                return old;
+            }
+            old = old.append(args[2] + last_char);
+            last_char++;
+        }
+    }
+
     return old;
 }
 
 QString MainWindow::remove(QString old, QStringList args)
-{
-    return old.replace(args[0], "");
-}
-
-QString MainWindow::removeFromTo(QString old, QStringList args)
 {
     int first = args[1].toInt();
     int second = args[2].toInt();

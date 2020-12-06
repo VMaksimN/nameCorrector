@@ -466,7 +466,7 @@ void NewElementWindow::writeDataToResult()
     else if(typeComboBox->currentText() == "MakeList")
     {
         result->setInfo("MakeList " + positionComboBox->currentText()
-                               + " " + listType_ComboBox->currentText()
+                               + " " + listType_ComboBox->currentText() + " "
                                +  addTextBox->toPlainText() + " as separator");
     }
     else if(typeComboBox->currentText() == "Directory")
