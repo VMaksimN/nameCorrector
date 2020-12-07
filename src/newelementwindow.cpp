@@ -124,9 +124,6 @@ ListElement* NewElementWindow::getResult()
 
 
 
-
-
-
 /////Signals handlers
 
 void NewElementWindow::browseButton_Clicked()
@@ -265,9 +262,6 @@ void NewElementWindow::typeComboBox_ItemChanged()
 //////////////
 //////////////
 //////////////
-
-
-
 
 
 
@@ -449,25 +443,25 @@ void NewElementWindow::writeDataToResult()
     result->setName(typeComboBox->currentText());
     if(typeComboBox->currentText() == "Replace")
     {
-        result->setInfo("Replace " + replacedTextBox->toPlainText()
-                                    + " " + replaceWithTextBox->toPlainText());
+        result->setInfo("Replace/" + replacedTextBox->toPlainText()
+                                    + "/" + replaceWithTextBox->toPlainText());
     }
     else if(typeComboBox->currentText() == "Remove")
     {
-        result->setInfo("Remove " + removeTextBox->toPlainText()
-                                   + " " + fromTextBox->toPlainText()
-                                   + " " + toTextBox->toPlainText());
+        result->setInfo("Remove/" + removeTextBox->toPlainText()
+                                   + "/" + fromTextBox->toPlainText()
+                                   + "/" + toTextBox->toPlainText());
     }
     else if(typeComboBox->currentText() == "Add")
     {
-        result->setInfo("Add " + addTextBox->toPlainText()
-                               + " " + toTextBox->toPlainText());
+        result->setInfo("Add/" + addTextBox->toPlainText()
+                               + "/" + toTextBox->toPlainText());
     }
     else if(typeComboBox->currentText() == "MakeList")
     {
-        result->setInfo("MakeList " + positionComboBox->currentText()
-                               + " " + listType_ComboBox->currentText() + " "
-                               +  addTextBox->toPlainText() + " as separator");
+        result->setInfo("MakeList/" + positionComboBox->currentText()
+                               + "/" + listType_ComboBox->currentText()
+                               + "/" + addTextBox->toPlainText());
     }
     else if(typeComboBox->currentText() == "Directory")
     {

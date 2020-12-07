@@ -375,8 +375,8 @@ QString MainWindow::correctName(QString old_name)
     {
         if(ruleList.at(i)->isEnabled())
         {
-            rule = ruleList.at(i)->getInfo().split(" ")[0];
-            options = ruleList.at(i)->getInfo().split(" ");
+            rule = ruleList.at(i)->getInfo().split("/")[0];
+            options = ruleList.at(i)->getInfo().split("/");
             options.removeAt(0);
 
             if(rule == "Replace")
